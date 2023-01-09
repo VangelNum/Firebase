@@ -1,13 +1,11 @@
 package com.vangelnum.firebase
 
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.navigation.NavController
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.vangelnum.firebase.ui.Screens
@@ -16,7 +14,7 @@ import com.vangelnum.firebase.ui.Screens
 fun MyAppNavHost(
     navController: NavHostController = rememberNavController(),
 ) {
-
+    val viewModel: MainViewModel = viewModel()
     val auth = Firebase.auth
     val currentUser = auth.currentUser
     var startDestination = Screens.Register.route
@@ -26,10 +24,14 @@ fun MyAppNavHost(
 
     NavHost(navController = navController, startDestination = startDestination) {
         composable(route = Screens.Register.route) {
-            RegisterScreen(auth, onNavigateToLogin = { navController.navigate(route = Screens.Login.route) })
+            RegisterScreen(auth,
+                onNavigateToLogin = { navController.navigate(route = Screens.Login.route) })
         }
         composable(route = Screens.Login.route) {
-            Text(text = "just check")
+            LoginScreen(onRegisterScreen = {
+                navController.navigate(route = Screens.Register.route)
+            }, auth)
         }
+
     }
 }

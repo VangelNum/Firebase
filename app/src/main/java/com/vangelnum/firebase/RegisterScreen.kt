@@ -1,28 +1,33 @@
 package com.vangelnum.firebase
 
-import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.google.firebase.auth.FirebaseAuth
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun RegisterScreen(auth: FirebaseAuth, onNavigateToLogin: () -> Unit) {
     Surface(modifier = Modifier.fillMaxSize(),
@@ -36,12 +41,21 @@ fun RegisterScreen(auth: FirebaseAuth, onNavigateToLogin: () -> Unit) {
         val currentStateEyes = remember {
             mutableStateOf(false)
         }
+        val errorRegisterText = remember {
+            mutableStateOf("")
+        }
+        val keyboardController = LocalSoftwareKeyboardController.current
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
-                .padding(top = 20.dp, start = 15.dp, end = 15.dp),
-            verticalArrangement = Arrangement.spacedBy(15.dp),
+                .padding(top = 15.dp, start = 15.dp, end = 15.dp)
+                .clickable {
+                    keyboardController?.hide()
+                },
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(space = 15.dp,
+                alignment = Alignment.CenterVertically),
         ) {
             Image(
                 painter = painterResource(id = R.drawable.joinnow),
@@ -53,9 +67,9 @@ fun RegisterScreen(auth: FirebaseAuth, onNavigateToLogin: () -> Unit) {
             )
             Text(text = "Register",
                 style = MaterialTheme.typography.h3,
-                textAlign = TextAlign.Start,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colors.onBackground
+                color = MaterialTheme.colors.onBackground,
+                modifier = Modifier.align(Alignment.Start)
             )
             OutlinedTextField(value = emailValue.value, onValueChange = {
                 emailValue.value = it
@@ -64,7 +78,7 @@ fun RegisterScreen(auth: FirebaseAuth, onNavigateToLogin: () -> Unit) {
                     contentDescription = "email_icon")
             }, placeholder = {
                 Text(text = "Email ID")
-            }, maxLines = 1, singleLine = true)
+            }, maxLines = 1, singleLine = true,  keyboardActions = KeyboardActions(onDone = {keyboardController?.hide()}))
             OutlinedTextField(value = passwordValue.value,
                 onValueChange = {
                     passwordValue.value = it
@@ -86,18 +100,25 @@ fun RegisterScreen(auth: FirebaseAuth, onNavigateToLogin: () -> Unit) {
                 maxLines = 1,
                 singleLine = true,
                 visualTransformation = if (!currentStateEyes.value) PasswordVisualTransformation() else
-                    VisualTransformation.None
+                    VisualTransformation.None,
+                keyboardActions = KeyboardActions(onDone = {keyboardController?.hide()})
             )
+            val context = LocalContext.current
             OutlinedButton(onClick = {
-                auth.createUserWithEmailAndPassword(
-                    emailValue.value.text.trim(),
-                    passwordValue.value.text.trim()
-                ).addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        Log.d("TAG", "Success")
-                    } else {
-                        Log.d("TAG", "Fail ${task.exception?.message.toString()}")
+                if (emailValue.value.text != "" || passwordValue.value.text != "") {
+                    auth.createUserWithEmailAndPassword(
+                        emailValue.value.text.trim(),
+                        passwordValue.value.text.trim()
+                    ).addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            Toast.makeText(context, "Success", Toast.LENGTH_LONG).show()
+                        } else {
+                            errorRegisterText.value = task.exception?.message.toString()
+                        }
                     }
+                } else {
+                    errorRegisterText.value = "Empty Field"
+                    // Toast.makeText(context, "Empty Field", Toast.LENGTH_LONG).show()
                 }
             }, modifier = Modifier
                 .fillMaxWidth()
@@ -107,10 +128,13 @@ fun RegisterScreen(auth: FirebaseAuth, onNavigateToLogin: () -> Unit) {
             {
                 Text(text = "Register")
             }
+
+            Text(text = errorRegisterText.value, color = Color.Red)
+
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter) {
                 Row(modifier = Modifier.clickable(onClick =
-                    onNavigateToLogin
-            ) ) {
+                onNavigateToLogin
+                )) {
                     Text(text = "Already have an account? ",
                         color = MaterialTheme.colors.onBackground)
                     Text(text = "Login", color = MaterialTheme.colors.primary)
