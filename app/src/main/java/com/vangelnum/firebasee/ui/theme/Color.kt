@@ -1,4 +1,4 @@
-package com.vangelnum.firebase.ui.theme
+package com.vangelnum.firebasee.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

@@ -1,4 +1,4 @@
-package com.vangelnum.firebase
+package com.vangelnum.firebasee
 
 import android.widget.Toast
 import androidx.compose.foundation.clickable
@@ -28,7 +28,7 @@ import com.google.firebase.auth.FirebaseAuth
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun LoginScreen(onRegisterScreen: () -> Unit, auth: FirebaseAuth) {
+fun LoginScreen(onRegisterScreen: () -> Unit, onNavigateToMain: () -> Unit, auth: FirebaseAuth) {
     val emailValue = remember {
         mutableStateOf(TextFieldValue())
     }
@@ -46,7 +46,7 @@ fun LoginScreen(onRegisterScreen: () -> Unit, auth: FirebaseAuth) {
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .padding(top = 20.dp, start = 15.dp, end = 15.dp)
+            .padding(start = 15.dp, end = 15.dp)
             .clickable {
                 keyboardController?.hide()
             },
@@ -58,7 +58,6 @@ fun LoginScreen(onRegisterScreen: () -> Unit, auth: FirebaseAuth) {
             style = MaterialTheme.typography.h4.copy(fontWeight = FontWeight.Bold))
         Text(text = "Welcome back.", style = MaterialTheme.typography.h4)
         Text(text = "You've been missed!", style = MaterialTheme.typography.h4)
-        Spacer(modifier = Modifier.height(30.dp))
         OutlinedTextField(value = emailValue.value,
             onValueChange = {
                 emailValue.value = it
@@ -68,7 +67,7 @@ fun LoginScreen(onRegisterScreen: () -> Unit, auth: FirebaseAuth) {
                 Icon(painter = painterResource(id = R.drawable.ic_baseline_alternate_email_24),
                     contentDescription = "email_icon")
             },
-            placeholder = {
+            label = {
                 Text(text = "Email ID")
             },
             maxLines = 1,
@@ -83,7 +82,7 @@ fun LoginScreen(onRegisterScreen: () -> Unit, auth: FirebaseAuth) {
                 Icon(painter = painterResource(id = R.drawable.ic_baseline_lock_24),
                     contentDescription = "email_icon")
             },
-            placeholder = {
+            label = {
                 Text(text = "Password")
             },
             trailingIcon = {
@@ -100,13 +99,14 @@ fun LoginScreen(onRegisterScreen: () -> Unit, auth: FirebaseAuth) {
         )
         val context = LocalContext.current
         OutlinedButton(onClick = {
-            if (emailValue.value.text != "" || passwordValue.value.text != "") {
+            if (emailValue.value.text != "" && passwordValue.value.text != "") {
                 auth.signInWithEmailAndPassword(
                     emailValue.value.text.trim(),
                     passwordValue.value.text.trim()
                 ).addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         Toast.makeText(context, "Success", Toast.LENGTH_LONG).show()
+                        return@addOnCompleteListener onNavigateToMain()
                     } else {
                         errorRegisterText.value = task.exception?.message.toString()
                     }
@@ -130,7 +130,7 @@ fun LoginScreen(onRegisterScreen: () -> Unit, auth: FirebaseAuth) {
             )) {
                 Text(text = "Don't have an account? ",
                     color = MaterialTheme.colors.onBackground)
-                Text(text = "Register", color = MaterialTheme.colors.primary)
+                Text(text = "Sign up", color = MaterialTheme.colors.primary)
             }
         }
     }

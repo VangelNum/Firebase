@@ -1,13 +1,9 @@
-package com.vangelnum.firebase
+package com.vangelnum.firebasee
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
-import com.vangelnum.firebase.ui.Screens
-import com.vangelnum.firebase.ui.theme.FirebaseTheme
+import com.vangelnum.firebasee.ui.theme.FirebaseTheme
 
 
 class MainActivity : ComponentActivity() {
@@ -15,7 +11,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             FirebaseTheme {
-                MyAppNavHost()
+                Navigataion()
             }
         }
     }

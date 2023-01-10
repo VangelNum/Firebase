@@ -1,4 +1,4 @@
-package com.vangelnum.firebase
+package com.vangelnum.firebasee
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4

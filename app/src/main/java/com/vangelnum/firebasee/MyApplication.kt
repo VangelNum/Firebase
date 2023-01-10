@@ -1,4 +1,4 @@
-package com.vangelnum.firebase
+package com.vangelnum.firebasee
 
 import android.app.Application
 import android.content.Context
@@ -11,7 +11,7 @@ open class MyApp : Application() {
 
     companion object {
         lateinit var mInstance: MyApp
-        fun getContext(): Context? {
+        fun getContext(): Context {
             return mInstance.applicationContext
         }
     }
