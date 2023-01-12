@@ -1,4 +1,4 @@
-package com.vangelnum.firebasee
+package com.vangelnum.testfirebase
 
 sealed class Screens(val route: String) {
     object Register : Screens("register")

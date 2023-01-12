@@ -1,4 +1,4 @@
-package com.vangelnum.firebasee
+package com.vangelnum.testfirebase
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
@@ -16,16 +16,22 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import coil.compose.SubcomposeAsyncImage
 import com.google.firebase.auth.FirebaseAuth
 
 
 data class NewPhotos(
-    val arrayimage: List<String> = listOf(),
+    val arrayImages: List<String> = listOf(),
 )
 
 @Composable
-fun MainScreen(viewModel: MainViewModel, auth: FirebaseAuth) {
+fun MainScreen(viewModel: MainViewModel, auth: FirebaseAuth, navHostController: NavHostController) {
+
+    if (auth.currentUser?.isEmailVerified == false) {
+        navHostController.navigate(Screens.Register.route)
+    }
+
     val uiState = viewModel.uiState.collectAsState()
     val allPhotos = viewModel.allPhotos.collectAsState()
     val context = LocalContext.current
@@ -35,7 +41,7 @@ fun MainScreen(viewModel: MainViewModel, auth: FirebaseAuth) {
             Toast.makeText(context, "Error", Toast.LENGTH_LONG).show()
         }
         is NewsState.Success -> {
-            ColumnImages(allPhotos.value, auth)
+            ColumnImages(allPhotos.value, auth, navHostController)
         }
         is NewsState.Loading -> {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -50,12 +56,12 @@ fun MainScreen(viewModel: MainViewModel, auth: FirebaseAuth) {
 
 
 @Composable
-fun ColumnImages(allPhotos: NewPhotos, auth: FirebaseAuth) {
+fun ColumnImages(allPhotos: NewPhotos, auth: FirebaseAuth, navHostController: NavHostController) {
     LazyColumn(modifier = Modifier
         .fillMaxSize()
         .padding(10.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp)) {
-        items(allPhotos.arrayimage) { currentPhoto ->
+        items(allPhotos.arrayImages) { currentPhoto ->
             Card(modifier = Modifier
                 .fillMaxWidth()
                 .height(300.dp),
@@ -77,7 +83,10 @@ fun ColumnImages(allPhotos: NewPhotos, auth: FirebaseAuth) {
             }
         }
     }
-    Button(onClick = { }) {
+    Button(onClick = {
+        auth.signOut()
+        navHostController.navigate(Screens.Register.route)
+    }) {
 
     }
 }

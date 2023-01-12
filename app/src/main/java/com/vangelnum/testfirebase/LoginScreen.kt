@@ -1,6 +1,9 @@
-package com.vangelnum.firebasee
+package com.vangelnum.testfirebase
 
+import android.util.Log
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -22,13 +25,40 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.GoogleAuthProvider
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun LoginScreen(onRegisterScreen: () -> Unit, onNavigateToMain: () -> Unit, auth: FirebaseAuth) {
+
+    val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) {
+        val account = GoogleSignIn.getSignedInAccountFromIntent(it.data)
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val result = account.getResult(ApiException::class.java)
+                val credentials = GoogleAuthProvider.getCredential(result.idToken, null)
+                auth.signInWithCredential(credentials).await()
+                withContext(Dispatchers.Main) {
+                    return@withContext onNavigateToMain()
+                }
+            } catch (it: ApiException) {
+                Log.d("Error", it.status.toString())
+            }
+        }
+    }
+
     val emailValue = remember {
         mutableStateOf(TextFieldValue())
     }
@@ -121,6 +151,41 @@ fun LoginScreen(onRegisterScreen: () -> Unit, onNavigateToMain: () -> Unit, auth
             shape = RoundedCornerShape(15.dp))
         {
             Text(text = "Sign in")
+        }
+
+        Row(modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically) {
+            Divider(modifier = Modifier.weight(2f))
+            Text(text = "OR",
+                color = MaterialTheme.colors.onBackground,
+                modifier = Modifier.weight(1f),
+                textAlign = TextAlign.Center)
+            Divider(modifier = Modifier.weight(2f))
+        }
+
+        OutlinedButton(onClick = {
+            val options = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken("871448888785-bi18gi9padpjutejst70tb4tmcc6p8hd.apps.googleusercontent.com")
+                .requestEmail()
+                .build()
+            val mGoogleSignInClient = GoogleSignIn.getClient(context, options)
+
+            val signInIntent = mGoogleSignInClient.signInIntent
+            launcher.launch(signInIntent)
+
+        }, modifier = Modifier
+            .fillMaxWidth()
+            .height(60.dp), shape = RoundedCornerShape(15.dp)) {
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(painter = painterResource(id = R.drawable.google_svg),
+                    contentDescription = "google_svg", tint = Color.Unspecified)
+                Spacer(modifier = Modifier.width(4.dp))
+                Text(text = "Continue with Google")
+            }
         }
 
         Text(text = errorRegisterText.value, color = Color.Red)

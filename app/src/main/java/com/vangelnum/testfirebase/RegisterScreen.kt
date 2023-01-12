@@ -1,4 +1,4 @@
-package com.vangelnum.firebasee
+package com.vangelnum.testfirebase
 
 import android.util.Log
 import android.widget.Toast
@@ -36,6 +36,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -45,14 +46,16 @@ fun RegisterScreen(
     onNavigateToMain: () -> Unit,
 ) {
 
-    val launcher =
-        rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) {
+    val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) {
             val account = GoogleSignIn.getSignedInAccountFromIntent(it.data)
             CoroutineScope(Dispatchers.IO).launch {
                 try {
                     val result = account.getResult(ApiException::class.java)
                     val credentials = GoogleAuthProvider.getCredential(result.idToken, null)
                     auth.signInWithCredential(credentials).await()
+                    withContext(Dispatchers.Main) {
+                        return@withContext onNavigateToMain()
+                    }
                     Log.d("TAG",result.email.toString())
                 } catch (it: ApiException) {
                     Log.d("Error", it.status.toString())
@@ -141,8 +144,17 @@ fun RegisterScreen(
                         passwordValue.value.text.trim()
                     ).addOnCompleteListener { task ->
                         if (task.isSuccessful) {
-                            Toast.makeText(context, "Success Sign up", Toast.LENGTH_LONG).show()
-                            return@addOnCompleteListener onNavigateToMain()
+                            auth.currentUser?.sendEmailVerification()
+                                ?.addOnSuccessListener {
+                                    if (auth.currentUser?.isEmailVerified == true) {
+                                        return@addOnSuccessListener onNavigateToMain()
+                                    } else {
+                                        Toast.makeText(context, "Verify your email please", Toast.LENGTH_LONG).show()
+                                    }
+                                }
+                                ?.addOnFailureListener{
+                                    Toast.makeText(context, "Error: $it", Toast.LENGTH_LONG).show()
+                                }
                         } else {
                             errorRegisterText.value = task.exception?.message.toString()
                         }
@@ -171,7 +183,7 @@ fun RegisterScreen(
             }
             OutlinedButton(onClick = {
                 val options = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                    .requestIdToken("269678745264-vdeg3rnrlvle12aia91d09ftcu973ahb.apps.googleusercontent.com")
+                    .requestIdToken("871448888785-bi18gi9padpjutejst70tb4tmcc6p8hd.apps.googleusercontent.com")
                     .requestEmail()
                     .build()
                 val mGoogleSignInClient = GoogleSignIn.getClient(context, options)

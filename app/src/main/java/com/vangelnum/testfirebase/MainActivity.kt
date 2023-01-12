@@ -1,9 +1,9 @@
-package com.vangelnum.firebasee
+package com.vangelnum.testfirebase
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import com.vangelnum.firebasee.ui.theme.FirebaseTheme
+import com.vangelnum.testfirebase.ui.theme.FirebaseTheme
 
 
 class MainActivity : ComponentActivity() {

@@ -1,4 +1,4 @@
-package com.vangelnum.firebasee
+package com.vangelnum.testfirebase
 
 import org.junit.Test
 

@@ -1,4 +1,4 @@
-package com.vangelnum.firebasee
+package com.vangelnum.testfirebase
 
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -33,7 +33,7 @@ fun Navigataion(
                 { navController.navigate(route = Screens.Main.route) }, auth)
         }
         composable(route = Screens.Main.route) {
-            MainScreen(myViewModel, auth)
+            MainScreen(myViewModel, auth, navController)
         }
 
     }

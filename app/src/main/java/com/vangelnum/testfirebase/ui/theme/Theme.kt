@@ -1,4 +1,4 @@
-package com.vangelnum.firebasee.ui.theme
+package com.vangelnum.testfirebase.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme
