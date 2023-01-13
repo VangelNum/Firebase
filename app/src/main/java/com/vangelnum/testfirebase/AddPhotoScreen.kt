@@ -11,8 +11,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import coil.compose.SubcomposeAsyncImage
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
@@ -34,24 +38,29 @@ fun AddPhotoScreen(auth: FirebaseAuth) {
 
     Column(modifier = Modifier
         .fillMaxSize()
-        .padding(start = 10.dp, end = 10.dp, top = 10.dp)
+        .padding(start = 10.dp, end = 10.dp)
         .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         Text(
             text = "Здесь вы можете предложить свои варианты фотографий курседа.",
             style = MaterialTheme.typography.body1,
+            modifier = Modifier.padding(top = 10.dp)
         )
         Text(text = "Ограничения:", color = Color.Red, style = MaterialTheme.typography.body2)
-        Text(text = "1. Максимум 5 фотографий, ограничение связано с бесплатностью приложения.")
+        Text(text = "1. Максимум 10 фотографий, ограничение связано с бесплатностью приложения.")
         Text(text = "2. Нельзя предлагать нацизм, фашизм, нацистскую символику и так далее.")
-        Text(text = "За нарушение второго пункта ваш аккаунт может быть заблокирован, если вы будете этим злоупотреблять!")
+        Text(text = "За нарушение второго пункта ваш аккаунт может быть заблокирован!")
 
         OutlinedTextField(value = textValue.value, onValueChange = {
             textValue.value = it
         }, modifier = Modifier.fillMaxWidth(), label = {
             Text(text = "Фото курседа URL")
-        }, maxLines = 1, shape = RoundedCornerShape(15.dp), singleLine = true)
+        }, maxLines = 1, shape = RoundedCornerShape(15.dp), singleLine = true, trailingIcon = {
+            IconButton(onClick = { textValue.value = "" }) {
+                Icon(painter = painterResource(id = R.drawable.ic_round_close_24), contentDescription = "delete field")
+            }
+        })
         OutlinedButton(onClick = {
             CoroutineScope(Dispatchers.IO).launch {
                 try {
@@ -64,11 +73,11 @@ fun AddPhotoScreen(auth: FirebaseAuth) {
                             "url" to FieldValue.arrayUnion(textValue.value),
                             "score" to newScore
                         )
-                        if (newScore < 6) {
+                        if (newScore < 11) {
                             collection.update(mapUpdate)
                             withContext(Dispatchers.Main) {
                                 Toast.makeText(context,
-                                    "Отправлено $newScore / 5",
+                                    "Отправлено $newScore / 10",
                                     Toast.LENGTH_LONG).show()
                             }
                         } else {
@@ -86,9 +95,10 @@ fun AddPhotoScreen(auth: FirebaseAuth) {
                             "score" to 1.toLong()
                         )
                         collection.update(mapUpdate).await().also {
+
                             withContext(Dispatchers.Main) {
                                 Toast.makeText(context,
-                                    "Отправлено ${mapUpdate["score"]} / 5",
+                                    "Отправлено ${mapUpdate["score"]} / 10",
                                     Toast.LENGTH_LONG).show()
                             }
                         }
@@ -106,6 +116,35 @@ fun AddPhotoScreen(auth: FirebaseAuth) {
             shape = RoundedCornerShape(15.dp)
         ) {
             Text(text = "Отправить")
+        }
+
+        if (textValue.value.isEmpty()) {
+            Text(
+                text = "Вставьте ссылку и курсед появится, если этого не произошло, вероятно, ссылка не работает",
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center
+            )
+        } else {
+            Card(modifier = Modifier
+                .fillMaxWidth()
+                .height(400.dp)
+                .padding(bottom = 10.dp),
+                shape = RoundedCornerShape(15.dp)
+            ) {
+                SubcomposeAsyncImage(
+                    model = textValue.value,
+                    loading = {
+                        Box(modifier = Modifier.fillMaxSize()) {
+                            CircularProgressIndicator()
+                        }
+                    },
+                    contentDescription = "",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(400.dp),
+                    contentScale = ContentScale.Crop
+                )
+            }
         }
     }
 }

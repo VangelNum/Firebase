@@ -1,5 +1,6 @@
 package com.vangelnum.testfirebase
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.firestore.ktx.firestore
@@ -11,6 +12,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 
 class MainViewModel : ViewModel() {
     private val _uiState = MutableStateFlow<NewsState>(NewsState.Empty)
@@ -19,8 +21,29 @@ class MainViewModel : ViewModel() {
     private val _allPhotos = MutableStateFlow(NewPhotos(emptyList()))
     val allPhotos: StateFlow<NewPhotos> = _allPhotos.asStateFlow()
 
+
+    private val _allUsersPhotos = MutableStateFlow(UserPhotos(emptyList()))
+    val allUsersPhotos: StateFlow<UserPhotos> = _allUsersPhotos.asStateFlow()
+
     private val myCollection = Firebase.firestore.collection("images").document("tutor")
 
+
+    fun getUserPhotos() {
+        viewModelScope.launch {
+            try {
+                val userCollection = Firebase.firestore.collection("users").document("")
+//                val querySnapShot = userCollection.get().await()
+//                for (document in querySnapShot.documents) {
+//                    val userPerson = document.toObject<UserPhotos>()
+//                    if (userPerson != null) {
+//                        _allUsersPhotos.value = userPerson
+//                    }
+//                }
+            } catch (e: Exception) {
+                Log.d("Error: ", e.message.toString())
+            }
+        }
+    }
 
     fun getSomePhotos() {
         viewModelScope.launch(Dispatchers.IO) {
@@ -33,6 +56,7 @@ class MainViewModel : ViewModel() {
             }
         }
     }
+
 }
 
 sealed class NewsState {
