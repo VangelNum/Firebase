@@ -43,7 +43,7 @@ import kotlinx.coroutines.withContext
 fun RegisterScreen(
     auth: FirebaseAuth,
     onNavigateToLogin: () -> Unit,
-    onNavigateToMain: () -> Unit,
+    onNavigateToMain: () -> Unit
 ) {
 
     val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) {
@@ -146,11 +146,8 @@ fun RegisterScreen(
                         if (task.isSuccessful) {
                             auth.currentUser?.sendEmailVerification()
                                 ?.addOnSuccessListener {
-                                    if (auth.currentUser?.isEmailVerified == true) {
-                                        return@addOnSuccessListener onNavigateToMain()
-                                    } else {
-                                        Toast.makeText(context, "Verify your email please", Toast.LENGTH_LONG).show()
-                                    }
+                                    Toast.makeText(context, "Verify your email please: ${auth.currentUser?.email}", Toast.LENGTH_LONG).show()
+                                    return@addOnSuccessListener onNavigateToLogin()
                                 }
                                 ?.addOnFailureListener{
                                     Toast.makeText(context, "Error: $it", Toast.LENGTH_LONG).show()

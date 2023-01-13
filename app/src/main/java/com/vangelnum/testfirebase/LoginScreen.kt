@@ -41,7 +41,7 @@ import kotlinx.coroutines.withContext
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun LoginScreen(onRegisterScreen: () -> Unit, onNavigateToMain: () -> Unit, auth: FirebaseAuth) {
+fun LoginScreen(onNavigateToRegister: () -> Unit, onNavigateToMain: () -> Unit, auth: FirebaseAuth) {
 
     val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) {
         val account = GoogleSignIn.getSignedInAccountFromIntent(it.data)
@@ -86,8 +86,6 @@ fun LoginScreen(onRegisterScreen: () -> Unit, onNavigateToMain: () -> Unit, auth
     ) {
         Text(text = "Let's sign you in",
             style = MaterialTheme.typography.h4.copy(fontWeight = FontWeight.Bold))
-        Text(text = "Welcome back.", style = MaterialTheme.typography.h4)
-        Text(text = "You've been missed!", style = MaterialTheme.typography.h4)
         OutlinedTextField(value = emailValue.value,
             onValueChange = {
                 emailValue.value = it
@@ -135,8 +133,11 @@ fun LoginScreen(onRegisterScreen: () -> Unit, onNavigateToMain: () -> Unit, auth
                     passwordValue.value.text.trim()
                 ).addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        Toast.makeText(context, "Success", Toast.LENGTH_LONG).show()
-                        return@addOnCompleteListener onNavigateToMain()
+                        if (auth.currentUser?.isEmailVerified==true) {
+                            return@addOnCompleteListener onNavigateToMain()
+                        } else {
+                            Toast.makeText(context,"Verify your email please: ${auth.currentUser?.email}",Toast.LENGTH_LONG).show()
+                        }
                     } else {
                         errorRegisterText.value = task.exception?.message.toString()
                     }
@@ -166,7 +167,7 @@ fun LoginScreen(onRegisterScreen: () -> Unit, onNavigateToMain: () -> Unit, auth
 
         OutlinedButton(onClick = {
             val options = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken("871448888785-bi18gi9padpjutejst70tb4tmcc6p8hd.apps.googleusercontent.com")
+                .requestIdToken(context.getString(R.string.default_web_client_id))
                 .requestEmail()
                 .build()
             val mGoogleSignInClient = GoogleSignIn.getClient(context, options)
@@ -191,7 +192,7 @@ fun LoginScreen(onRegisterScreen: () -> Unit, onNavigateToMain: () -> Unit, auth
         Text(text = errorRegisterText.value, color = Color.Red)
 
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter) {
-            Row(modifier = Modifier.clickable(onClick = onRegisterScreen
+            Row(modifier = Modifier.clickable(onClick = onNavigateToRegister
             )) {
                 Text(text = "Don't have an account? ",
                     color = MaterialTheme.colors.onBackground)

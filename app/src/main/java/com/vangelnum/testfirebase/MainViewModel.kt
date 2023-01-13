@@ -21,6 +21,7 @@ class MainViewModel : ViewModel() {
 
     private val myCollection = Firebase.firestore.collection("images").document("tutor")
 
+
     fun getSomePhotos() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
