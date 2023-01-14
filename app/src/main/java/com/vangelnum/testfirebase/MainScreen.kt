@@ -18,21 +18,18 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
 import coil.compose.SubcomposeAsyncImage
-import com.google.firebase.auth.FirebaseAuth
-
 
 
 @Composable
-fun MainScreen(viewModel: MainViewModel, auth: FirebaseAuth, navHostController: NavHostController) {
+fun MainScreen(viewModel: MainViewModel) {
 
     val uiState = viewModel.uiState.collectAsState()
     val allPhotos = viewModel.allPhotos.collectAsState()
     val context = LocalContext.current
 
     when (uiState.value) {
-        is NewsState.Error -> {
+        is StatesOfProgress.Error -> {
             Toast.makeText(context, "Error", Toast.LENGTH_LONG).show()
             Column(modifier = Modifier.fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -43,15 +40,15 @@ fun MainScreen(viewModel: MainViewModel, auth: FirebaseAuth, navHostController: 
                 }
             }
         }
-        is NewsState.Success -> {
-            ColumnImages(allPhotos.value, auth, navHostController)
+        is StatesOfProgress.Success -> {
+            ColumnImages(allPhotos.value)
         }
-        is NewsState.Loading -> {
+        is StatesOfProgress.Loading -> {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator(color = Color.Green)
             }
         }
-        is NewsState.Empty -> {
+        is StatesOfProgress.Empty -> {
             viewModel.getSomePhotos()
         }
     }
@@ -59,12 +56,13 @@ fun MainScreen(viewModel: MainViewModel, auth: FirebaseAuth, navHostController: 
 
 
 @Composable
-fun ColumnImages(allPhotos: NewPhotos, auth: FirebaseAuth, navHostController: NavHostController) {
+fun ColumnImages(allPhotos: NewPhotos) {
 
     LazyVerticalGrid(columns = GridCells.Fixed(2),
-        modifier = Modifier.fillMaxSize().padding(10.dp),
+        modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(10.dp),
-        horizontalArrangement = Arrangement.spacedBy(10.dp)
+        horizontalArrangement = Arrangement.spacedBy(10.dp),
+        contentPadding = PaddingValues(horizontal = 10.dp, vertical = 10.dp),
     ) {
         items(allPhotos.arrayImages) { currentPhoto ->
             Card(modifier = Modifier

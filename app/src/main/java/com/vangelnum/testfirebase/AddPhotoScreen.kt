@@ -88,7 +88,7 @@ fun AddPhotoScreen(auth: FirebaseAuth) {
                         }
                     } else {
                         val email = auth.currentUser?.email!!
-                        val person = Person(email = email, userId = uid, score = 0)
+                        val person = UserPhotos(email = email, userId = uid, score = 0)
                         collection.set(person).await()
                         val mapUpdate = mapOf(
                             "url" to FieldValue.arrayUnion(textValue.value),
@@ -120,7 +120,7 @@ fun AddPhotoScreen(auth: FirebaseAuth) {
 
         if (textValue.value.isEmpty()) {
             Text(
-                text = "Вставьте ссылку и курсед появится, если этого не произошло, вероятно, ссылка не работает",
+                text = "Вставьте ссылку, и курсед появится, если этого не произошло, вероятно, ссылка не работает",
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center
             )

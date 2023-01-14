@@ -57,9 +57,9 @@ fun Navigation(
             TopAppBar {
                 Spacer(modifier = Modifier.weight(1f))
                 IconButton(onClick = {
-                    val myCollection = Firebase.firestore.collection("developer").document(uid!!)
                     CoroutineScope(Dispatchers.IO).launch {
                         try {
+                            val myCollection = Firebase.firestore.collection("developer").document(uid!!)
                             val querySnapShot = myCollection.get().await()
                             withContext(Dispatchers.Main) {
                                 navController.navigate(route = Screens.Developer.route)
@@ -121,7 +121,7 @@ fun Navigation(
                     { navController.navigate(route = Screens.Main.route) }, auth)
             }
             composable(route = Screens.Main.route) {
-                MainScreen(myViewModel, auth, navController)
+                MainScreen(myViewModel)
             }
             composable(route = Screens.Favourite.route) {
                 FavouriteScreen()
@@ -130,7 +130,7 @@ fun Navigation(
                 AddPhotoScreen(auth)
             }
             composable(route = Screens.Developer.route) {
-                DeveloperScreen(viewModel = myViewModel)
+                DeveloperScreen(viewModel = myViewModel, auth = auth)
             }
 
         }
