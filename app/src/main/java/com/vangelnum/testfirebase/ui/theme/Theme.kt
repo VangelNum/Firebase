@@ -12,8 +12,8 @@ private val DarkColorPalette = darkColors(
     primary = Blue100,
     primaryVariant = Purple700,
     secondary = Teal200,
-    background = Color.White,
-    surface = Color.White,
+    background = MyLightBlue,
+    surface = MyBlue,
     onPrimary = Color.White,
     onSecondary = Color.Black,
     onBackground = Color.Black,
@@ -39,7 +39,7 @@ private val LightColorPalette = lightColors(
 fun FirebaseTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable () -> Unit) {
     val systemUiController = rememberSystemUiController()
     val colors = if (darkTheme) {
-        systemUiController.setSystemBarsColor(color = Color.White)
+        systemUiController.setSystemBarsColor(color = Color.Black)
         DarkColorPalette
     } else {
         LightColorPalette

@@ -75,8 +75,8 @@ fun UsersImages(auth: FirebaseAuth, allUsersPhotos: List<UserPhotos>) {
             Text(text = "Email: ${collectPhotos.email}")
             Text(text = "Uid: ${collectPhotos.userId}")
             Text(text = "Score: ${collectPhotos.score}")
-            Spacer(modifier = Modifier.height(10.dp))
             collectPhotos.url.forEach { onePhoto ->
+                Text(text = "Link: $onePhoto")
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -116,15 +116,14 @@ fun UsersImages(auth: FirebaseAuth, allUsersPhotos: List<UserPhotos>) {
                                     )
                                     myCollection.update(mapUpdate).await()
 
-                                    val uid = auth.currentUser?.uid
 
-                                    if (uid != null) {
-                                        val personCollection =
-                                            Firebase.firestore.collection("users").document(uid)
-                                        personCollection.update(mapOf(
-                                            "url" to FieldValue.arrayRemove(onePhoto)
-                                        ))
-                                    }
+                                    val personCollection =
+                                        Firebase.firestore.collection("users")
+                                            .document(collectPhotos.userId)
+                                    personCollection.update(mapOf(
+                                        "url" to FieldValue.arrayRemove(onePhoto)
+                                    ))
+
                                 }
                             }) {
                                 Icon(
@@ -136,10 +135,9 @@ fun UsersImages(auth: FirebaseAuth, allUsersPhotos: List<UserPhotos>) {
                             }
                             IconButton(onClick = {
                                 val uid = auth.currentUser?.uid
-
                                 if (uid != null) {
                                     val personCollection =
-                                        Firebase.firestore.collection("users").document()
+                                        Firebase.firestore.collection("users").document(collectPhotos.userId)
                                     personCollection.update(mapOf(
                                         "url" to FieldValue.arrayRemove(onePhoto)
                                     ))

@@ -70,7 +70,10 @@ class MainViewModel : ViewModel() {
                     val userList = mutableListOf<UserPhotos>()
                     for (data in it.documents) {
                         val userPhoto = data.toObject(UserPhotos::class.java)
-                        userList.add(userPhoto!!)
+                        if (!userPhoto?.url?.isEmpty()!!) {
+                            userList.add(userPhoto)
+                        }
+
                     }
                     _allUsersPhotos.value = userList
                     _uiStateDeveloper.value = StatesOfProgress.Success
