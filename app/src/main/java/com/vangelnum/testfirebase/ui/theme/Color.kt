@@ -11,3 +11,6 @@ val Teal200 = Color(0xFF03DAC5)
 val MyBlue = Color(0xFFB3E5FC)
 val MyLightBlue = Color(0xFFBBDEFB)
 
+val MyGray = Color(0xFF1F1B24)
+val MyGrayForBackground = Color(0xFF121212)
+

@@ -1,4 +1,4 @@
-package com.vangelnum.testfirebase
+package com.vangelnum.testfirebase.presentation
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
@@ -21,6 +21,8 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.vangelnum.testfirebase.R
+import com.vangelnum.testfirebase.UserPhotos
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

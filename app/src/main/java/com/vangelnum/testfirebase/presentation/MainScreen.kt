@@ -1,6 +1,7 @@
-package com.vangelnum.testfirebase
+package com.vangelnum.testfirebase.presentation
 
 import android.widget.Toast
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -18,11 +19,19 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import coil.compose.SubcomposeAsyncImage
+import com.vangelnum.testfirebase.MainViewModel
+import com.vangelnum.testfirebase.NewPhotos
+import com.vangelnum.testfirebase.Screens
+import com.vangelnum.testfirebase.StatesOfProgress
+import com.vangelnum.testfirebase.room.FavouritePhotosEntity
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 
 
 @Composable
-fun MainScreen(viewModel: MainViewModel) {
+fun MainScreen(viewModel: MainViewModel, navController: NavController) {
 
     val uiState = viewModel.uiState.collectAsState()
     val allPhotos = viewModel.allPhotos.collectAsState()
@@ -41,7 +50,7 @@ fun MainScreen(viewModel: MainViewModel) {
             }
         }
         is StatesOfProgress.Success -> {
-            ColumnImages(allPhotos.value)
+            ColumnImages(allPhotos.value, viewModel = viewModel, navController)
         }
         is StatesOfProgress.Loading -> {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -56,7 +65,7 @@ fun MainScreen(viewModel: MainViewModel) {
 
 
 @Composable
-fun ColumnImages(allPhotos: NewPhotos) {
+fun ColumnImages(allPhotos: NewPhotos, viewModel: MainViewModel, navController: NavController) {
 
     LazyVerticalGrid(columns = GridCells.Fixed(2),
         modifier = Modifier.fillMaxSize(),
@@ -67,14 +76,17 @@ fun ColumnImages(allPhotos: NewPhotos) {
         items(allPhotos.arrayImages) { currentPhoto ->
             Card(modifier = Modifier
                 .fillMaxWidth()
-                .height(350.dp),
+                .height(350.dp).clickable {
+                    val encodedUrl = URLEncoder.encode(currentPhoto, StandardCharsets.UTF_8.toString())
+                    navController.navigate(Screens.WatchPhoto.withArgs(encodedUrl))
+                },
                 shape = RoundedCornerShape(25.dp)
             ) {
                 SubcomposeAsyncImage(model = currentPhoto,
                     contentDescription = "photo",
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(400.dp),
+                        .height(350.dp),
                     contentScale = ContentScale.Crop,
                     loading = {
                         Box(modifier = Modifier.fillMaxSize(),

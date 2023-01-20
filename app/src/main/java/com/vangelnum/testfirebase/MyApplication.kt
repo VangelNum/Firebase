@@ -2,17 +2,8 @@ package com.vangelnum.testfirebase
 
 import android.app.Application
 import android.content.Context
+import dagger.hilt.android.HiltAndroidApp
 
-open class MyApp : Application() {
-    override fun onCreate() {
-        super.onCreate()
-        mInstance = this
-    }
 
-    companion object {
-        lateinit var mInstance: MyApp
-        fun getContext(): Context {
-            return mInstance.applicationContext
-        }
-    }
-}
+@HiltAndroidApp
+class MyApp : Application()

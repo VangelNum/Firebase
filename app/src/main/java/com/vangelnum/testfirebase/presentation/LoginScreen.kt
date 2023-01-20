@@ -1,4 +1,4 @@
-package com.vangelnum.testfirebase
+package com.vangelnum.testfirebase.presentation
 
 import android.util.Log
 import android.widget.Toast
@@ -32,6 +32,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import com.vangelnum.testfirebase.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
