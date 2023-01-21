@@ -8,5 +8,5 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "photos_table")
 data class FavouritePhotosEntity(
     @PrimaryKey(autoGenerate = false)
-    @ColumnInfo(name = "url") val url: String
+    @ColumnInfo(name = "url") val url: String,
 )

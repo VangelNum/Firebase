@@ -60,7 +60,8 @@ fun AddPhotoScreen(auth: FirebaseAuth) {
             Text(text = "Фото курседа URL")
         }, maxLines = 1, shape = RoundedCornerShape(15.dp), singleLine = true, trailingIcon = {
             IconButton(onClick = { textValue.value = "" }) {
-                Icon(painter = painterResource(id = R.drawable.ic_round_close_24), contentDescription = "delete field")
+                Icon(painter = painterResource(id = R.drawable.ic_round_close_24),
+                    contentDescription = "delete field")
             }
         })
         OutlinedButton(onClick = {

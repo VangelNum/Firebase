@@ -141,7 +141,8 @@ fun UsersImages(auth: FirebaseAuth, allUsersPhotos: List<UserPhotos>) {
                                 val uid = auth.currentUser?.uid
                                 if (uid != null) {
                                     val personCollection =
-                                        Firebase.firestore.collection("users").document(collectPhotos.userId)
+                                        Firebase.firestore.collection("users")
+                                            .document(collectPhotos.userId)
                                     personCollection.update(mapOf(
                                         "url" to FieldValue.arrayRemove(onePhoto)
                                     ))

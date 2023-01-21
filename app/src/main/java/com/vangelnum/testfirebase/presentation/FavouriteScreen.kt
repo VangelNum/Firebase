@@ -8,7 +8,6 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -20,8 +19,6 @@ import com.vangelnum.testfirebase.MainViewModel
 
 @Composable
 fun FavouriteScreen(viewModel: MainViewModel) {
-    Text(text = "favourite_Screen")
-
     val allFavouritePhotos = viewModel.readAllData.observeAsState()
     if (allFavouritePhotos.value != null) {
         LazyVerticalGrid(

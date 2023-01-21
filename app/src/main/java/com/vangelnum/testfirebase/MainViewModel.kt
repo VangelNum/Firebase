@@ -19,8 +19,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val repositoryFavourite: FavouritePhotosRepository
-): ViewModel() {
+    private val repositoryFavourite: FavouritePhotosRepository,
+) : ViewModel() {
     private val _uiState = MutableStateFlow<StatesOfProgress>(StatesOfProgress.Empty)
     val uiState: StateFlow<StatesOfProgress> = _uiState.asStateFlow()
 
@@ -42,13 +42,7 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun deleteFavouritePhoto(photo: FavouritePhotosEntity) {
-        viewModelScope.launch {
-            repositoryFavourite.deletePhoto(photo)
-        }
-    }
-
-    fun deleteFavouritePhotoUrl (url: String) {
+    fun deleteFavouritePhotoUrl(url: String) {
         viewModelScope.launch {
             repositoryFavourite.deletePhotoUrl(url)
         }
@@ -57,7 +51,7 @@ class MainViewModel @Inject constructor(
     fun getUserPhotos() {
         viewModelScope.launch(Dispatchers.IO) {
             val personCollection = Firebase.firestore.collection("users")
-            personCollection.addSnapshotListener {  querySnapshot, firebaseException ->
+            personCollection.addSnapshotListener { querySnapshot, firebaseException ->
                 firebaseException?.let {
                     // TODO
                     //Toast.makeText(MyApp.getContext(),it.message.toString(),Toast.LENGTH_LONG).show()
@@ -90,7 +84,7 @@ class MainViewModel @Inject constructor(
                         // TODO
                         //Toast.makeText(MyApp.getContext(),it.message.toString(),Toast.LENGTH_LONG).show()
                     }
-                    querySnapshot?.let { photos->
+                    querySnapshot?.let { photos ->
                         _allPhotos.value = photos.toObject<NewPhotos>()!!
                     }
                 }

@@ -1,21 +1,11 @@
 package com.vangelnum.testfirebase.presentation
 
-import android.widget.Toast
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.dp
-import androidx.navigation.NavDestination.Companion.hierarchy
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -23,24 +13,16 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.navArgument
 import com.google.firebase.auth.ktx.auth
-import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import com.vangelnum.testfirebase.MainViewModel
-import com.vangelnum.testfirebase.R
-import com.vangelnum.testfirebase.Screens
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
-import kotlinx.coroutines.withContext
+import com.vangelnum.testfirebase.*
 
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun Navigation(
     navController: NavHostController,
     myViewModel: MainViewModel,
 ) {
-
     val auth = Firebase.auth
     val currentUser = auth.currentUser
     var startDestination = Screens.Register.route
@@ -61,19 +43,14 @@ fun Navigation(
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
 
-
-
     var showAppBar by rememberSaveable {
         mutableStateOf(true)
     }
     var showBottomBar by rememberSaveable {
         mutableStateOf(true)
     }
+
     when (navBackStackEntry?.destination?.route) {
-        Screens.WatchPhoto.route + "/{url}" -> {
-            showAppBar = true
-            showBottomBar = false
-        }
         Screens.Login.route -> {
             showAppBar = false
             showBottomBar = false
@@ -89,80 +66,29 @@ fun Navigation(
     }
 
 
-
+    val scope = rememberCoroutineScope()
+    val sheetState = rememberBottomSheetState(
+        initialValue = BottomSheetValue.Collapsed
+    )
+    val scaffoldState = rememberBottomSheetScaffoldState(
+        bottomSheetState = sheetState
+    )
 
     Scaffold(
         topBar = {
             if (showAppBar) {
-                if (currentDestination?.route != Screens.WatchPhoto.route + "/{url}") {
-                    TopAppBar(elevation = 0.dp) {
-                        IconButton(onClick = { /*TODO*/ }) {
-                            Icon(painter = painterResource(id = R.drawable.ic_baseline_menu_24),
-                                contentDescription = "menu")
-                        }
-                        Spacer(modifier = Modifier.weight(1f))
-                        IconButton(onClick = {
-                            CoroutineScope(Dispatchers.IO).launch {
-                                try {
-                                    val myCollection =
-                                        Firebase.firestore.collection("developer").document(uid!!)
-                                    val querySnapShot = myCollection.get().await()
-                                    withContext(Dispatchers.Main) {
-                                        navController.navigate(route = Screens.Developer.route)
-                                    }
-                                } catch (e: Exception) {
-                                    withContext(Dispatchers.Main) {
-                                        Toast.makeText(context,
-                                            "Error: ${e.message.toString()}",
-                                            Toast.LENGTH_LONG).show()
-                                    }
-                                }
-                            }
-                        }) {
-                            Icon(painter = painterResource(id = R.drawable.ic_round_favorite_24),
-                                contentDescription = "admin_panel")
-                        }
-                    }
+                if (currentDestination?.route == Screens.WatchPhoto.route + "/{url}") {
+                    MyTopBarForWatchScreen(navController = navController,
+                        scope = scope,
+                        sheetState = sheetState)
                 } else {
-                    TopAppBar(elevation = 0.dp) {
-                        IconButton(onClick = { navController.popBackStack() }) {
-                            Icon(painter = painterResource(id = R.drawable.ic_baseline_arrow_back_24), contentDescription = "back")
-                        }
-                    }
+                    MyTopBar(navController, context, uid)
                 }
             }
         },
         bottomBar = {
             if (showBottomBar) {
-                BottomNavigation(elevation = 0.dp) {
-                    items.forEach { screen ->
-                        if (currentDestination != null) {
-                            BottomNavigationItem(
-                                icon = {
-                                    Icon(painter = painterResource(id = screen.icon),
-                                        contentDescription = null)
-                                },
-                                label = {
-                                    Text(text = screen.title,
-                                        overflow = TextOverflow.Ellipsis,
-                                        maxLines = 1)
-                                },
-                                selected = currentDestination.hierarchy.any {
-                                    it.route == screen.route
-                                },
-                                onClick = {
-                                    navController.navigate(screen.route) {
-                                        popUpTo(navController.graph.findStartDestination().id) {
-                                            saveState = true
-                                        }
-                                        launchSingleTop = true
-                                        restoreState = true
-                                    }
-                                }
-                            )
-                        }
-                    }
-                }
+                MyBottomNavigation(items, currentDestination, navController)
             }
         }
     ) { innerPadding ->
@@ -198,7 +124,11 @@ fun Navigation(
                     type = NavType.StringType
                 }
             )) { entry ->
-                WatchPhotoScreen(url = entry.arguments?.getString("url"), navController)
+                WatchPhotoScreen(
+                    url = entry.arguments?.getString("url"),
+                    scaffoldState = scaffoldState,
+                    viewModel = myViewModel
+                )
             }
 
         }

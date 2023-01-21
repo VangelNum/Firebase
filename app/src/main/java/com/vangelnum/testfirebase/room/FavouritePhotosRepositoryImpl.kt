@@ -1,12 +1,10 @@
 package com.vangelnum.testfirebase.room
 
 import androidx.lifecycle.LiveData
-import kotlinx.coroutines.flow.StateFlow
-import javax.inject.Inject
 
 class FavouritePhotosRepositoryImpl(
-    private val myDao: FavouritePhotosDao
-): FavouritePhotosRepository {
+    private val myDao: FavouritePhotosDao,
+) : FavouritePhotosRepository {
     override fun getAllPhotos(): LiveData<List<FavouritePhotosEntity>> {
         return myDao.getAllUsersPhotos()
     }

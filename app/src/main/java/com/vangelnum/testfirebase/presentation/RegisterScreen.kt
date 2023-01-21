@@ -44,10 +44,11 @@ import kotlinx.coroutines.withContext
 fun RegisterScreen(
     auth: FirebaseAuth,
     onNavigateToLogin: () -> Unit,
-    onNavigateToMain: () -> Unit
+    onNavigateToMain: () -> Unit,
 ) {
 
-    val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) {
+    val launcher =
+        rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) {
             val account = GoogleSignIn.getSignedInAccountFromIntent(it.data)
             CoroutineScope(Dispatchers.IO).launch {
                 try {
@@ -57,7 +58,7 @@ fun RegisterScreen(
                     withContext(Dispatchers.Main) {
                         return@withContext onNavigateToMain()
                     }
-                    Log.d("TAG",result.email.toString())
+                    Log.d("TAG", result.email.toString())
                 } catch (it: ApiException) {
                     Log.d("Error", it.status.toString())
                 }
@@ -147,10 +148,12 @@ fun RegisterScreen(
                         if (task.isSuccessful) {
                             auth.currentUser?.sendEmailVerification()
                                 ?.addOnSuccessListener {
-                                    Toast.makeText(context, "Verify your email please: ${auth.currentUser?.email}", Toast.LENGTH_LONG).show()
+                                    Toast.makeText(context,
+                                        "Verify your email please: ${auth.currentUser?.email}",
+                                        Toast.LENGTH_LONG).show()
                                     return@addOnSuccessListener onNavigateToLogin()
                                 }
-                                ?.addOnFailureListener{
+                                ?.addOnFailureListener {
                                     Toast.makeText(context, "Error: $it", Toast.LENGTH_LONG).show()
                                 }
                         } else {

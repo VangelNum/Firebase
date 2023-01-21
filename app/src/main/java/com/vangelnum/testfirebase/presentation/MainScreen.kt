@@ -25,7 +25,6 @@ import com.vangelnum.testfirebase.MainViewModel
 import com.vangelnum.testfirebase.NewPhotos
 import com.vangelnum.testfirebase.Screens
 import com.vangelnum.testfirebase.StatesOfProgress
-import com.vangelnum.testfirebase.room.FavouritePhotosEntity
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
@@ -50,7 +49,7 @@ fun MainScreen(viewModel: MainViewModel, navController: NavController) {
             }
         }
         is StatesOfProgress.Success -> {
-            ColumnImages(allPhotos.value, viewModel = viewModel, navController)
+            ColumnImages(allPhotos.value, navController)
         }
         is StatesOfProgress.Loading -> {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -65,9 +64,10 @@ fun MainScreen(viewModel: MainViewModel, navController: NavController) {
 
 
 @Composable
-fun ColumnImages(allPhotos: NewPhotos, viewModel: MainViewModel, navController: NavController) {
+fun ColumnImages(allPhotos: NewPhotos, navController: NavController) {
 
-    LazyVerticalGrid(columns = GridCells.Fixed(2),
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(2),
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(10.dp),
         horizontalArrangement = Arrangement.spacedBy(10.dp),
@@ -76,8 +76,10 @@ fun ColumnImages(allPhotos: NewPhotos, viewModel: MainViewModel, navController: 
         items(allPhotos.arrayImages) { currentPhoto ->
             Card(modifier = Modifier
                 .fillMaxWidth()
-                .height(350.dp).clickable {
-                    val encodedUrl = URLEncoder.encode(currentPhoto, StandardCharsets.UTF_8.toString())
+                .height(350.dp)
+                .clickable {
+                    val encodedUrl =
+                        URLEncoder.encode(currentPhoto, StandardCharsets.UTF_8.toString())
                     navController.navigate(Screens.WatchPhoto.withArgs(encodedUrl))
                 },
                 shape = RoundedCornerShape(25.dp)
