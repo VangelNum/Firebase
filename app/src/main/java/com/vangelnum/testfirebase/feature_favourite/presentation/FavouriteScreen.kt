@@ -1,4 +1,4 @@
-package com.vangelnum.testfirebase.presentation
+package com.vangelnum.testfirebase.feature_favourite.presentation
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -11,9 +11,6 @@ import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.OutlinedButton
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -21,49 +18,39 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.SubcomposeAsyncImage
-import com.vangelnum.testfirebase.StatesOfProgress
-import com.vangelnum.testfirebase.feature_favourite.presentation.ViewModelForFavourite
 import com.vangelnum.testfirebase.feature_favourite.domain.model.FavouritePhotosEntity
 
 @Composable
 fun FavouriteScreen(viewModel: ViewModelForFavourite = hiltViewModel()) {
 
-    val uiState = viewModel.uiStateFavourite.collectAsState()
-    val allFavouritePhotos = viewModel.allFavouritePhotos.observeAsState()
+    val resource = viewModel.allFavouritePhotos.value
 
-    when (uiState.value) {
-        is StatesOfProgress.Empty -> {
-            viewModel.getFavouritePhotos()
+    if (resource.isLoading) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            CircularProgressIndicator(color = Color.Green)
         }
-        is StatesOfProgress.Error -> {
-            Column(modifier = Modifier.fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center) {
-                Text(text = "Something wrong")
-                OutlinedButton(onClick = { viewModel.getFavouritePhotos() }) {
-                    Text(text = "Try again")
-                }
-            }
-        }
-        is StatesOfProgress.Success -> {
-            FavouritePhotosLazyGrid(viewModel = viewModel, allFavouritePhotos)
-        }
-        is StatesOfProgress.Loading -> {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator(color = Color.Green)
+    }
+    if (resource.error.isNotBlank()) {
+        Column(modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center) {
+            Text(text = resource.error)
+            OutlinedButton(onClick = { viewModel.getFavouritePhotos() }) {
+                Text(text = "Try again")
             }
         }
     }
+    FavouritePhotosLazyGrid(viewModel = viewModel, resource.data)
 
 }
 
 @Composable
 fun FavouritePhotosLazyGrid(
     viewModel: ViewModelForFavourite,
-    allFavouritePhotos: State<List<FavouritePhotosEntity>?>,
+    allFavouritePhotos: List<FavouritePhotosEntity>?,
 ) {
 
-    if (allFavouritePhotos.value?.isEmpty() == false) {
+    if (allFavouritePhotos?.isEmpty() == false) {
         LazyVerticalGrid(
             columns = GridCells.Fixed(2),
             modifier = Modifier.fillMaxSize(),
@@ -71,7 +58,7 @@ fun FavouritePhotosLazyGrid(
             horizontalArrangement = Arrangement.spacedBy(10.dp),
             contentPadding = PaddingValues(horizontal = 10.dp, vertical = 10.dp)
         ) {
-            items(allFavouritePhotos.value!!) { photo ->
+            items(allFavouritePhotos) { photo ->
                 Card(
                     modifier = Modifier.height(350.dp),
                     shape = RoundedCornerShape(25.dp)
@@ -83,7 +70,7 @@ fun FavouritePhotosLazyGrid(
                             .height(350.dp)
                             .fillMaxWidth()
                             .clickable {
-                               // viewModel.deleteFavouritePhotoUrl(url = photo.url)
+                                viewModel.deleteFavouritePhoto(url = photo.url)
                             },
                         contentScale = ContentScale.Crop,
                         loading = {

@@ -21,9 +21,9 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import com.vangelnum.testfirebase.MainViewModel
+import com.vangelnum.testfirebase.feature_main.presentation.MainViewModel
 import com.vangelnum.testfirebase.R
-import com.vangelnum.testfirebase.StatesOfProgress
+import com.vangelnum.testfirebase.feature_main.presentation.StatesOfProgress
 import com.vangelnum.testfirebase.UserPhotos
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

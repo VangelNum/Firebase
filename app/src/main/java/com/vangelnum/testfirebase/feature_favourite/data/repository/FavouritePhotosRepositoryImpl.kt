@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 class FavouritePhotosRepositoryImpl(
     private val myDao: FavouritePhotosDao,
 ) : FavouritePhotosRepository {
-    override fun getAllPhotos(): Flow<List<FavouritePhotosEntity>> {
+    override fun getAllFavouritesPhotos(): Flow<List<FavouritePhotosEntity>> {
         return myDao.getAllUsersPhotos()
     }
 
@@ -19,7 +19,6 @@ class FavouritePhotosRepositoryImpl(
     override suspend fun deletePhotoUrl(url: String) {
         return myDao.deletePhotoUrl(url)
     }
-
 
 
 }

@@ -15,6 +15,9 @@ import androidx.navigation.navArgument
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.vangelnum.testfirebase.*
+import com.vangelnum.testfirebase.feature_favourite.presentation.FavouriteScreen
+import com.vangelnum.testfirebase.feature_main.presentation.MainScreen
+import com.vangelnum.testfirebase.feature_main.presentation.MainViewModel
 
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -108,7 +111,7 @@ fun Navigation(
                     { navController.navigate(route = Screens.Main.route) }, auth)
             }
             composable(route = Screens.Main.route) {
-                MainScreen(viewModel = myViewModel, navController)
+                MainScreen()
             }
             composable(route = Screens.Favourite.route) {
                 FavouriteScreen()

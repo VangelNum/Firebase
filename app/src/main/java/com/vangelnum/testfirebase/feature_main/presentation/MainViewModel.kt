@@ -1,10 +1,12 @@
-package com.vangelnum.testfirebase
+package com.vangelnum.testfirebase.feature_main.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
+import com.vangelnum.testfirebase.UserPhotos
+import com.vangelnum.testfirebase.feature_main.domain.model.NewPhotos
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -16,15 +18,11 @@ class MainViewModel : ViewModel() {
     private val _uiState = MutableStateFlow<StatesOfProgress>(StatesOfProgress.Empty)
     val uiState: StateFlow<StatesOfProgress> = _uiState.asStateFlow()
 
-    private val _allPhotos = MutableStateFlow(NewPhotos(emptyList()))
-    val allPhotos: StateFlow<NewPhotos> = _allPhotos.asStateFlow()
-
     private val _uiStateDeveloper = MutableStateFlow<StatesOfProgress>(StatesOfProgress.Empty)
     val uiStateDeveloper: StateFlow<StatesOfProgress> = _uiStateDeveloper.asStateFlow()
 
     private val _allUsersPhotos = MutableStateFlow(listOf(UserPhotos()))
     val allUsersPhotos: StateFlow<List<UserPhotos>> = _allUsersPhotos.asStateFlow()
-
 
 
     fun getUserPhotos() {
@@ -53,26 +51,7 @@ class MainViewModel : ViewModel() {
         }
     }
 
-    fun getSomePhotos() {
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                val myCollection = Firebase.firestore.collection("images").document("tutor")
-                _uiState.value = StatesOfProgress.Loading
-                myCollection.addSnapshotListener { querySnapshot, firebaseException ->
-                    firebaseException?.let {
-                        // TODO
-                        //Toast.makeText(MyApp.getContext(),it.message.toString(),Toast.LENGTH_LONG).show()
-                    }
-                    querySnapshot?.let { photos ->
-                        _allPhotos.value = photos.toObject<NewPhotos>()!!
-                    }
-                }
-                _uiState.value = StatesOfProgress.Success
-            } catch (e: Exception) {
-                _uiState.value = StatesOfProgress.Error(e.message.toString())
-            }
-        }
-    }
+
 
 }
 

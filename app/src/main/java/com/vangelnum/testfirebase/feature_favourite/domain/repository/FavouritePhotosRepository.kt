@@ -4,7 +4,7 @@ import com.vangelnum.testfirebase.feature_favourite.domain.model.FavouritePhotos
 import kotlinx.coroutines.flow.Flow
 
 interface FavouritePhotosRepository {
-    fun getAllPhotos(): Flow<List<FavouritePhotosEntity>>
+    fun getAllFavouritesPhotos(): Flow<List<FavouritePhotosEntity>>
 
     suspend fun addPhoto(photo: FavouritePhotosEntity)
 
