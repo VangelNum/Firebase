@@ -16,10 +16,11 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.SubcomposeAsyncImage
 import com.vangelnum.testfirebase.BottomSheetData
-import com.vangelnum.testfirebase.MainViewModel
-import com.vangelnum.testfirebase.room.FavouritePhotosEntity
+import com.vangelnum.testfirebase.feature_favourite.presentation.ViewModelForFavourite
+import com.vangelnum.testfirebase.feature_favourite.domain.model.FavouritePhotosEntity
 
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
@@ -28,8 +29,9 @@ import com.vangelnum.testfirebase.room.FavouritePhotosEntity
 fun WatchPhotoScreen(
     url: String?,
     scaffoldState: BottomSheetScaffoldState,
-    viewModel: MainViewModel,
+    viewModel: ViewModelForFavourite = hiltViewModel(),
 ) {
+
     val items = listOf(
         BottomSheetData.Favourite,
         BottomSheetData.Share,

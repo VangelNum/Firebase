@@ -1,26 +1,18 @@
 package com.vangelnum.testfirebase
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
-import com.vangelnum.testfirebase.room.FavouritePhotosEntity
-import com.vangelnum.testfirebase.room.FavouritePhotosRepository
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 
-@HiltViewModel
-class MainViewModel @Inject constructor(
-    private val repositoryFavourite: FavouritePhotosRepository,
-) : ViewModel() {
+class MainViewModel : ViewModel() {
     private val _uiState = MutableStateFlow<StatesOfProgress>(StatesOfProgress.Empty)
     val uiState: StateFlow<StatesOfProgress> = _uiState.asStateFlow()
 
@@ -34,19 +26,6 @@ class MainViewModel @Inject constructor(
     val allUsersPhotos: StateFlow<List<UserPhotos>> = _allUsersPhotos.asStateFlow()
 
 
-    var readAllData: LiveData<List<FavouritePhotosEntity>> = repositoryFavourite.getAllPhotos()
-
-    fun addFavouritePhoto(photo: FavouritePhotosEntity) {
-        viewModelScope.launch {
-            repositoryFavourite.addPhoto(photo)
-        }
-    }
-
-    fun deleteFavouritePhotoUrl(url: String) {
-        viewModelScope.launch {
-            repositoryFavourite.deletePhotoUrl(url)
-        }
-    }
 
     fun getUserPhotos() {
         viewModelScope.launch(Dispatchers.IO) {

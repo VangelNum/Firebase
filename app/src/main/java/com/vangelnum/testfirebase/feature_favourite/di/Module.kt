@@ -1,7 +1,11 @@
-package com.vangelnum.testfirebase.room
+package com.vangelnum.testfirebase.feature_favourite.di
 
 import android.content.Context
 import androidx.room.Room
+import com.vangelnum.testfirebase.feature_favourite.data.network.FavouritePhotosDao
+import com.vangelnum.testfirebase.feature_favourite.data.network.FavouritePhotosDatabase
+import com.vangelnum.testfirebase.feature_favourite.data.repository.FavouritePhotosRepositoryImpl
+import com.vangelnum.testfirebase.feature_favourite.domain.repository.FavouritePhotosRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

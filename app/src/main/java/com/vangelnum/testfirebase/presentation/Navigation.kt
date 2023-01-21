@@ -23,6 +23,9 @@ fun Navigation(
     navController: NavHostController,
     myViewModel: MainViewModel,
 ) {
+
+    //val allFavouritePhotos = myViewModel.readAllData.observeAsState()
+
     val auth = Firebase.auth
     val currentUser = auth.currentUser
     var startDestination = Screens.Register.route
@@ -108,7 +111,7 @@ fun Navigation(
                 MainScreen(viewModel = myViewModel, navController)
             }
             composable(route = Screens.Favourite.route) {
-                FavouriteScreen(viewModel = myViewModel)
+                FavouriteScreen()
             }
             composable(route = Screens.Add.route) {
                 AddPhotoScreen(auth = auth)
@@ -126,8 +129,7 @@ fun Navigation(
             )) { entry ->
                 WatchPhotoScreen(
                     url = entry.arguments?.getString("url"),
-                    scaffoldState = scaffoldState,
-                    viewModel = myViewModel
+                    scaffoldState = scaffoldState
                 )
             }
 

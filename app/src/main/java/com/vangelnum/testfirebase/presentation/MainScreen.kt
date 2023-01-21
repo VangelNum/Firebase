@@ -7,10 +7,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.OutlinedButton
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
@@ -21,17 +18,16 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.SubcomposeAsyncImage
-import com.vangelnum.testfirebase.MainViewModel
-import com.vangelnum.testfirebase.NewPhotos
-import com.vangelnum.testfirebase.Screens
-import com.vangelnum.testfirebase.StatesOfProgress
+import com.vangelnum.testfirebase.*
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
 
 @Composable
-fun MainScreen(viewModel: MainViewModel, navController: NavController) {
-
+fun MainScreen(
+    viewModel: MainViewModel,
+    navController: NavController
+) {
     val uiState = viewModel.uiState.collectAsState()
     val allPhotos = viewModel.allPhotos.collectAsState()
     val context = LocalContext.current
@@ -64,8 +60,10 @@ fun MainScreen(viewModel: MainViewModel, navController: NavController) {
 
 
 @Composable
-fun ColumnImages(allPhotos: NewPhotos, navController: NavController) {
-
+fun ColumnImages(
+    allPhotos: NewPhotos,
+    navController: NavController
+) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         modifier = Modifier.fillMaxSize(),

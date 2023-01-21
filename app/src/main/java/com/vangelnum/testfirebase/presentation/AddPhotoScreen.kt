@@ -123,7 +123,7 @@ fun AddPhotoScreen(auth: FirebaseAuth) {
 
         if (textValue.value.isEmpty()) {
             Text(
-                text = "Вставьте ссылку, и курсед появится, если этого не произошло, вероятно, ссылка не работает",
+                text = "Вставьте ссылку и курсед появится, если этого не произошло, вероятно, ссылка не работает",
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center
             )

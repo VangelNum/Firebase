@@ -1,4 +1,4 @@
-package com.vangelnum.testfirebase.room
+package com.vangelnum.testfirebase.feature_favourite.domain.model
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
