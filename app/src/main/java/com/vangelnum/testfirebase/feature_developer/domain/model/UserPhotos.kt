@@ -1,4 +1,4 @@
-package com.vangelnum.testfirebase
+package com.vangelnum.testfirebase.feature_developer.domain.model
 
 data class UserPhotos(
     val email: String = "",

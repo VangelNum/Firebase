@@ -5,7 +5,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.vangelnum.testfirebase.feature_favourite.common.Resource
+import com.vangelnum.testfirebase.common.Resource
 import com.vangelnum.testfirebase.feature_favourite.domain.model.FavouritePhotosEntity
 import com.vangelnum.testfirebase.feature_favourite.domain.use_case.AddToFavouriteUseCase
 import com.vangelnum.testfirebase.feature_favourite.domain.use_case.DeleteFavouriteUseCase

@@ -22,7 +22,7 @@ import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.vangelnum.testfirebase.R
-import com.vangelnum.testfirebase.UserPhotos
+import com.vangelnum.testfirebase.feature_developer.domain.model.UserPhotos
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

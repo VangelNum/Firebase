@@ -1,6 +1,6 @@
 package com.vangelnum.testfirebase.feature_favourite.domain.use_case
 
-import com.vangelnum.testfirebase.feature_favourite.common.Resource
+import com.vangelnum.testfirebase.common.Resource
 import com.vangelnum.testfirebase.feature_favourite.domain.model.FavouritePhotosEntity
 import com.vangelnum.testfirebase.feature_favourite.domain.repository.FavouritePhotosRepository
 import kotlinx.coroutines.flow.Flow

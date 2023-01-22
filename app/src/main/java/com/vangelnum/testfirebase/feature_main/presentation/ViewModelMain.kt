@@ -4,7 +4,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.vangelnum.testfirebase.feature_favourite.common.Resource
+import com.vangelnum.testfirebase.common.Resource
 import com.vangelnum.testfirebase.feature_main.domain.use_cases.GetAllPhotosUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn

@@ -11,23 +11,21 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.vangelnum.testfirebase.*
+import com.vangelnum.testfirebase.feature_developer.presentation.DeveloperScreen
 import com.vangelnum.testfirebase.feature_favourite.presentation.FavouriteScreen
 import com.vangelnum.testfirebase.feature_main.presentation.MainScreen
-import com.vangelnum.testfirebase.feature_main.presentation.MainViewModel
 
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun Navigation(
-    navController: NavHostController,
-    myViewModel: MainViewModel,
+    navController: NavHostController = rememberNavController(),
 ) {
-
-    //val allFavouritePhotos = myViewModel.readAllData.observeAsState()
 
     val auth = Firebase.auth
     val currentUser = auth.currentUser
@@ -111,7 +109,7 @@ fun Navigation(
                     { navController.navigate(route = Screens.Main.route) }, auth)
             }
             composable(route = Screens.Main.route) {
-                MainScreen()
+                MainScreen(navController)
             }
             composable(route = Screens.Favourite.route) {
                 FavouriteScreen()
@@ -120,7 +118,7 @@ fun Navigation(
                 AddPhotoScreen(auth = auth)
             }
             composable(route = Screens.Developer.route) {
-                DeveloperScreen(viewModel = myViewModel, auth = auth)
+                DeveloperScreen(auth = auth)
             }
             composable(route = Screens.Notification.route) {
                 NotificationScreen()

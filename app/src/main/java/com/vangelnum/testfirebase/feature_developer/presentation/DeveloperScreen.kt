@@ -1,30 +1,25 @@
-package com.vangelnum.testfirebase.presentation
+package com.vangelnum.testfirebase.feature_developer.presentation
 
-import android.util.Log
-import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.SubcomposeAsyncImage
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import com.vangelnum.testfirebase.feature_main.presentation.MainViewModel
 import com.vangelnum.testfirebase.R
-import com.vangelnum.testfirebase.feature_main.presentation.StatesOfProgress
-import com.vangelnum.testfirebase.UserPhotos
+import com.vangelnum.testfirebase.feature_developer.domain.model.UserPhotos
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -32,39 +27,22 @@ import kotlinx.coroutines.tasks.await
 
 
 @Composable
-fun DeveloperScreen(viewModel: MainViewModel, auth: FirebaseAuth) {
+fun DeveloperScreen(viewModel: DeveleoperViewModel = hiltViewModel(), auth: FirebaseAuth) {
 
-    val uiState = viewModel.uiStateDeveloper.collectAsState()
-    val allUsersPhotos = viewModel.allUsersPhotos.collectAsState()
-    val context = LocalContext.current
+    val resource = viewModel.allUsersPhotosForDeveloper.value
 
-
-    when (uiState.value) {
-        is StatesOfProgress.Error -> {
-            Toast.makeText(context, "Error", Toast.LENGTH_LONG).show()
-            Column(modifier = Modifier.fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center) {
-                Text(text = "Something wrong")
-                OutlinedButton(onClick = { viewModel.getUserPhotos() }) {
-                    Text(text = "Try again")
-                }
-            }
+    if (resource.isLoading) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            CircularProgressIndicator()
         }
-        is StatesOfProgress.Success -> {
-            UsersImages(auth = auth, allUsersPhotos = allUsersPhotos.value)
-        }
-        is StatesOfProgress.Loading -> {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator(color = Color.Green)
-            }
-        }
-        is StatesOfProgress.Empty -> {
-            viewModel.getUserPhotos()
-            Log.d("tag", allUsersPhotos.value.toString())
+    }
+    if (resource.error.isNotBlank()) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Text(text = "Error: ${resource.error}")
         }
     }
 
+    UsersImages(auth = auth, allUsersPhotos = resource.data)
 
 }
 
@@ -113,13 +91,11 @@ fun UsersImages(auth: FirebaseAuth, allUsersPhotos: List<UserPhotos>) {
                                 CoroutineScope(Dispatchers.IO).launch {
 
                                     val myCollection =
-                                        Firebase.firestore.collection("images")
-                                            .document("tutor")
+                                        Firebase.firestore.collection("images").document("tutor")
                                     val mapUpdate = mapOf(
                                         "arrayImages" to FieldValue.arrayUnion(onePhoto)
                                     )
                                     myCollection.update(mapUpdate).await()
-
 
                                     val personCollection =
                                         Firebase.firestore.collection("users")

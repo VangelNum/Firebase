@@ -17,7 +17,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import coil.compose.SubcomposeAsyncImage
 import com.vangelnum.testfirebase.Screens
 import java.net.URLEncoder
@@ -26,8 +25,8 @@ import java.nio.charset.StandardCharsets
 
 @Composable
 fun MainScreen(
+    navController: NavController,
     viewModelMain: ViewModelMain = hiltViewModel(),
-    navController: NavController = rememberNavController(),
 ) {
     val resources = viewModelMain.allPhotos.value
 
