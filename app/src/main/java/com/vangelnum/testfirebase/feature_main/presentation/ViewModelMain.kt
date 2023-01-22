@@ -1,6 +1,5 @@
 package com.vangelnum.testfirebase.feature_main.presentation
 
-import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -26,43 +25,19 @@ class ViewModelMain @Inject constructor(
     }
 
     private fun getAllPhotos() {
-        getAllPhotosUseCase().onEach {
-            when (it) {
-                is Resource.Loading -> {
-                    _allPhotos.value = AllPhotosState(isLoading = true)
-                }
+        getAllPhotosUseCase().onEach { result ->
+            when (result) {
                 is Resource.Error -> {
-                    _allPhotos.value = AllPhotosState(error = it.message.toString())
+                    _allPhotos.value =
+                        AllPhotosState(error = result.message ?: "An unexpected error")
                 }
                 is Resource.Success -> {
-                    _allPhotos.value = AllPhotosState(data = it.data!!)
+                    _allPhotos.value = AllPhotosState(data = result.data)
+                }
+                is Resource.Loading -> {
+                    _allPhotos.value = AllPhotosState(isLoading = true)
                 }
             }
         }.launchIn(viewModelScope)
     }
-
-//    private val _allPhotos = MutableStateFlow(NewPhotos(emptyList()))
-//    val allPhotos: StateFlow<NewPhotos> = _allPhotos.asStateFlow()
-//
-//
-//    fun getSomePhotos() {
-//        viewModelScope.launch(Dispatchers.IO) {
-//            try {
-//                val myCollection = Firebase.firestore.collection("images").document("tutor")
-//                //_uiState.value = StatesOfProgress.Loading
-//                myCollection.addSnapshotListener { querySnapshot, firebaseException ->
-//                    firebaseException?.let {
-//                        // TODO
-//                        //Toast.makeText(MyApp.getContext(),it.message.toString(),Toast.LENGTH_LONG).show()
-//                    }
-//                    querySnapshot?.let { photos ->
-//                        _allPhotos.value = photos.toObject<NewPhotos>()!!
-//                    }
-//                }
-//                //_uiState.value = StatesOfProgress.Success
-//            } catch (e: Exception) {
-//                //_uiState.value = StatesOfProgress.Error(e.message.toString())
-//            }
-//        }
-//    }
 }

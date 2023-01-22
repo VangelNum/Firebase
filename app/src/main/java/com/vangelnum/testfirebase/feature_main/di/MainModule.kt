@@ -14,7 +14,7 @@ import javax.inject.Singleton
 object MainModule {
     @Singleton
     @Provides
-    fun provideMyRepository() : MainRepository {
+    fun provideMyRepository(): MainRepository {
         return MainRepositoryImpl()
     }
 }
