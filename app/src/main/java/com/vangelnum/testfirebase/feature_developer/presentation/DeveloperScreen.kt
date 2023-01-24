@@ -19,7 +19,6 @@ import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.vangelnum.testfirebase.R
-import com.vangelnum.testfirebase.feature_developer.domain.model.UserPhotos
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -30,30 +29,34 @@ import kotlinx.coroutines.tasks.await
 fun DeveloperScreen(viewModel: DeveleoperViewModel = hiltViewModel(), auth: FirebaseAuth) {
 
     val resource = viewModel.allUsersPhotosForDeveloper.value
-
-    if (resource.isLoading) {
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            CircularProgressIndicator()
-        }
-    }
-    if (resource.error.isNotBlank()) {
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text(text = "Error: ${resource.error}")
-        }
-    }
-
-    UsersImages(auth = auth, allUsersPhotos = resource.data)
+    UsersImages(auth = auth, allUsersPhotos = resource)
 
 }
 
 
 @Composable
-fun UsersImages(auth: FirebaseAuth, allUsersPhotos: List<UserPhotos>) {
+fun UsersImages(
+    auth: FirebaseAuth,
+    allUsersPhotos: DeveloperState
+) {
+
+
+    if (allUsersPhotos.isLoading) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            CircularProgressIndicator()
+        }
+    }
+    if (allUsersPhotos.error.isNotBlank()) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Text(text = "Error: ${allUsersPhotos.error}")
+        }
+    }
+
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(10.dp)
     ) {
-        items(allUsersPhotos) { collectPhotos ->
+        items(allUsersPhotos.data) { collectPhotos ->
             Text(text = "Email: ${collectPhotos.email}")
             Text(text = "Uid: ${collectPhotos.userId}")
             Text(text = "Score: ${collectPhotos.score}")
@@ -97,12 +100,11 @@ fun UsersImages(auth: FirebaseAuth, allUsersPhotos: List<UserPhotos>) {
                                     )
                                     myCollection.update(mapUpdate).await()
 
-                                    val personCollection =
-                                        Firebase.firestore.collection("users")
-                                            .document(collectPhotos.userId)
+                                    val personCollection = Firebase.firestore.collection("users")
+                                        .document(collectPhotos.userId)
                                     personCollection.update(mapOf(
                                         "url" to FieldValue.arrayRemove(onePhoto)
-                                    ))
+                                    )).await()
 
                                 }
                             }) {

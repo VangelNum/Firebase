@@ -7,8 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.vangelnum.testfirebase.common.Resource
 import com.vangelnum.testfirebase.feature_main.domain.use_cases.GetAllPhotosUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
@@ -25,19 +24,21 @@ class ViewModelMain @Inject constructor(
     }
 
     private fun getAllPhotos() {
-        getAllPhotosUseCase().onEach { result ->
-            when (result) {
-                is Resource.Error -> {
-                    _allPhotos.value =
-                        AllPhotosState(error = result.message ?: "An unexpected error")
-                }
-                is Resource.Success -> {
-                    _allPhotos.value = AllPhotosState(data = result.data)
-                }
-                is Resource.Loading -> {
-                    _allPhotos.value = AllPhotosState(isLoading = true)
+        viewModelScope.launch() {
+            getAllPhotosUseCase().collect {
+                when (it) {
+                    is Resource.Error -> {
+                        _allPhotos.value = AllPhotosState(error = it.message.toString())
+                    }
+                    is Resource.Loading -> {
+                        _allPhotos.value = AllPhotosState(isLoading = true)
+                    }
+                    is Resource.Success -> {
+                        _allPhotos.value = AllPhotosState(data = it.data)
+                    }
                 }
             }
-        }.launchIn(viewModelScope)
+        }
+
     }
 }
