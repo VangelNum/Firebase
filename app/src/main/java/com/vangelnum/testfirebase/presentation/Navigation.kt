@@ -74,11 +74,22 @@ fun Navigation(
     val sheetState = rememberBottomSheetState(
         initialValue = BottomSheetValue.Collapsed
     )
-    val scaffoldState = rememberBottomSheetScaffoldState(
+    val scaffoldStateBottom = rememberBottomSheetScaffoldState(
         bottomSheetState = sheetState
     )
-
+    val scaffoldState = rememberScaffoldState()
     Scaffold(
+        scaffoldState = scaffoldState,
+        snackbarHost = { hostState ->
+            SnackbarHost(hostState = hostState) { data ->
+                Snackbar(
+                    snackbarData = data,
+                    backgroundColor = MaterialTheme.colors.background,
+                    contentColor = MaterialTheme.colors.onBackground,
+                    actionColor = MaterialTheme.colors.primary,
+                )
+            }
+        },
         topBar = {
             if (showAppBar) {
                 if (currentDestination?.route == Screens.WatchPhoto.route + "/{url}") {
@@ -109,10 +120,10 @@ fun Navigation(
                     { navController.navigate(route = Screens.Main.route) }, auth)
             }
             composable(route = Screens.Main.route) {
-                MainScreen(navController)
+                MainScreen(scaffoldState, navController)
             }
             composable(route = Screens.Favourite.route) {
-                FavouriteScreen()
+                FavouriteScreen(navController)
             }
             composable(route = Screens.Add.route) {
                 AddPhotoScreen(auth = auth)
@@ -130,7 +141,7 @@ fun Navigation(
             )) { entry ->
                 WatchPhotoScreen(
                     url = entry.arguments?.getString("url"),
-                    scaffoldState = scaffoldState
+                    scaffoldState = scaffoldStateBottom
                 )
             }
 

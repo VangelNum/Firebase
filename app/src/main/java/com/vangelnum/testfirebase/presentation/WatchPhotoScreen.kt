@@ -11,7 +11,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -19,8 +22,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.SubcomposeAsyncImage
 import com.vangelnum.testfirebase.BottomSheetData
-import com.vangelnum.testfirebase.feature_favourite.presentation.ViewModelForFavourite
 import com.vangelnum.testfirebase.feature_favourite.domain.model.FavouritePhotosEntity
+import com.vangelnum.testfirebase.feature_favourite.presentation.ViewModelForFavourite
 
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
@@ -30,6 +33,7 @@ fun WatchPhotoScreen(
     url: String?,
     scaffoldState: BottomSheetScaffoldState,
     viewModel: ViewModelForFavourite = hiltViewModel(),
+    viewModelForFavourite: ViewModelForFavourite = hiltViewModel(),
 ) {
 
     val items = listOf(
@@ -38,6 +42,13 @@ fun WatchPhotoScreen(
         BottomSheetData.Download,
     )
 
+    val favourites = viewModelForFavourite.allFavouritePhotos.value
+
+    val photoInFavourite = remember {
+        mutableStateOf(false)
+    }
+
+    photoInFavourite.value = favourites.data.toString().contains(url!!)
     val context = LocalContext.current
 
     BottomSheetScaffold(scaffoldState = scaffoldState, sheetContent = {
@@ -52,15 +63,34 @@ fun WatchPhotoScreen(
         }
         items.forEachIndexed { index, current ->
             ListItem(
-                text = { Text(text = current.name) },
+                text = {
+                    when (index) {
+                        0 -> {
+                            if (photoInFavourite.value) {
+                                Text(text = BottomSheetData.FavouriteDelete.name)
+                            } else {
+                                Text(text = current.name)
+                            }
+                        }
+                        else -> {
+                            Text(text = current.name)
+                        }
+                    }
+
+                },
                 icon = {
                     Icon(painter = painterResource(id = current.icon),
-                        contentDescription = "icon")
+                        contentDescription = "icon",
+                        tint = if (photoInFavourite.value && index == 0) Color.Red else Color.White)
                 },
                 modifier = Modifier.clickable {
                     when (index) {
                         0 -> {
-                            viewModel.addFavouritePhoto(FavouritePhotosEntity(url!!))
+                            if (!photoInFavourite.value) {
+                                viewModel.addFavouritePhoto(FavouritePhotosEntity(url))
+                            } else {
+                                viewModel.deleteFavouritePhoto(url)
+                            }
                         }
                         1 -> {
                             share(url, context = context)
