@@ -6,4 +6,8 @@ import kotlinx.coroutines.flow.Flow
 
 interface DeveloperRepository {
     suspend fun getUsersPhotos():Flow<Resource<List<UserPhotos>>>
+
+    suspend fun addUsersPhotosFromDeveloper(onePhoto: String, collectPhotos: UserPhotos)
+
+    suspend fun deleteUsersPhotosFromDeveleoper(onePhoto: String, collectPhotos: UserPhotos)
 }

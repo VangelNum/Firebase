@@ -1,5 +1,6 @@
 package com.vangelnum.testfirebase.feature_main.presentation
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -89,10 +90,8 @@ fun MainScreen(
                                 if (photoInFavourite.value) {
                                     viewModelForFavourite.deleteFavouritePhoto(photoUrl)
                                     scope.launch {
-                                        val result =
-                                            scaffoldState.snackbarHostState.showSnackbar("Удалено из избранного",
+                                        val result = scaffoldState.snackbarHostState.showSnackbar("Удалено из избранного",
                                                 "Отмена")
-
                                         when (result) {
                                             SnackbarResult.ActionPerformed -> {
                                                 viewModelForFavourite.addFavouritePhoto(
@@ -110,7 +109,7 @@ fun MainScreen(
                                             .showSnackbar("Добавлено в избранное",
                                                 "Отмена",
                                                 duration = SnackbarDuration.Short)
-
+                                        Log.d("tag",result.toString())
                                         when (result) {
                                             SnackbarResult.ActionPerformed -> {
                                                 viewModelForFavourite.deleteFavouritePhoto(url = photoUrl)

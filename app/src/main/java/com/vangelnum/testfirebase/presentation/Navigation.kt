@@ -1,11 +1,17 @@
 package com.vangelnum.testfirebase.presentation
 
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -16,6 +22,7 @@ import androidx.navigation.navArgument
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.vangelnum.testfirebase.*
+import com.vangelnum.testfirebase.R
 import com.vangelnum.testfirebase.feature_developer.presentation.DeveloperScreen
 import com.vangelnum.testfirebase.feature_favourite.presentation.FavouriteScreen
 import com.vangelnum.testfirebase.feature_main.presentation.MainScreen
@@ -78,26 +85,53 @@ fun Navigation(
         bottomSheetState = sheetState
     )
     val scaffoldState = rememberScaffoldState()
+
     Scaffold(
         scaffoldState = scaffoldState,
         snackbarHost = { hostState ->
             SnackbarHost(hostState = hostState) { data ->
                 Snackbar(
-                    snackbarData = data,
+                    action = {
+                        Box(contentAlignment = Alignment.Center) {
+                            TextButton(onClick = {
+                                data.performAction()
+                            }) {
+                                Text(text = data.actionLabel.toString())
+                            }
+                        }
+                    },
                     backgroundColor = MaterialTheme.colors.background,
                     contentColor = MaterialTheme.colors.onBackground,
-                    actionColor = MaterialTheme.colors.primary,
-                )
+                    modifier = Modifier.padding(start = 15.dp, end = 15.dp, bottom = 10.dp)
+                ) {
+                    Row(horizontalArrangement = Arrangement.Center) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_round_favorite_24),
+                            "", modifier = Modifier.padding(end = 15.dp)
+                        )
+                        Text(
+                            data.message,
+                            style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Light),
+                        )
+                    }
+                }
             }
         },
+        drawerContent = {
+            DrawerHeader(auth)
+            DrawerBody()
+        },
+        drawerElevation = 0.dp,
         topBar = {
             if (showAppBar) {
                 if (currentDestination?.route == Screens.WatchPhoto.route + "/{url}") {
-                    MyTopBarForWatchScreen(navController = navController,
+                    MyTopBarForWatchScreen(
+                        navController = navController,
                         scope = scope,
-                        sheetState = sheetState)
+                        sheetState = sheetState
+                    )
                 } else {
-                    MyTopBar(navController, context, uid)
+                    MyTopBar(navController, context, uid, scaffoldState)
                 }
             }
         },
@@ -107,17 +141,21 @@ fun Navigation(
             }
         }
     ) { innerPadding ->
-        NavHost(navController = navController,
+        NavHost(
+            navController = navController,
             startDestination = startDestination,
-            modifier = Modifier.padding(innerPadding)) {
+            modifier = Modifier.padding(innerPadding)
+        ) {
             composable(route = Screens.Register.route) {
                 RegisterScreen(auth,
                     onNavigateToLogin = { navController.navigate(route = Screens.Login.route) },
                     onNavigateToMain = { navController.navigate(route = Screens.Main.route) })
             }
             composable(route = Screens.Login.route) {
-                LoginScreen(onNavigateToRegister = { navController.navigate(route = Screens.Register.route) },
-                    { navController.navigate(route = Screens.Main.route) }, auth)
+                LoginScreen(
+                    onNavigateToRegister = { navController.navigate(route = Screens.Register.route) },
+                    { navController.navigate(route = Screens.Main.route) }, auth
+                )
             }
             composable(route = Screens.Main.route) {
                 MainScreen(scaffoldState, navController)
@@ -129,7 +167,7 @@ fun Navigation(
                 AddPhotoScreen(auth = auth)
             }
             composable(route = Screens.Developer.route) {
-                DeveloperScreen(auth = auth)
+                DeveloperScreen()
             }
             composable(route = Screens.Notification.route) {
                 NotificationScreen()

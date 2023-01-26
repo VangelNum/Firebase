@@ -14,30 +14,22 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.SubcomposeAsyncImage
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FieldValue
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
 import com.vangelnum.testfirebase.R
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
 
 
 @Composable
-fun DeveloperScreen(viewModel: DeveleoperViewModel = hiltViewModel(), auth: FirebaseAuth) {
+fun DeveloperScreen(viewModel: DeveleoperViewModel = hiltViewModel()) {
 
     val resource = viewModel.allUsersPhotosForDeveloper.value
-    UsersImages(auth = auth, allUsersPhotos = resource)
+    UsersImages(viewModel, allUsersPhotos = resource)
 
 }
 
 
 @Composable
 fun UsersImages(
-    auth: FirebaseAuth,
-    allUsersPhotos: DeveloperState
+    viewModel: DeveleoperViewModel,
+    allUsersPhotos: DeveloperState,
 ) {
 
 
@@ -57,87 +49,74 @@ fun UsersImages(
         contentPadding = PaddingValues(10.dp)
     ) {
         items(allUsersPhotos.data) { collectPhotos ->
-            Text(text = "Email: ${collectPhotos.email}")
-            Text(text = "Uid: ${collectPhotos.userId}")
-            Text(text = "Score: ${collectPhotos.score}")
-            collectPhotos.url.forEach { onePhoto ->
-                Text(text = "Link: $onePhoto")
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(400.dp),
-                    shape = RoundedCornerShape(25.dp)
-                ) {
-                    SubcomposeAsyncImage(
-                        model = onePhoto,
-                        contentDescription = "photos",
-                        loading = {
-                            Box(modifier = Modifier.fillMaxSize()) {
-                                CircularProgressIndicator()
-                            }
-                        },
+            if (collectPhotos.url.isNotEmpty()) {
+                collectPhotos.url.forEach { onePhoto ->
+                    Card(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(400.dp)
-                            .padding(),
-                        contentScale = ContentScale.Crop,
-                        error = {
-                            Icon(painter = painterResource(id = R.drawable.ic_baseline_error_24),
-                                contentDescription = "error")
-                        }
-                    )
-                    Box(modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.BottomEnd) {
-                        Row(horizontalArrangement = Arrangement.SpaceBetween,
-                            modifier = Modifier.fillMaxWidth()) {
-                            IconButton(onClick = {
-                                CoroutineScope(Dispatchers.IO).launch {
-
-                                    val myCollection =
-                                        Firebase.firestore.collection("images").document("tutor")
-                                    val mapUpdate = mapOf(
-                                        "arrayImages" to FieldValue.arrayUnion(onePhoto)
-                                    )
-                                    myCollection.update(mapUpdate).await()
-
-                                    val personCollection = Firebase.firestore.collection("users")
-                                        .document(collectPhotos.userId)
-                                    personCollection.update(mapOf(
-                                        "url" to FieldValue.arrayRemove(onePhoto)
-                                    )).await()
-
+                            .height(400.dp),
+                        shape = RoundedCornerShape(25.dp)
+                    ) {
+                        SubcomposeAsyncImage(
+                            model = onePhoto,
+                            contentDescription = "photos",
+                            loading = {
+                                Box(modifier = Modifier.fillMaxSize()) {
+                                    CircularProgressIndicator()
                                 }
-                            }) {
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(400.dp)
+                                .padding(),
+                            contentScale = ContentScale.Crop,
+                            error = {
                                 Icon(
-                                    painter = painterResource(id = R.drawable.ic_baseline_upload_24),
-                                    contentDescription = "delete",
-                                    modifier = Modifier.size(30.dp),
-                                    tint = Color.Red
+                                    painter = painterResource(id = R.drawable.ic_baseline_error_24),
+                                    contentDescription = "error"
                                 )
                             }
-                            IconButton(onClick = {
-                                val uid = auth.currentUser?.uid
-                                if (uid != null) {
-                                    val personCollection =
-                                        Firebase.firestore.collection("users")
-                                            .document(collectPhotos.userId)
-                                    personCollection.update(mapOf(
-                                        "url" to FieldValue.arrayRemove(onePhoto)
-                                    ))
+                        )
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.BottomEnd
+                        ) {
+                            Row(
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                IconButton(onClick = {
+                                    viewModel.updateUserPhotosDev(onePhoto, collectPhotos)
+                                }) {
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.ic_baseline_upload_24),
+                                        contentDescription = "upload",
+                                        modifier = Modifier.size(30.dp),
+                                        tint = Color.Red
+                                    )
                                 }
-                            }) {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.ic_baseline_delete_24),
-                                    contentDescription = "delete",
-                                    modifier = Modifier.size(30.dp),
-                                    tint = Color.Red
-                                )
+                                IconButton(onClick = {
+                                    viewModel.deleteUserPhotosDev(onePhoto, collectPhotos)
+                                }) {
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.ic_baseline_delete_24),
+                                        contentDescription = "delete",
+                                        modifier = Modifier.size(30.dp),
+                                        tint = Color.Red
+                                    )
+                                }
                             }
                         }
                     }
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Text(text = "Link: $onePhoto")
+                    Text(text = "Email: ${collectPhotos.email}")
+                    Text(text = "Uid: ${collectPhotos.userId}")
+                    Text(text = "Score: ${collectPhotos.score}")
                 }
-                Spacer(modifier = Modifier.height(10.dp))
             }
+
+
         }
     }
 }

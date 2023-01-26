@@ -4,6 +4,7 @@ import android.content.Context
 import android.widget.Toast
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -17,11 +18,21 @@ import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 
 @Composable
-fun MyTopBar(navController: NavController, context: Context = LocalContext.current, uid: String?) {
+fun MyTopBar(
+    navController: NavController,
+    context: Context = LocalContext.current,
+    uid: String?,
+    scaffoldState: ScaffoldState,
+    scope: CoroutineScope = rememberCoroutineScope(),
+) {
     TopAppBar(title = {
         Text(text = "")
     }, navigationIcon = {
-        IconButton(onClick = { /*TODO*/ }) {
+        IconButton(onClick = {
+            scope.launch {
+                scaffoldState.drawerState.open()
+            }
+        }) {
             Icon(painter = painterResource(id = R.drawable.ic_baseline_menu_24),
                 contentDescription = "menu")
         }

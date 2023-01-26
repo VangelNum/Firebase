@@ -64,19 +64,15 @@ fun WatchPhotoScreen(
         items.forEachIndexed { index, current ->
             ListItem(
                 text = {
-                    when (index) {
-                        0 -> {
-                            if (photoInFavourite.value) {
-                                Text(text = BottomSheetData.FavouriteDelete.name)
-                            } else {
-                                Text(text = current.name)
-                            }
-                        }
-                        else -> {
+                    if (index == 0) {
+                        if (photoInFavourite.value) {
+                            Text(text = BottomSheetData.FavouriteDelete.name)
+                        } else {
                             Text(text = current.name)
                         }
+                    } else {
+                        Text(text = current.name)
                     }
-
                 },
                 icon = {
                     Icon(painter = painterResource(id = current.icon),

@@ -15,14 +15,15 @@ val Typography = Typography(
     ),
     body2 = TextStyle (
         fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Light,
+        fontWeight = FontWeight.Bold,
         fontSize = 16.sp
-    ),
+    ) ,
+
 
     button = TextStyle(
         fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Light,
-        fontSize = 16.sp
+        fontWeight = FontWeight.W500,
+        fontSize = 14.sp
     ),
     caption = TextStyle(
         fontFamily = FontFamily.Default,

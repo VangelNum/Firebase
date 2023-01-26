@@ -5,15 +5,17 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vangelnum.testfirebase.common.Resource
-import com.vangelnum.testfirebase.feature_developer.domain.use_cases.GetUsersPhotosUseCase
+import com.vangelnum.testfirebase.feature_developer.domain.model.UserPhotos
+import com.vangelnum.testfirebase.feature_developer.domain.use_cases.DeveloperUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
 @HiltViewModel
 class DeveleoperViewModel @Inject constructor(
-    private val getUsersPhotosUseCase: GetUsersPhotosUseCase,
+    private val developerUseCase: DeveloperUseCase,
 ) : ViewModel() {
 
     private val _allUsersPhotosForDeveloper = mutableStateOf(DeveloperState())
@@ -25,7 +27,7 @@ class DeveleoperViewModel @Inject constructor(
 
     private fun getUsersPhotos() {
         viewModelScope.launch {
-            getUsersPhotosUseCase().collect { result ->
+            developerUseCase.getUsersPhotosUseCase().collect { result ->
                 when (result) {
                     is Resource.Error -> {
                         _allUsersPhotosForDeveloper.value =
@@ -42,4 +44,17 @@ class DeveleoperViewModel @Inject constructor(
             }
         }
     }
+
+    fun updateUserPhotosDev(onePhoto: String, photos: UserPhotos) {
+        viewModelScope.launch(Dispatchers.IO) {
+            developerUseCase.addUsersPhotosDevUseCase(onePhoto, photos)
+        }
+    }
+
+    fun deleteUserPhotosDev(onePhoto: String, photos: UserPhotos) {
+        viewModelScope.launch(Dispatchers.IO) {
+            developerUseCase.deleteUsersPhotosUseCase(onePhoto, photos)
+        }
+    }
+
 }
