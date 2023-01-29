@@ -1,5 +1,6 @@
 package com.vangelnum.testfirebase.presentation
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -74,7 +75,8 @@ fun AddPhotoScreen(auth: FirebaseAuth) {
                         val newScore: Long = score as Long + 1
                         val mapUpdate = mapOf(
                             "url" to FieldValue.arrayUnion(textValue.value),
-                            "score" to newScore
+                            "score" to newScore,
+                            "notification" to FieldValue.arrayUnion(mapOf("name1" to textValue.value, "name2" to "gray"))
                         )
                         if (newScore < 11) {
                             collection.update(mapUpdate)
@@ -95,10 +97,10 @@ fun AddPhotoScreen(auth: FirebaseAuth) {
                         collection.set(person).await()
                         val mapUpdate = mapOf(
                             "url" to FieldValue.arrayUnion(textValue.value),
-                            "score" to 1.toLong()
+                            "score" to 1.toLong(),
+                            "notification" to FieldValue.arrayUnion(textValue.value, "gray "),
                         )
                         collection.update(mapUpdate).await().also {
-
                             withContext(Dispatchers.Main) {
                                 Toast.makeText(context,
                                     "Отправлено ${mapUpdate["score"]} / 10",

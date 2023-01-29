@@ -26,6 +26,7 @@ import com.vangelnum.testfirebase.R
 import com.vangelnum.testfirebase.feature_developer.presentation.DeveloperScreen
 import com.vangelnum.testfirebase.feature_favourite.presentation.FavouriteScreen
 import com.vangelnum.testfirebase.feature_main.presentation.MainScreen
+import com.vangelnum.testfirebase.feature_notification.presentation.NotificationScreen
 
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -170,7 +171,7 @@ fun Navigation(
                 DeveloperScreen()
             }
             composable(route = Screens.Notification.route) {
-                NotificationScreen()
+                NotificationScreen(navController)
             }
             composable(route = Screens.WatchPhoto.route + "/{url}", arguments = listOf(
                 navArgument("url") {

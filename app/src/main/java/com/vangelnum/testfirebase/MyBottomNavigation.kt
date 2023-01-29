@@ -1,5 +1,6 @@
 package com.vangelnum.testfirebase
 
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Icon
@@ -25,13 +26,17 @@ fun MyBottomNavigation(
             if (currentDestination != null) {
                 BottomNavigationItem(
                     icon = {
-                        Icon(painter = painterResource(id = screen.icon),
-                            contentDescription = null)
+                        Icon(
+                            painter = painterResource(id = screen.icon),
+                            contentDescription = null,
+                        )
                     },
                     label = {
-                        Text(text = screen.title,
+                        Text(
+                            text = screen.title,
                             overflow = TextOverflow.Ellipsis,
-                            maxLines = 1)
+                            maxLines = 1
+                        )
                     },
                     selected = currentDestination.hierarchy.any {
                         it.route == screen.route

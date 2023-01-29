@@ -1,10 +1,11 @@
 package com.vangelnum.testfirebase.presentation
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Card
 import androidx.compose.material.Icon
@@ -12,6 +13,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import coil.compose.SubcomposeAsyncImage
@@ -46,9 +48,7 @@ fun DrawerHeader(auth: FirebaseAuth) {
             }
             Spacer(modifier = Modifier.height(16.dp))
             Text(text = name.toString())
-            Spacer(modifier = Modifier.height(8.dp))
             Text(text = email.toString())
-            Spacer(modifier = Modifier.height(16.dp))
         }
     }
 
@@ -60,27 +60,46 @@ fun DrawerBody() {
     val items = listOf(
         MenuItems.Share,
         MenuItems.Stars,
-        MenuItems.Contacts
+        MenuItems.Contacts,
+        MenuItems.SoundBoard,
+        MenuItems.DrumPad
     )
     LazyColumn(
         contentPadding = PaddingValues(horizontal = 20.dp, vertical = 16.dp)
     ) {
-        items(items) { item ->
+        itemsIndexed(items) { index, item ->
             Row(modifier = Modifier
-                .fillMaxWidth()
                 .clickable {
 
                 }
             ) {
-                Icon(painter = painterResource(id = item.icon), contentDescription = item.title)
+                if (index > 2) {
+                    Image(
+                        painter = painterResource(id = item.icon),
+                        contentDescription = item.title,
+                        modifier = Modifier.size(24.dp)
+                    )
+                } else {
+                    Icon(
+                        painter = painterResource(id = item.icon),
+                        contentDescription = item.title,
+                        modifier = Modifier.size(24.dp),
+                    )
+                }
                 Spacer(modifier = Modifier.width(20.dp))
                 Text(
                     text = item.title,
                     modifier = Modifier.weight(1f)
                 )
             }
-            Spacer(modifier = Modifier.height(20.dp))
-
+            Spacer(modifier = Modifier.height(25.dp))
         }
+        item {
+            Spacer(modifier = Modifier.height(100.dp))
+            Text(text = "Developer",color = Color.Transparent, modifier = Modifier.clickable {
+
+            })
+        }
+
     }
 }
