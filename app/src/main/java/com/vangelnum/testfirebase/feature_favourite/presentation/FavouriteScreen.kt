@@ -1,5 +1,6 @@
 package com.vangelnum.testfirebase.feature_favourite.presentation
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -29,6 +30,7 @@ fun FavouriteScreen(navController: NavController,viewModel: ViewModelForFavourit
     val resource = viewModel.allFavouritePhotos.value
 
     if (resource.isLoading) {
+        Log.d("taag","loading")
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             CircularProgressIndicator(color = Color.Green)
         }
@@ -96,7 +98,7 @@ fun FavouritePhotosLazyGrid(
         }
     } else {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text(text = "Список пуст")
+            Text(text = "Список избранного пуст")
         }
     }
 }

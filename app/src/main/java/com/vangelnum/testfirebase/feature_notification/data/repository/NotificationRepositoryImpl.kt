@@ -22,6 +22,8 @@ class NotificationRepositoryImpl : NotificationRepository {
             val querySnapShot = collection.get().await()
             val state = querySnapShot.toObject<NotificationToUserData>()
 
+            Log.d("tag",state.toString())
+
             emit(Resource.Success(state))
         } catch (e: Exception) {
             emit(Resource.Error(e.message.toString()))

@@ -68,9 +68,14 @@ fun MainScreen(
                                 .fillMaxWidth()
                                 .height(350.dp),
                             contentScale = ContentScale.Crop,
+                            error = {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.ic_baseline_error_24),
+                                    contentDescription = "error"
+                                )
+                            },
                             loading = {
-                                Box(modifier = Modifier.fillMaxSize(),
-                                    contentAlignment = Alignment.Center) {
+                                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                                     CircularProgressIndicator()
                                 }
                             }

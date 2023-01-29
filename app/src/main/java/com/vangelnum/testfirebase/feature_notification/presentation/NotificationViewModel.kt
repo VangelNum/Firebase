@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vangelnum.testfirebase.common.Resource
+import com.vangelnum.testfirebase.feature_notification.domain.model.NotificationToUserData
 import com.vangelnum.testfirebase.feature_notification.domain.repository.NotificationRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -27,10 +28,15 @@ class NotificationViewModel @Inject constructor(
             repository.getNotifications().collect { result ->
                 when (result) {
                     is Resource.Success -> {
-                        _allNotifications.value = NotificationStates(isLoading = false, data = result.data!!)
+                        _allNotifications.value = NotificationStates(
+                            isLoading = false, data = result.data ?: NotificationToUserData(
+                                emptyList()
+                            )
+                        )
                     }
                     is Resource.Error -> {
-                        _allNotifications.value = NotificationStates(error = result.message.toString())
+                        _allNotifications.value =
+                            NotificationStates(error = result.message.toString())
                     }
                     is Resource.Loading -> {
                         _allNotifications.value = NotificationStates(isLoading = true)

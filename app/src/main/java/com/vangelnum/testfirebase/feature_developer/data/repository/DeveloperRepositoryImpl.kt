@@ -1,5 +1,6 @@
 package com.vangelnum.testfirebase.feature_developer.data.repository
 
+import android.util.Log
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObjects
@@ -45,12 +46,65 @@ class DeveloperRepositoryImpl : DeveloperRepository {
         val mapUpdate = mapOf(
             "arrayImages" to FieldValue.arrayUnion(onePhoto)
         )
+
         myCollection.update(mapUpdate).await()
 
         val personCollection = Firebase.firestore.collection("users").document(collectPhotos.userId)
-        personCollection.update(mapOf(
-            "url" to FieldValue.arrayRemove(onePhoto)
-        )).await()
+        personCollection.update(
+            mapOf(
+                "url" to FieldValue.arrayRemove(onePhoto)
+            )
+        ).await()
+
+
+        val photo = mutableMapOf(
+            "name1" to onePhoto,
+            "name2" to "gray"
+        )
+
+        val notifCollection = Firebase.firestore.collection("users")
+
+        notifCollection.whereArrayContains("notification", photo).get()
+            .addOnCompleteListener { task ->
+                task.apply {
+                    if (task.isSuccessful) {
+                        for (document in result) {
+                            val docId = notifCollection.document(collectPhotos.userId)
+                            docId.update("notification", FieldValue.arrayRemove(photo))
+                                .addOnCompleteListener { removeTask ->
+                                    if (removeTask.isSuccessful) {
+                                        docId.update(
+                                            "notification",
+                                            FieldValue.arrayUnion(
+                                                mutableMapOf(
+                                                    "name1" to onePhoto,
+                                                    "name2" to "green"
+                                                )
+                                            )
+                                        ).addOnCompleteListener { additionTask ->
+                                            if (additionTask.isSuccessful) {
+                                                Log.d("tag", "Update complete")
+                                            } else {
+                                                additionTask.exception?.message?.let {
+                                                    Log.e("tag", it)
+                                                }
+                                            }
+                                        }
+                                    } else {
+                                        removeTask.exception?.message?.let {
+                                            Log.e("tag", it)
+                                        }
+                                    }
+                                }
+                        }
+                    } else {
+                        task.exception?.message?.let {
+                            Log.e("tag", it)
+                        }
+                    }
+                }
+            }
+
 
     }
 
@@ -62,9 +116,63 @@ class DeveloperRepositoryImpl : DeveloperRepository {
         val personCollection =
             Firebase.firestore.collection("users")
                 .document(collectPhotos.userId)
-        personCollection.update(mapOf(
-            "url" to FieldValue.arrayRemove(onePhoto)
-        ))
+        personCollection.update(
+            mapOf(
+                "url" to FieldValue.arrayRemove(onePhoto)
+            )
+        )
+
+
+        val photo = mutableMapOf(
+            "name1" to onePhoto,
+            "name2" to "gray"
+        )
+
+        val notifCollection = Firebase.firestore.collection("users")
+
+        notifCollection.whereArrayContains("notification", photo).get()
+            .addOnCompleteListener { task ->
+                task.apply {
+                    if (task.isSuccessful) {
+                        for (document in result) {
+                            val docId = notifCollection.document(collectPhotos.userId)
+                            docId.update("notification", FieldValue.arrayRemove(photo))
+                                .addOnCompleteListener { removeTask ->
+                                    if (removeTask.isSuccessful) {
+                                        docId.update(
+                                            "notification",
+                                            FieldValue.arrayUnion(
+                                                mutableMapOf(
+                                                    "name1" to onePhoto,
+                                                    "name2" to "red"
+                                                )
+                                            )
+                                        ).addOnCompleteListener { additionTask ->
+                                            if (additionTask.isSuccessful) {
+                                                Log.d("tag", "Update complete")
+                                            } else {
+                                                additionTask.exception?.message?.let {
+                                                    Log.e("tag", it)
+                                                }
+                                            }
+                                        }
+                                    } else {
+                                        removeTask.exception?.message?.let {
+                                            Log.e("tag", it)
+                                        }
+                                    }
+                                }
+                        }
+                    } else {
+                        task.exception?.message?.let {
+                            Log.e("tag", it)
+                        }
+                    }
+                }
+            }
+
+
+
 
     }
 }

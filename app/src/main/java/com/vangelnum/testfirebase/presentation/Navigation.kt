@@ -120,7 +120,7 @@ fun Navigation(
         },
         drawerContent = {
             DrawerHeader(auth)
-            DrawerBody()
+            DrawerBody(navController)
         },
         drawerElevation = 0.dp,
         topBar = {

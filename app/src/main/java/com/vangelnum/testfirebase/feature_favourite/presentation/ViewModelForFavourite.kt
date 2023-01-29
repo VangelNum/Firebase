@@ -35,7 +35,9 @@ class ViewModelForFavourite @Inject constructor(
         getFavouritePhotosUseCase().onEach { resources ->
             when (resources) {
                 is Resource.Loading -> {
-                    _allFavouritePhotos.value = FavouriteState(isLoading = true)
+                    _allFavouritePhotos.value = _allFavouritePhotos.value.copy(
+                        isLoading = true
+                    )
                 }
                 is Resource.Error -> {
                     _allFavouritePhotos.value = FavouriteState(error = resources.message.toString())

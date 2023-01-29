@@ -6,4 +6,5 @@ sealed class MenuItems(val title: String, val icon: Int) {
     object Stars : MenuItems("Оценить", R.drawable.ic_baseline_star_24)
     object SoundBoard: MenuItems("Zxcursed SoundBoard", R.drawable.soundboard)
     object DrumPad: MenuItems("Zxcursed DrumPad", R.drawable.drumpad)
+    object Exit: MenuItems("Выйти",R.drawable.ic_baseline_exit_to_app_24)
 }

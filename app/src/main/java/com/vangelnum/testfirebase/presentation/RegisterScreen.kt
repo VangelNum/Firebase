@@ -85,10 +85,7 @@ fun RegisterScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
-                .padding(start = 15.dp, end = 15.dp)
-                .clickable {
-                    keyboardController?.hide()
-                },
+                .padding(start = 15.dp, end = 15.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(space = 15.dp,
                 alignment = Alignment.CenterVertically),

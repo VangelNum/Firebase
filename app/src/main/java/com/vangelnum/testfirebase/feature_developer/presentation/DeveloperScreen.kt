@@ -44,6 +44,7 @@ fun UsersImages(
         }
     }
 
+
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(10.dp)
@@ -60,11 +61,6 @@ fun UsersImages(
                         SubcomposeAsyncImage(
                             model = onePhoto,
                             contentDescription = "photos",
-                            loading = {
-                                Box(modifier = Modifier.fillMaxSize()) {
-                                    CircularProgressIndicator()
-                                }
-                            },
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(400.dp)
