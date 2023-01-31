@@ -10,7 +10,7 @@ android {
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.vangelnum.testfirebase"
+        applicationId "com.zxcursed.wallpaper"
         minSdk 24
         targetSdk 33
         versionCode 1
