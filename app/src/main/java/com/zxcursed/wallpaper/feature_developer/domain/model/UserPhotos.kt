@@ -7,5 +7,5 @@ data class UserPhotos(
     val score: Int = 0,
     val url: MutableList<String> = mutableListOf(),
     val userId: String = "",
-    val notification: MutableList<NotificationToUserData> = mutableListOf(),
 )
+

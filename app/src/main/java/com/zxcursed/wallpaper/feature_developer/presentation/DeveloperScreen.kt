@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.SubcomposeAsyncImage
@@ -18,7 +19,7 @@ import com.zxcursed.wallpaper.R
 
 
 @Composable
-fun DeveloperScreen(viewModel: DeveleoperViewModel = hiltViewModel()) {
+fun DeveloperScreen(viewModel: DeveloperViewModel = hiltViewModel()) {
 
     val resource = viewModel.allUsersPhotosForDeveloper.value
     UsersImages(viewModel, allUsersPhotos = resource)
@@ -28,7 +29,7 @@ fun DeveloperScreen(viewModel: DeveleoperViewModel = hiltViewModel()) {
 
 @Composable
 fun UsersImages(
-    viewModel: DeveleoperViewModel,
+    viewModel: DeveloperViewModel,
     allUsersPhotos: DeveloperState,
 ) {
 
@@ -40,7 +41,7 @@ fun UsersImages(
     }
     if (allUsersPhotos.error.isNotBlank()) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text(text = "Error: ${allUsersPhotos.error}")
+            Text(text = allUsersPhotos.error)
         }
     }
 
@@ -105,10 +106,11 @@ fun UsersImages(
                         }
                     }
                     Spacer(modifier = Modifier.height(10.dp))
-                    Text(text = "Link: $onePhoto")
-                    Text(text = "Email: ${collectPhotos.email}")
-                    Text(text = "Uid: ${collectPhotos.userId}")
-                    Text(text = "Score: ${collectPhotos.score}")
+                    Text(text = stringResource(id = R.string.link) +" "+ onePhoto)
+                    Text(text = stringResource(id = R.string.email) + " " + collectPhotos.email)
+                    Text(text = stringResource(id = R.string.uid) + " " + collectPhotos.userId)
+                    Text(text = stringResource(id = R.string.score) + " " + collectPhotos.score)
+
                 }
             }
 

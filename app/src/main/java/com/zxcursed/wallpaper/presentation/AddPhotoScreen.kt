@@ -14,6 +14,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.compose.SubcomposeAsyncImage
@@ -45,18 +46,18 @@ fun AddPhotoScreen(auth: FirebaseAuth) {
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         Text(
-            text = "Здесь вы можете предложить свои варианты фотографий курседа.",
+            text = stringResource(id = R.string.your_variants_for_photo),
             style = MaterialTheme.typography.body1,
             modifier = Modifier.padding(top = 10.dp)
         )
-        Text(text = "Ограничения:", color = Color.Red, style = MaterialTheme.typography.body2)
-        Text(text = "1. Максимум 10 фотографий, ограничение связано с бесплатностью приложения.")
-        Text(text = "2. Нельзя предлагать нацизм, фашизм, нацистскую символику, наготу и так далее.")
+        Text(text = stringResource(id = R.string.restrictions), color = Color.Red, style = MaterialTheme.typography.body2)
+        Text(text = stringResource(id = R.string.restriction1))
+        Text(text =  stringResource(id = R.string.restriction2))
 
         OutlinedTextField(value = textValue.value, onValueChange = {
             textValue.value = it
         }, modifier = Modifier.fillMaxWidth(), label = {
-            Text(text = "Фото курседа URL")
+            Text(text = stringResource(id = R.string.url_to_zxcursed))
         }, maxLines = 1, shape = RoundedCornerShape(15.dp), singleLine = true, trailingIcon = {
             IconButton(onClick = { textValue.value = "" }) {
                 Icon(
@@ -145,12 +146,12 @@ fun AddPhotoScreen(auth: FirebaseAuth) {
                 .height(60.dp), colors = ButtonDefaults.buttonColors(MaterialTheme.colors.primary),
             shape = RoundedCornerShape(15.dp)
         ) {
-            Text(text = "Отправить")
+            Text(text = stringResource(id = R.string.send))
         }
 
         if (textValue.value.isEmpty()) {
             Text(
-                text = "Вставьте ссылку и курсед появится, если этого не произошло, вероятно, ссылка не работает",
+                text = stringResource(id = R.string.error_for_photo_zxcursed),
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center
             )

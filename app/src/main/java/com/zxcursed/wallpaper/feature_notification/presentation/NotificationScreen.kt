@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -41,7 +42,7 @@ fun NotificationScreen(
 
     if (resourses.data.notification?.isEmpty() == true) {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text(text = "Уведомлений нет")
+            Text(text = stringResource(id = R.string.no_notification))
         }
     }
 
@@ -91,7 +92,7 @@ fun NotificationScreen(
                     context.startActivity(intent)
                 }) {
                     Text(
-                        text = "Открыть фото в браузере",
+                        text = stringResource(id = R.string.open_photo),
                         modifier = Modifier.fillMaxWidth(),
                         style = TextStyle(
                             fontSize = 18.sp,
@@ -105,7 +106,7 @@ fun NotificationScreen(
                     navController.navigate(Screens.WatchPhoto.withArgs(encodedUrl))
                 }) {
                     Text(
-                        text = "Посмотреть фото",
+                        text = stringResource(id = R.string.watch_photo),
                         modifier = Modifier.fillMaxWidth(),
                         style = TextStyle(
                             fontSize = 18.sp,
@@ -115,27 +116,27 @@ fun NotificationScreen(
                 }
 
                 Spacer(modifier = Modifier.height(10.dp))
-                if (res.name2 == "green") {
+                if (res.name2 == stringResource(id = R.string.green)) {
                     Text(
                         modifier = Modifier.fillMaxWidth(),
                         textAlign = TextAlign.Center,
-                        text = "Статус: Ваше фото принято!",
+                        text = stringResource(id = R.string.status_on_apply),
                         color = Color.Green
                     )
                 }
-                if (res.name2 == "red") {
+                if (res.name2 == stringResource(id = R.string.red)) {
                     Text(
                         modifier = Modifier.fillMaxWidth(),
                         textAlign = TextAlign.Center,
-                        text = "Статус: Ваше фото отклонено :с",
+                        text = stringResource(id = R.string.status_on_rejected),
                         color = Color.Red
                     )
                 }
-                if (res.name2 == "gray") {
+                if (res.name2 == stringResource(id = R.string.gray)) {
                     Text(
                         modifier = Modifier.fillMaxWidth(),
                         textAlign = TextAlign.Center,
-                        text = "Статус: Ваше фото на рассмотрении",
+                        text = stringResource(id = R.string.status_on_review),
                         color = Color.Gray
                     )
                 }

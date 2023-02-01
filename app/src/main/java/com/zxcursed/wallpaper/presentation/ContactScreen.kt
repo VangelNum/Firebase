@@ -38,13 +38,13 @@ fun ContactScreen() {
                     modifier = Modifier.size(100.dp)
                 )
                 Text(
-                    text = stringResource(id = R.string.check),
+                    text = stringResource(id = R.string.errorContract),
                     fontSize = 20.sp,
                     fontFamily = FontFamily(Font(R.font.atypdisplaynew)),
                     textAlign = TextAlign.Center
                 )
                 Text(
-                    text = stringResource(id = R.string.check3),
+                    text = stringResource(id = R.string.gmail_vangelnum),
                     fontSize = 20.sp,
                     fontFamily = FontFamily(Font(R.font.atypdisplaynew)),
                     textAlign = TextAlign.Center,
@@ -60,7 +60,7 @@ fun ContactScreen() {
                         }
                 )
                 Text(
-                    text = stringResource(id = R.string.check2),
+                    text = stringResource(id = R.string.vk_com_vangelnum),
                     fontSize = 20.sp,
                     fontFamily = FontFamily(Font(R.font.atypdisplaynew)),
                     textAlign = TextAlign.Center,
@@ -75,13 +75,13 @@ fun ContactScreen() {
             }
             item() {
                 Text(
-                    text = stringResource(id = R.string.check5),
+                    text = stringResource(id = R.string.best_dota_rep),
                     fontSize = 20.sp,
                     fontFamily = FontFamily(Font(R.font.atypdisplaynew)),
                     textAlign = TextAlign.Center
                 )
                 Text(
-                    text = stringResource(id = R.string.check6),
+                    text = stringResource(id = R.string.youtube_zxcursed),
                     fontSize = 20.sp,
                     textAlign = TextAlign.Center,
                     fontFamily = FontFamily(Font(R.font.atypdisplaynew)),
@@ -94,7 +94,7 @@ fun ContactScreen() {
                         }
                 )
                 Text(
-                    text = stringResource(id = R.string.check7),
+                    text = stringResource(id = R.string.telegram_zxcursed),
                     fontSize = 20.sp,
                     textAlign = TextAlign.Center,
                     fontFamily = FontFamily(Font(R.font.atypdisplaynew)),
@@ -107,7 +107,7 @@ fun ContactScreen() {
                         }
                 )
                 Text(
-                    text = stringResource(id = R.string.check8),
+                    text = stringResource(id = R.string.vk_zxcursed),
                     fontSize = 20.sp,
                     textAlign = TextAlign.Center,
                     fontFamily = FontFamily(Font(R.font.atypdisplaynew)),

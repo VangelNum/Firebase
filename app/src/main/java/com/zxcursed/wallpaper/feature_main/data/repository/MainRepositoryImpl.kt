@@ -15,7 +15,7 @@ import java.io.IOException
 class MainRepositoryImpl : MainRepository {
     override suspend fun getAllPhotos(): Flow<Resource<NewPhotos>> = flow {
         try {
-            emit(Resource.Loading())
+            emit(Resource.Loading(isLoading = true))
             val myCollection =
                 Firebase.firestore.collection("images").document("tutor").get().await()
                     .toObject<NewPhotos>()

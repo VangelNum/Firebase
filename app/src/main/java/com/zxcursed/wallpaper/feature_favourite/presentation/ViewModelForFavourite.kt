@@ -40,10 +40,16 @@ class ViewModelForFavourite @Inject constructor(
                     )
                 }
                 is Resource.Error -> {
-                    _allFavouritePhotos.value = FavouriteState(error = resources.message.toString())
+                    _allFavouritePhotos.value = allFavouritePhotos.value.copy(
+                        error = resources.message.toString(),
+                        isLoading = false
+                    )
                 }
                 is Resource.Success -> {
-                    _allFavouritePhotos.value = FavouriteState(data = resources.data ?: emptyList())
+                    _allFavouritePhotos.value = allFavouritePhotos.value.copy(
+                        data = resources.data?: emptyList(),
+                        isLoading = false
+                    )
                 }
             }
         }.launchIn(viewModelScope)

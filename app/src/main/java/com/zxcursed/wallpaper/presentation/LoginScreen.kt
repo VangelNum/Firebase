@@ -21,6 +21,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
@@ -82,7 +83,7 @@ fun LoginScreen(onNavigateToRegister: () -> Unit, onNavigateToMain: () -> Unit, 
         verticalArrangement = Arrangement.spacedBy(space = 15.dp,
             alignment = Alignment.CenterVertically),
     ) {
-        Text(text = "Let's sign you in",
+        Text(text = stringResource(id = R.string.lets_sign_you),
             style = MaterialTheme.typography.h4.copy(fontWeight = FontWeight.Bold))
         OutlinedTextField(value = emailValue.value,
             onValueChange = {
@@ -94,7 +95,7 @@ fun LoginScreen(onNavigateToRegister: () -> Unit, onNavigateToMain: () -> Unit, 
                     contentDescription = "email_icon")
             },
             label = {
-                Text(text = "Email ID")
+                Text(text = stringResource(id = R.string.email_id))
             },
             maxLines = 1,
             singleLine = true,
@@ -109,7 +110,7 @@ fun LoginScreen(onNavigateToRegister: () -> Unit, onNavigateToMain: () -> Unit, 
                     contentDescription = "email_icon")
             },
             label = {
-                Text(text = "Password")
+                Text(text = stringResource(id = R.string.password))
             },
             trailingIcon = {
                 IconButton(onClick = { currentStateEyes.value = !currentStateEyes.value }) {
@@ -141,7 +142,7 @@ fun LoginScreen(onNavigateToRegister: () -> Unit, onNavigateToMain: () -> Unit, 
                     }
                 }
             } else {
-                errorRegisterText.value = "Empty Field"
+                errorRegisterText.value = context.getString(R.string.empty_field)
             }
         }, modifier = Modifier
             .fillMaxWidth()
@@ -149,14 +150,14 @@ fun LoginScreen(onNavigateToRegister: () -> Unit, onNavigateToMain: () -> Unit, 
             colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.primary),
             shape = RoundedCornerShape(15.dp))
         {
-            Text(text = "Sign in")
+            Text(text = stringResource(id = R.string.sign_in))
         }
 
         Row(modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically) {
             Divider(modifier = Modifier.weight(2f))
-            Text(text = "OR",
+            Text(text = stringResource(id = R.string.or),
                 color = MaterialTheme.colors.onBackground,
                 modifier = Modifier.weight(1f),
                 textAlign = TextAlign.Center)
@@ -183,7 +184,7 @@ fun LoginScreen(onNavigateToRegister: () -> Unit, onNavigateToMain: () -> Unit, 
                 Icon(painter = painterResource(id = R.drawable.google_svg),
                     contentDescription = "google_svg", tint = Color.Unspecified)
                 Spacer(modifier = Modifier.width(4.dp))
-                Text(text = "Continue with Google")
+                Text(text = stringResource(id = R.string.continue_with_google))
             }
         }
 
@@ -192,9 +193,9 @@ fun LoginScreen(onNavigateToRegister: () -> Unit, onNavigateToMain: () -> Unit, 
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter) {
             Row(modifier = Modifier.clickable(onClick = onNavigateToRegister
             )) {
-                Text(text = "Don't have an account? ",
+                Text(text = stringResource(id = R.string.dont_have_account) + " ",
                     color = MaterialTheme.colors.onBackground)
-                Text(text = "Sign up", color = MaterialTheme.colors.primary)
+                Text(text = stringResource(id = R.string.sign_up), color = MaterialTheme.colors.primary)
             }
         }
     }

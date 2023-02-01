@@ -25,16 +25,16 @@ class ViewModelMain @Inject constructor(
 
     private fun getAllPhotos() {
         viewModelScope.launch() {
-            getAllPhotosUseCase().collect {
-                when (it) {
+            getAllPhotosUseCase().collect { resource->
+                when (resource) {
                     is Resource.Error -> {
-                        _allPhotos.value = AllPhotosState(error = it.message.toString())
+                        _allPhotos.value = AllPhotosState(error = resource.message.toString())
                     }
                     is Resource.Loading -> {
                         _allPhotos.value = AllPhotosState(isLoading = true)
                     }
                     is Resource.Success -> {
-                        _allPhotos.value = AllPhotosState(data = it.data)
+                        _allPhotos.value = AllPhotosState(data = resource.data)
                     }
                 }
             }

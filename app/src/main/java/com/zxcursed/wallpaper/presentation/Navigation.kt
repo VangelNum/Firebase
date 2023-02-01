@@ -27,23 +27,20 @@ import com.zxcursed.wallpaper.feature_developer.presentation.DeveloperScreen
 import com.zxcursed.wallpaper.feature_favourite.presentation.FavouriteScreen
 import com.zxcursed.wallpaper.feature_main.presentation.MainScreen
 import com.zxcursed.wallpaper.feature_notification.presentation.NotificationScreen
+import com.zxcursed.wallpaper.feature_register.presentation.RegisterScreen
 
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun Navigation(
     navController: NavHostController = rememberNavController(),
+    startDestination: String = Screens.Register.route
 ) {
 
     val auth = Firebase.auth
     val currentUser = auth.currentUser
-    var startDestination = Screens.Register.route
     val uid = currentUser?.uid
     val context = LocalContext.current
-
-    if (currentUser != null && currentUser.isEmailVerified) {
-        startDestination = Screens.Main.route
-    }
 
     val items = listOf(
         Screens.Main,
@@ -149,8 +146,7 @@ fun Navigation(
         ) {
             composable(route = Screens.Register.route) {
                 RegisterScreen(auth,
-                    onNavigateToLogin = { navController.navigate(route = Screens.Login.route) },
-                    onNavigateToMain = { navController.navigate(route = Screens.Main.route) })
+                    navController = navController)
             }
             composable(route = Screens.Login.route) {
                 LoginScreen(
@@ -180,7 +176,7 @@ fun Navigation(
             )) { entry ->
                 WatchPhotoScreen(
                     url = entry.arguments?.getString("url"),
-                    scaffoldState = scaffoldStateBottom
+                    scaffoldState = scaffoldStateBottom,
                 )
             }
             composable(Screens.Contact.route) {

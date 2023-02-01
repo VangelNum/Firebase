@@ -6,6 +6,8 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObjects
 import com.google.firebase.ktx.Firebase
 import com.zxcursed.wallpaper.common.Resource
+import com.zxcursed.wallpaper.feature_developer.data.dto.UserPhotosDto
+import com.zxcursed.wallpaper.feature_developer.data.mapper.toUserPhotos
 import com.zxcursed.wallpaper.feature_developer.domain.model.UserPhotos
 import com.zxcursed.wallpaper.feature_developer.domain.repository.DeveloperRepository
 import kotlinx.coroutines.channels.awaitClose
@@ -14,25 +16,31 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 
 class DeveloperRepositoryImpl : DeveloperRepository {
-    override suspend fun getUsersPhotos(): Flow<Resource<List<UserPhotos>>> = callbackFlow {
-        Resource.Loading(data = null)
-        val personCollection =
-            Firebase.firestore.collection("users").addSnapshotListener { snapshot, error ->
-                val response = snapshot?.let {
-                    val userPhotos = it.toObjects<UserPhotos>()
-                    Resource.Success(data = userPhotos)
+    override fun getUsersPhotos(): Flow<Resource<List<UserPhotos>>> = callbackFlow {
+        Resource.Loading<Boolean>(isLoading = true)
+        try {
+            val personCollection =
+                Firebase.firestore.collection("users").addSnapshotListener { snapshot, error ->
+                    val response = snapshot?.let {
+                        val userPhotoDto = it.toObjects<UserPhotosDto>().map { userPhotosDto ->
+                            userPhotosDto.toUserPhotos()
+                        }
+                        Resource.Success(data = userPhotoDto)
+                    }
+                    error.let {
+                        Resource.Error(message = it?.message.toString(), data = null)
+                    }
+                    if (response != null) {
+                        trySend(response).isSuccess
+                    }
                 }
-                error.let {
-                    Resource.Error(message = it?.message.toString(), data = null)
-                }
-                if (response != null) {
-                    trySend(response).isSuccess
-                }
-
+            awaitClose {
+                personCollection.remove()
             }
-        awaitClose {
-            personCollection.remove()
+        } catch (e: Exception) {
+            Resource.Error(e.message.toString(), data = null)
         }
+
     }
 
     override suspend fun addUsersPhotosFromDeveloper(
@@ -170,8 +178,6 @@ class DeveloperRepositoryImpl : DeveloperRepository {
                     }
                 }
             }
-
-
 
 
     }

@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -41,7 +42,7 @@ fun FavouriteScreen(navController: NavController,viewModel: ViewModelForFavourit
             verticalArrangement = Arrangement.Center) {
             Text(text = resource.error)
             OutlinedButton(onClick = { viewModel.getFavouritePhotos() }) {
-                Text(text = "Try again")
+                Text(text = stringResource(id = R.string.try_again))
             }
         }
     }
@@ -98,7 +99,7 @@ fun FavouritePhotosLazyGrid(
         }
     } else {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text(text = "Список избранного пуст")
+            Text(text = stringResource(id = R.string.favourite_empty))
         }
     }
 }

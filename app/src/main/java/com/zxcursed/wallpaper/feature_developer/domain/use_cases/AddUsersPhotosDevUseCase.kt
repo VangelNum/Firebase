@@ -7,7 +7,7 @@ import javax.inject.Inject
 class AddUsersPhotosDevUseCase @Inject constructor(
     private val repository: DeveloperRepository
 ) {
-    suspend operator fun invoke(onePhoto: String,collectPhotos: UserPhotos) {
+    suspend operator fun invoke(onePhoto: String, collectPhotos: UserPhotos) {
         return repository.addUsersPhotosFromDeveloper(onePhoto, collectPhotos)
     }
 }

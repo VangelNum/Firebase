@@ -1,6 +1,5 @@
 package com.zxcursed.wallpaper.presentation
 
-import android.annotation.SuppressLint
 import android.app.DownloadManager
 import android.content.Context
 import android.content.Intent
@@ -26,13 +25,11 @@ import com.zxcursed.wallpaper.feature_favourite.domain.model.FavouritePhotosEnti
 import com.zxcursed.wallpaper.feature_favourite.presentation.ViewModelForFavourite
 
 
-@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun WatchPhotoScreen(
     url: String?,
     scaffoldState: BottomSheetScaffoldState,
-    viewModel: ViewModelForFavourite = hiltViewModel(),
     viewModelForFavourite: ViewModelForFavourite = hiltViewModel(),
 ) {
 
@@ -51,54 +48,65 @@ fun WatchPhotoScreen(
     photoInFavourite.value = favourites.data.toString().contains(url!!)
     val context = LocalContext.current
 
-    BottomSheetScaffold(scaffoldState = scaffoldState, sheetContent = {
-        Row(modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 20.dp)) {
-            Spacer(modifier = Modifier.weight(3f))
-            Divider(modifier = Modifier
-                .height(4.dp)
-                .weight(1f))
-            Spacer(modifier = Modifier.weight(3f))
-        }
-        items.forEachIndexed { index, current ->
-            ListItem(
-                text = {
-                    if (index == 0) {
-                        if (photoInFavourite.value) {
-                            Text(text = BottomSheetData.FavouriteDelete.name)
+    BottomSheetScaffold(
+        scaffoldState = scaffoldState, sheetContent = {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 20.dp)
+            ) {
+                Spacer(modifier = Modifier.weight(3f))
+                Divider(
+                    modifier = Modifier
+                        .height(4.dp)
+                        .weight(1f)
+                )
+                Spacer(modifier = Modifier.weight(3f))
+            }
+            items.forEachIndexed { index, current ->
+                ListItem(
+                    text = {
+                        if (index == 0) {
+                            if (photoInFavourite.value) {
+                                Text(text = BottomSheetData.FavouriteDelete.name)
+                            } else {
+                                Text(text = current.name)
+                            }
                         } else {
                             Text(text = current.name)
                         }
-                    } else {
-                        Text(text = current.name)
-                    }
-                },
-                icon = {
-                    Icon(painter = painterResource(id = current.icon),
-                        contentDescription = "icon",
-                        tint = if (photoInFavourite.value && index == 0) Color.Red else Color.White)
-                },
-                modifier = Modifier.clickable {
-                    when (index) {
-                        0 -> {
-                            if (!photoInFavourite.value) {
-                                viewModel.addFavouritePhoto(FavouritePhotosEntity(url))
-                            } else {
-                                viewModel.deleteFavouritePhoto(url)
+                    },
+                    icon = {
+                        Icon(
+                            painter = painterResource(id = current.icon),
+                            contentDescription = "icon",
+                            tint = if (photoInFavourite.value && index == 0) Color.Red else Color.White
+                        )
+                    },
+                    modifier = Modifier.clickable {
+                        when (index) {
+                            0 -> {
+                                if (!photoInFavourite.value) {
+                                    viewModelForFavourite.addFavouritePhoto(
+                                        FavouritePhotosEntity(
+                                            url
+                                        )
+                                    )
+                                } else {
+                                    viewModelForFavourite.deleteFavouritePhoto(url)
+                                }
+                            }
+                            1 -> {
+                                share(url, context = context)
+                            }
+                            2 -> {
+                                download(url, context = context)
                             }
                         }
-                        1 -> {
-                            share(url, context = context)
-                        }
-                        2 -> {
-                            download(url, context = context)
-                        }
                     }
-                }
-            )
-        }
-    }, sheetElevation = 0.dp,
+                )
+            }
+        }, sheetElevation = 0.dp,
         sheetShape = RoundedCornerShape(topStart = 25.dp, topEnd = 25.dp),
         sheetPeekHeight = 36.dp,
         drawerElevation = 0.dp
@@ -132,8 +140,10 @@ private fun download(url: String?, context: Context) {
     request.setMimeType("image/*")
     request.setTitle("File")
     request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-    request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS,
-        "photo.png")
+    request.setDestinationInExternalPublicDir(
+        Environment.DIRECTORY_DOWNLOADS,
+        "photo.png"
+    )
     val manager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager?
     manager!!.enqueue(request)
 }

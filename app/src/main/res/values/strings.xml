@@ -1,10 +1,56 @@
 <resources>
     <string name="app_name">Firebase</string>
-    <string name="check">"При возникновении ошибки, по предложениям доработки приложения, если используется ваше фото и вы хотите его удалить"</string>
-    <string name="check2">"<u>VK.COM/VANGELNUM</u>"</string>
-    <string name="check3">"<u>VANGELNUM@GMAIL.COM</u>"</string>
-    <string name="check5">"Ссылки на лучшего дота репера"</string>
-    <string name="check6">"<u>YOUTUBE.COM/ZXCURSED</u>"</string>
-    <string name="check7">"<u>T.ME/ZXCURSED</u>"</string>
-    <string name="check8">"<u>VK.COM/ZXCURSEDD</u>"</string>
+    <string name="errorContract">"При возникновении ошибки, по предложениям доработки приложения, если используется ваше фото"</string>
+    <string name="vk_com_vangelnum">"<u>VK.COM/VANGELNUM</u>"</string>
+    <string name="gmail_vangelnum">"<u>VANGELNUM@GMAIL.COM</u>"</string>
+    <string name="best_dota_rep">"Ссылки на лучшего дота репера"</string>
+    <string name="youtube_zxcursed">"<u>YOUTUBE.COM/ZXCURSED</u>"</string>
+    <string name="telegram_zxcursed">"<u>T.ME/ZXCURSED</u>"</string>
+    <string name="vk_zxcursed">"<u>VK.COM/ZXCURSEDD</u>"</string>
+
+    <string name="Error">Error </string>
+    <string name="link">Link: </string>
+    <string name="email">Email: </string>
+    <string name="uid">Uid: </string>
+    <string name="score">Score: </string>
+
+    <string name="try_again">Try again</string>
+    <string name="favourite_empty">Список избранного пуст</string>
+    <string name="open_photo">Открыть фото в браузере"</string>
+    <string name="watch_photo">Посмотреть фото"</string>
+
+    <string name="green">green"</string>
+    <string name="red">red"</string>
+    <string name="gray">gray"</string>
+
+    <string name="status_on_review">Статус: Ваше фото на рассмотрении</string>
+    <string name="status_on_rejected">Статус: Ваше фото отклонено :с</string>
+    <string name="status_on_apply">Статус: Ваше фото принято!</string>
+
+    <string name="no_notification">Уведомлений нет</string>
+
+    <string name="your_variants_for_photo">Здесь вы можете предложить свои варианты фотографий курседа.</string>
+    <string name="restrictions">Ограничения:</string>
+    <string name="restriction1">1. Максимум 10 фотографий, ограничение связано с бесплатностью приложения.</string>
+    <string name="restriction2">2. Нельзя предлагать нацизм, фашизм, нацистскую символику, наготу и так далее.</string>
+    <string name="url_to_zxcursed">Фото курседа URL</string>
+    <string name="send">Отправить</string>
+    <string name="error_for_photo_zxcursed">Вставьте ссылку и курсед появится, если этого не произошло, вероятно, ссылка не работает</string>
+
+    <string name="sign_in">Sign in</string>
+    <string name="or">OR</string>
+    <string name="continue_with_google">Continue with Google</string>
+    <string name="dont_have_account">Dont have an account?</string>
+    <string name="sign_up">Sign up</string>
+    <string name="empty_field">Empty Field</string>
+    <string name="password">Password</string>
+    <string name="email_id">Email ID</string>
+    <string name="lets_sign_you">Lets sign you in</string>
+
+    <string name="develeper">Developer</string>
+    <string name="create_your_account">Create your account</string>
+    <string name="register">Register</string>
+    <string name="already_have_account">Already have an account?</string>
+    <string name="login">Login</string>
+
 </resources>

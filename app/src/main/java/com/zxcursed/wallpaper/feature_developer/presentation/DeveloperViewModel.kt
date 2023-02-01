@@ -1,5 +1,6 @@
 package com.zxcursed.wallpaper.feature_developer.presentation
 
+import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -9,12 +10,14 @@ import com.zxcursed.wallpaper.feature_developer.domain.model.UserPhotos
 import com.zxcursed.wallpaper.feature_developer.domain.use_cases.DeveloperUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
 @HiltViewModel
-class DeveleoperViewModel @Inject constructor(
+class DeveloperViewModel @Inject constructor(
     private val developerUseCase: DeveloperUseCase,
 ) : ViewModel() {
 
@@ -26,23 +29,28 @@ class DeveleoperViewModel @Inject constructor(
     }
 
     private fun getUsersPhotos() {
-        viewModelScope.launch {
-            developerUseCase.getUsersPhotosUseCase().collect { result ->
+            developerUseCase.getUsersPhotosUseCase().onEach { result ->
                 when (result) {
                     is Resource.Error -> {
-                        _allUsersPhotosForDeveloper.value =
-                            DeveloperState(error = result.message.toString())
+                        _allUsersPhotosForDeveloper.value = allUsersPhotosForDeveloper.value.copy(
+                            error = result.message.toString()
+                        )
                     }
                     is Resource.Loading -> {
-                        _allUsersPhotosForDeveloper.value = DeveloperState(isLoading = true)
+                        _allUsersPhotosForDeveloper.value = allUsersPhotosForDeveloper.value.copy(
+                            isLoading = true
+                        )
                     }
                     is Resource.Success -> {
-                        _allUsersPhotosForDeveloper.value =
-                            DeveloperState(data = result.data ?: emptyList())
+                        _allUsersPhotosForDeveloper.value = allUsersPhotosForDeveloper.value.copy(
+                            isLoading = false,
+                            data = result.data?: emptyList()
+                        )
+
                     }
                 }
-            }
-        }
+            }.launchIn(viewModelScope)
+
     }
 
     fun updateUserPhotosDev(onePhoto: String, photos: UserPhotos) {
