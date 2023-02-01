@@ -25,6 +25,7 @@ import com.zxcursed.wallpaper.*
 import com.zxcursed.wallpaper.R
 import com.zxcursed.wallpaper.feature_developer.presentation.DeveloperScreen
 import com.zxcursed.wallpaper.feature_favourite.presentation.FavouriteScreen
+import com.zxcursed.wallpaper.feature_login.presentation.LoginScreen
 import com.zxcursed.wallpaper.feature_main.presentation.MainScreen
 import com.zxcursed.wallpaper.feature_notification.presentation.NotificationScreen
 import com.zxcursed.wallpaper.feature_register.presentation.RegisterScreen
@@ -34,7 +35,7 @@ import com.zxcursed.wallpaper.feature_register.presentation.RegisterScreen
 @Composable
 fun Navigation(
     navController: NavHostController = rememberNavController(),
-    startDestination: String = Screens.Register.route
+    startDestination: String = Screens.Main.route
 ) {
 
     val auth = Firebase.auth
@@ -151,7 +152,8 @@ fun Navigation(
             composable(route = Screens.Login.route) {
                 LoginScreen(
                     onNavigateToRegister = { navController.navigate(route = Screens.Register.route) },
-                    { navController.navigate(route = Screens.Main.route) }, auth
+                    { navController.navigate(route = Screens.Main.route) }, auth,
+                    navController = navController
                 )
             }
             composable(route = Screens.Main.route) {

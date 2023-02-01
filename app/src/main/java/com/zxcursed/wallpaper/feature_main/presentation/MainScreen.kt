@@ -41,7 +41,6 @@ fun MainScreen(
     val resources = viewModelMain.allPhotos.value
     val favourites = viewModelForFavourite.allFavouritePhotos.value
 
-
     Box(modifier = Modifier.fillMaxSize()) {
         LazyVerticalGrid(
             GridCells.Fixed(2),

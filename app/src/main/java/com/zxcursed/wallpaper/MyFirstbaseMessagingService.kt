@@ -20,16 +20,6 @@ class MyFirstbaseMessagingService : FirebaseMessagingService() {
 
     override fun onNewToken(token: String) {
         super.onNewToken(token)
-        GlobalScope.launch {
-            saveToken(token)
-        }
     }
 
-    //save token
-    private suspend fun saveToken(token: String) {
-        val gckTokenKey = stringPreferencesKey("gcm_token")
-        baseContext.dataStore.edit { pref ->
-            pref[gckTokenKey] = token
-        }
-    }
 }

@@ -54,9 +54,7 @@ fun RegisterScreen(
         LaunchedEffect(Unit) {
             if (auth.currentUser?.isEmailVerified == true) {
                 navController.navigate(Screens.Main.route) {
-                    popUpTo(Screens.Register.route) {
-                        inclusive = true
-                    }
+
                 }
             } else {
                 Toast.makeText(context,"Verify your email please: " + "${auth.currentUser?.email}",Toast.LENGTH_LONG).show()
