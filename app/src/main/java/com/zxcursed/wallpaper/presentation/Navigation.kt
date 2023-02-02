@@ -35,13 +35,17 @@ import com.zxcursed.wallpaper.feature_register.presentation.RegisterScreen
 @Composable
 fun Navigation(
     navController: NavHostController = rememberNavController(),
-    startDestination: String = Screens.Main.route
 ) {
 
     val auth = Firebase.auth
     val currentUser = auth.currentUser
+    var startDestination = Screens.Register.route
     val uid = currentUser?.uid
     val context = LocalContext.current
+
+    if (currentUser != null && currentUser.isEmailVerified) {
+        startDestination = Screens.Main.route
+    }
 
     val items = listOf(
         Screens.Main,
@@ -146,14 +150,11 @@ fun Navigation(
             modifier = Modifier.padding(innerPadding)
         ) {
             composable(route = Screens.Register.route) {
-                RegisterScreen(auth,
-                    navController = navController)
+                RegisterScreen(auth, navController)
             }
             composable(route = Screens.Login.route) {
                 LoginScreen(
-                    onNavigateToRegister = { navController.navigate(route = Screens.Register.route) },
-                    { navController.navigate(route = Screens.Main.route) }, auth,
-                    navController = navController
+                    navController = navController, auth = auth
                 )
             }
             composable(route = Screens.Main.route) {

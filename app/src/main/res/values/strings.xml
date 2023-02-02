@@ -50,7 +50,7 @@
     <string name="develeper">Developer</string>
     <string name="create_your_account">Create your account</string>
     <string name="register">Register</string>
-    <string name="already_have_account">Already have an account?</string>
+    <string name="already_have_account">"Already have an account? "</string>
     <string name="login">Login</string>
 
 </resources>

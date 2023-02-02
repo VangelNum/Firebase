@@ -9,14 +9,13 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
-
 @Module
 @InstallIn(SingletonComponent::class)
 object LoginModule {
 
-    @Singleton
     @Provides
-    fun provideLoginRepository(auth: FirebaseAuth) : LoginRepository {
+    @Singleton
+    fun provideRepository(auth: FirebaseAuth): LoginRepository {
         return LoginRepositoryImpl(auth)
     }
 }

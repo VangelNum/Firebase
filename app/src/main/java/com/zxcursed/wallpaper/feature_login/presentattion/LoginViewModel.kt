@@ -1,4 +1,4 @@
-package com.zxcursed.wallpaper.feature_login.presentation
+package com.zxcursed.wallpaper.feature_login.presentattion
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -12,20 +12,19 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val repository: LoginRepository
 ) : ViewModel() {
 
-
     private val _loginFlow = MutableStateFlow<Resource<FirebaseUser>?>(null)
     val loginFlow: StateFlow<Resource<FirebaseUser>?> = _loginFlow.asStateFlow()
+
 
     fun loginUser(email: String, password: String) {
         viewModelScope.launch {
             _loginFlow.value = Resource.Loading(isLoading = true)
-            val result = repository.login(email, password)
+            val result = repository.login(email, password = password)
             _loginFlow.value = result
         }
     }

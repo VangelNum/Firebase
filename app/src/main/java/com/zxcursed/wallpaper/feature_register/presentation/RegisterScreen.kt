@@ -1,6 +1,5 @@
 package com.zxcursed.wallpaper.feature_register.presentation
 
-import android.content.Context
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -37,51 +36,23 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.zxcursed.wallpaper.R
 import com.zxcursed.wallpaper.Screens
-import kotlinx.coroutines.*
+import com.zxcursed.wallpaper.common.Resource
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
-
-@Composable
-fun RegisterScreen(
-    auth: FirebaseAuth,
-    viewModel: RegisterViewModel = hiltViewModel(),
-    navController: NavController,
-    context: Context = LocalContext.current
-) {
-
-    val registerFlow = viewModel.registerFlow.value
-
-    if (registerFlow.data != null) {
-        LaunchedEffect(Unit) {
-            if (auth.currentUser?.isEmailVerified == true) {
-                navController.navigate(Screens.Main.route) {
-
-                }
-            } else {
-                Toast.makeText(context,"Verify your email please: " + "${auth.currentUser?.email}",Toast.LENGTH_LONG).show()
-                navController.navigate(Screens.Login.route)
-            }
-        }
-    } else {
-        RegisterContent(
-            auth = auth,
-            viewModel = viewModel,
-            registerFlow = registerFlow,
-            navController = navController
-        )
-    }
-
-}
-
+import kotlinx.coroutines.withContext
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun RegisterContent(
+fun RegisterScreen(
     auth: FirebaseAuth,
-    viewModel: RegisterViewModel,
     navController: NavController,
-    registerFlow: RegisterState
+    viewModel: RegisterViewModel = hiltViewModel()
 ) {
 
+    val state = viewModel.registerFlow.collectAsState()
+    val context = LocalContext.current
 
     val launcher =
         rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) {
@@ -110,183 +81,181 @@ fun RegisterContent(
         mutableStateOf(false)
     }
 
-    val context = LocalContext.current
     val keyboardController = LocalSoftwareKeyboardController.current
 
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colors.background
     ) {
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
-                    .padding(start = 15.dp, end = 15.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(
-                    space = 15.dp,
-                    alignment = Alignment.CenterVertically
-                ),
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(start = 15.dp, end = 15.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(
+                space = 15.dp,
+                alignment = Alignment.CenterVertically
+            ),
+        ) {
+            Text(
+                text = stringResource(id = R.string.create_your_account),
+                style = MaterialTheme.typography.h4,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colors.onBackground,
+                textAlign = TextAlign.Center
+            )
+            OutlinedTextField(value = emailValue.value,
+                onValueChange = {
+                    emailValue.value = it
+                },
+                modifier = Modifier.fillMaxWidth(),
+                leadingIcon = {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_baseline_alternate_email_24),
+                        contentDescription = "email_icon"
+                    )
+                },
+                label = {
+                    Text(text = stringResource(id = R.string.email_id))
+                },
+                maxLines = 1,
+                singleLine = true,
+                keyboardActions = KeyboardActions(onDone = { keyboardController?.hide() })
+            )
+            OutlinedTextField(
+                value = passwordValue.value,
+                onValueChange = {
+                    passwordValue.value = it
+                },
+                modifier = Modifier.fillMaxWidth(),
+                leadingIcon = {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_baseline_lock_24),
+                        contentDescription = "email_icon"
+                    )
+                },
+                label = {
+                    Text(text = "Password")
+                },
+                trailingIcon = {
+                    IconButton(onClick = { currentStateEyes.value = !currentStateEyes.value }) {
+                        Icon(
+                            painter = if (!currentStateEyes.value) painterResource(id = R.drawable.closeeyes) else painterResource(
+                                id = R.drawable.openeyes
+                            ), contentDescription = "eyes"
+                        )
+                    }
+                },
+                maxLines = 1,
+                singleLine = true,
+                visualTransformation = if (!currentStateEyes.value) PasswordVisualTransformation() else
+                    VisualTransformation.None,
+                keyboardActions = KeyboardActions(onDone = { keyboardController?.hide() })
+            )
+            OutlinedButton(
+                onClick = {
+                    if (emailValue.value.text.trim() != "" && passwordValue.value.text.trim() != "") {
+                        viewModel.registerUser(
+                            emailValue.value.text.trim(),
+                            passwordValue.value.text.trim()
+                        )
+                    } else {
+                        Toast.makeText(context, "Empty Fields", Toast.LENGTH_SHORT).show()
+                    }
+                }, modifier = Modifier
+                    .fillMaxWidth()
+                    .height(60.dp),
+                colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.primary),
+                shape = RoundedCornerShape(15.dp)
+            )
+            {
+                Text(text = "Register")
+            }
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
             ) {
+                Divider(modifier = Modifier.weight(2f))
                 Text(
-                    text = stringResource(id = R.string.create_your_account),
-                    style = MaterialTheme.typography.h4,
-                    fontWeight = FontWeight.Bold,
+                    text = "OR",
                     color = MaterialTheme.colors.onBackground,
+                    modifier = Modifier.weight(1f),
                     textAlign = TextAlign.Center
                 )
-                OutlinedTextField(
-                    value = emailValue.value,
-                    onValueChange = {
-                        emailValue.value = it
-                    },
-                    modifier = Modifier.fillMaxWidth(),
-                    leadingIcon = {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_baseline_alternate_email_24),
-                            contentDescription = "email_icon"
-                        )
-                    },
-                    label = {
-                        Text(text = "Email ID")
-                    },
-                    maxLines = 1,
-                    singleLine = true,
-                    keyboardActions = KeyboardActions(onDone = { keyboardController?.hide() })
-                )
-                OutlinedTextField(
-                    value = passwordValue.value,
-                    onValueChange = {
-                        passwordValue.value = it
-                    },
-                    modifier = Modifier.fillMaxWidth(),
-                    leadingIcon = {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_baseline_lock_24),
-                            contentDescription = "email_icon"
-                        )
-                    },
-                    label = {
-                        Text(text = "Password")
-                    },
-                    trailingIcon = {
-                        IconButton(onClick = { currentStateEyes.value = !currentStateEyes.value }) {
-                            Icon(
-                                painter = if (!currentStateEyes.value) painterResource(id = R.drawable.closeeyes) else painterResource(
-                                    id = R.drawable.openeyes
-                                ), contentDescription = "eyes"
-                            )
-                        }
-                    },
-                    maxLines = 1,
-                    singleLine = true,
-                    visualTransformation = if (!currentStateEyes.value) PasswordVisualTransformation() else
-                        VisualTransformation.None,
-                    keyboardActions = KeyboardActions(onDone = { keyboardController?.hide() })
-                )
-                OutlinedButton(
-                    onClick = {
-                        if (emailValue.value.text.trim() != "" && passwordValue.value.text.trim() != "") {
-                            viewModel.registerUser(emailValue.value.text, passwordValue.value.text)
-                        } else {
-                            Toast.makeText(
-                                context,
-                                context.getString(R.string.empty_field),
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
-                    }, modifier = Modifier
-                        .fillMaxWidth()
-                        .height(60.dp),
-                    colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.primary),
-                    shape = RoundedCornerShape(15.dp)
-                )
-                {
-                    Text(text = stringResource(id = R.string.register))
-                }
+                Divider(modifier = Modifier.weight(2f))
+            }
+            OutlinedButton(
+                onClick = {
+                    val options = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                        .requestIdToken(context.getString(R.string.default_web_client_id))
+                        .requestEmail()
+                        .build()
+                    val mGoogleSignInClient = GoogleSignIn.getClient(context, options)
 
+                    val signInIntent = mGoogleSignInClient.signInIntent
+                    launcher.launch(signInIntent)
+
+                }, modifier = Modifier
+                    .fillMaxWidth()
+                    .height(60.dp), shape = RoundedCornerShape(15.dp)
+            ) {
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Divider(modifier = Modifier.weight(2f))
-                    Text(
-                        text = stringResource(id = R.string.or),
-                        color = MaterialTheme.colors.onBackground,
-                        modifier = Modifier.weight(1f),
-                        textAlign = TextAlign.Center
+                    Icon(
+                        painter = painterResource(id = R.drawable.google_svg),
+                        contentDescription = "google_svg", tint = Color.Unspecified
                     )
-                    Divider(modifier = Modifier.weight(2f))
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(text = "Continue with Google")
                 }
-                OutlinedButton(
-                    onClick = {
-                        val options =
-                            GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                                .requestIdToken(context.getString(R.string.default_web_client_id))
-                                .requestEmail()
-                                .build()
-                        val mGoogleSignInClient = GoogleSignIn.getClient(context, options)
+            }
 
-                        val signInIntent = mGoogleSignInClient.signInIntent
-                        launcher.launch(signInIntent)
-
-                    }, modifier = Modifier
-                        .fillMaxWidth()
-                        .height(60.dp), shape = RoundedCornerShape(15.dp)
-                ) {
-                    Row(
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.google_svg),
-                            contentDescription = "google_svg", tint = Color.Unspecified
-                        )
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text(text = stringResource(id = R.string.continue_with_google))
-                    }
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter) {
+                Row(modifier = Modifier.clickable(onClick = {
+                    navController.navigate(Screens.Login.route)
                 }
-
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter) {
-                    Row(
-                        modifier = Modifier.clickable(
-                            onClick = {
-                                navController.navigate(Screens.Login.route)
-                            }
-                        )
-                    ) {
-                        Text(
-                            text = stringResource(id = R.string.already_have_account) + " ",
-                            color = MaterialTheme.colors.onBackground
-                        )
-                        Text(
-                            text = stringResource(id = R.string.login),
-                            color = MaterialTheme.colors.primary
-                        )
-                    }
+                )) {
+                    Text(
+                        text = "Already have an account? ",
+                        color = MaterialTheme.colors.onBackground
+                    )
+                    Text(text = "Login", color = MaterialTheme.colors.primary)
                 }
             }
         }
-        if (registerFlow.isLoading) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(MaterialTheme.colors.background),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
-            }
-        }
-        if (registerFlow.error.isNotBlank()) {
-            LaunchedEffect(key1 = Unit) {
-                Toast.makeText(context, registerFlow.error, Toast.LENGTH_SHORT).show()
+        state.value?.let {
+            when (it) {
+                is Resource.Success -> {
+                    LaunchedEffect(key1 = Unit) {
+                        auth.currentUser?.sendEmailVerification()
+                        navController.navigate(Screens.Login.route)
+                        Toast.makeText(context, "Verify your email please ${it.data?.email}", Toast.LENGTH_SHORT).show()
+                    }
+                }
+                is Resource.Error -> {
+                    LaunchedEffect(key1 = true) {
+                        Toast.makeText(context, it.message.toString(), Toast.LENGTH_SHORT).show()
+                    }
+                }
+                is Resource.Loading -> {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(MaterialTheme.colors.background),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator()
+                    }
+                }
             }
         }
     }
 }
-
 
 
 

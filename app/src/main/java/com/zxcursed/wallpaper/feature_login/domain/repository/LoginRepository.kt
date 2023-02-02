@@ -4,5 +4,5 @@ import com.google.firebase.auth.FirebaseUser
 import com.zxcursed.wallpaper.common.Resource
 
 interface LoginRepository {
-    suspend fun login(email: String, password: String) : Resource<FirebaseUser>
+    suspend fun login(email: String,password: String) : Resource<FirebaseUser>
 }

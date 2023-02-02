@@ -37,6 +37,7 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.zxcursed.wallpaper.R
 import com.zxcursed.wallpaper.Screens
 import com.zxcursed.wallpaper.common.Resource
+import com.zxcursed.wallpaper.feature_login.presentattion.LoginViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -47,8 +48,6 @@ import kotlinx.coroutines.withContext
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun LoginScreen(
-    onNavigateToRegister: () -> Unit,
-    onNavigateToMain: () -> Unit,
     auth: FirebaseAuth,
     viewModel: LoginViewModel = hiltViewModel(),
     navController: NavController
@@ -68,7 +67,7 @@ fun LoginScreen(
                     val credentials = GoogleAuthProvider.getCredential(result.idToken, null)
                     auth.signInWithCredential(credentials).await()
                     withContext(Dispatchers.Main) {
-                        return@withContext onNavigateToMain()
+                        return@withContext navController.navigate(Screens.Main.route)
                     }
                 } catch (it: ApiException) {
                     Log.d("Error", it.status.toString())
@@ -220,7 +219,7 @@ fun LoginScreen(
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter) {
                 Row(
                     modifier = Modifier.clickable(
-                        onClick = onNavigateToRegister
+                        onClick = {navController.navigate(Screens.Register.route)}
                     )
                 ) {
                     Text(
@@ -244,7 +243,11 @@ fun LoginScreen(
                 }
                 is Resource.Success -> {
                     LaunchedEffect(key1 = Unit) {
-                        navController.navigate(Screens.Main.route)
+                        if (auth.currentUser?.isEmailVerified == true) {
+                            navController.navigate(Screens.Main.route)
+                        } else {
+                            Toast.makeText(context,"Verify your email please", Toast.LENGTH_SHORT).show()
+                        }
                     }
                 }
                 is Resource.Loading -> {
@@ -262,4 +265,3 @@ fun LoginScreen(
 
     }
 }
-

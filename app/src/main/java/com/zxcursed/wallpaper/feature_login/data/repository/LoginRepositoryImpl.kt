@@ -12,7 +12,7 @@ class LoginRepositoryImpl @Inject constructor(
 ) : LoginRepository {
     override suspend fun login(email: String, password: String): Resource<FirebaseUser> {
         return try {
-            val result = auth.signInWithEmailAndPassword(email,password).await()
+            val result = auth.signInWithEmailAndPassword(email, password).await()
             Resource.Success(result.user)
         } catch (e: Exception) {
             Resource.Error(e.message.toString())

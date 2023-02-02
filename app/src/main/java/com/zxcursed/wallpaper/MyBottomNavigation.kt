@@ -22,7 +22,6 @@ fun MyBottomNavigation(
 ) {
     BottomNavigation(elevation = 0.dp) {
         items.forEach { screen ->
-            if (currentDestination != null) {
                 BottomNavigationItem(
                     icon = {
                         Icon(
@@ -37,21 +36,19 @@ fun MyBottomNavigation(
                             maxLines = 1
                         )
                     },
-                    selected = currentDestination.hierarchy.any {
+                    selected = currentDestination?.hierarchy?.any {
                         it.route == screen.route
-                    },
+                    } == true,
                     onClick = {
                         navController.navigate(screen.route) {
                             popUpTo(navController.graph.findStartDestination().id) {
-                                inclusive = true
+                                saveState = true
                             }
                             launchSingleTop = true
                             restoreState = true
                         }
                     }
                 )
-            }
-
 
         }
     }

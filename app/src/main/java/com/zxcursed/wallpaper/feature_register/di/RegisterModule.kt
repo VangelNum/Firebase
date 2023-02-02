@@ -6,10 +6,8 @@ import com.zxcursed.wallpaper.feature_register.domain.repository.RegisterReposit
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ViewModelComponent
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
-
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -17,7 +15,8 @@ object RegisterModule {
 
     @Provides
     @Singleton
-    fun provideRegisterRepository(auth: FirebaseAuth): RegisterRepository {
+    fun provideRepository(auth: FirebaseAuth): RegisterRepository {
         return RegisterRepositoryImpl(auth)
     }
+
 }
