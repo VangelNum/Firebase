@@ -1,4 +1,4 @@
-package com.zxcursed.wallpaper.presentation
+package com.zxcursed.wallpaper.feature_watch_photo.presentation
 
 import android.app.DownloadManager
 import android.content.Context
@@ -20,7 +20,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.SubcomposeAsyncImage
-import com.zxcursed.wallpaper.BottomSheetData
+import com.zxcursed.wallpaper.domain.BottomSheet
 import com.zxcursed.wallpaper.feature_favourite.domain.model.FavouritePhotosEntity
 import com.zxcursed.wallpaper.feature_favourite.presentation.ViewModelForFavourite
 
@@ -34,9 +34,9 @@ fun WatchPhotoScreen(
 ) {
 
     val items = listOf(
-        BottomSheetData.Favourite,
-        BottomSheetData.Share,
-        BottomSheetData.Download,
+        BottomSheet.Favourite,
+        BottomSheet.Share,
+        BottomSheet.Download,
     )
 
     val favourites = viewModelForFavourite.allFavouritePhotos.value
@@ -68,7 +68,7 @@ fun WatchPhotoScreen(
                     text = {
                         if (index == 0) {
                             if (photoInFavourite.value) {
-                                Text(text = BottomSheetData.FavouriteDelete.name)
+                                Text(text = BottomSheet.FavouriteDelete.name)
                             } else {
                                 Text(text = current.name)
                             }

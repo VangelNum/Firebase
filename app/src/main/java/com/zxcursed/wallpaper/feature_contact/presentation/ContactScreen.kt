@@ -1,5 +1,6 @@
-package com.zxcursed.wallpaper.presentation
+package com.zxcursed.wallpaper.feature_contact.presentation
 
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.clickable
@@ -51,12 +52,7 @@ fun ContactScreen() {
                     modifier = Modifier
                         .padding(top = 5.dp)
                         .clickable {
-                            val mailto = "mailto:vangelnum@gmail.com" +
-                                    "?cc=" +
-                                    "&subject=" + Uri.encode("Zxcursed Wallpaper")
-                            val emailIntent = Intent(Intent.ACTION_SENDTO)
-                            emailIntent.data = Uri.parse(mailto)
-                            context.startActivity(emailIntent)
+                            emailSend(context)
                         }
                 )
                 Text(
@@ -67,9 +63,7 @@ fun ContactScreen() {
                     modifier = Modifier
                         .padding(top = 5.dp)
                         .clickable {
-                            val uri: Uri = Uri.parse("https://vk.com/vangelnum")
-                            val browser = Intent(Intent.ACTION_VIEW, uri)
-                            context.startActivity(browser)
+                            goToMyVk(context)
                         }
                 )
             }
@@ -88,9 +82,7 @@ fun ContactScreen() {
                     modifier = Modifier
                         .padding(top = 5.dp)
                         .clickable {
-                            val uri: Uri = Uri.parse("https://www.youtube.com/zxcursed")
-                            val browser = Intent(Intent.ACTION_VIEW, uri)
-                            context.startActivity(browser)
+                           goToYoutubeZxcursed(context)
                         }
                 )
                 Text(
@@ -101,9 +93,7 @@ fun ContactScreen() {
                     modifier = Modifier
                         .padding(top = 5.dp)
                         .clickable {
-                            val uri: Uri = Uri.parse("https://t.me/zxcursed")
-                            val browser = Intent(Intent.ACTION_VIEW, uri)
-                            context.startActivity(browser)
+                            goToTelegramZxcursed(context)
                         }
                 )
                 Text(
@@ -114,13 +104,46 @@ fun ContactScreen() {
                     modifier = Modifier
                         .padding(top = 5.dp)
                         .clickable {
-                            val uri: Uri = Uri.parse("https://vk.com/zxcursedd")
-                            val browser = Intent(Intent.ACTION_VIEW, uri)
-                            context.startActivity(browser)
+                            goToVkZxcursed(context)
                         }
                 )
             }
         }
     }
 
+}
+
+private fun goToVkZxcursed(context: Context) {
+    val uri: Uri = Uri.parse("https://vk.com/zxcursedd")
+    val browser = Intent(Intent.ACTION_VIEW, uri)
+    context.startActivity(browser)
+}
+
+private fun goToTelegramZxcursed(context: Context) {
+    val uri: Uri = Uri.parse("https://t.me/zxcursed")
+    val browser = Intent(Intent.ACTION_VIEW, uri)
+    context.startActivity(browser)
+
+}
+
+private fun goToYoutubeZxcursed(context: Context) {
+    val uri: Uri = Uri.parse("https://www.youtube.com/zxcursed")
+    val browser = Intent(Intent.ACTION_VIEW, uri)
+    context.startActivity(browser)
+}
+
+private fun goToMyVk(context: Context) {
+    val uri: Uri = Uri.parse("https://vk.com/vangelnum")
+    val browser = Intent(Intent.ACTION_VIEW, uri)
+    context.startActivity(browser)
+
+}
+
+fun emailSend(context: Context) {
+    val mailto = "mailto:vangelnum@gmail.com" +
+            "?cc=" +
+            "&subject=" + Uri.encode("Zxcursed Wallpaper")
+    val emailIntent = Intent(Intent.ACTION_SENDTO)
+    emailIntent.data = Uri.parse(mailto)
+    context.startActivity(emailIntent)
 }

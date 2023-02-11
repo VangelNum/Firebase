@@ -22,7 +22,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.SubcomposeAsyncImage
 import com.zxcursed.wallpaper.R
-import com.zxcursed.wallpaper.Screens
+import com.zxcursed.wallpaper.presentation.Screens
 import com.zxcursed.wallpaper.feature_favourite.domain.model.FavouritePhotosEntity
 import com.zxcursed.wallpaper.feature_favourite.presentation.ViewModelForFavourite
 import kotlinx.coroutines.launch

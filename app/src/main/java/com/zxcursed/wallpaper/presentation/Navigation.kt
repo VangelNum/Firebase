@@ -6,7 +6,6 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -23,12 +22,16 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.zxcursed.wallpaper.*
 import com.zxcursed.wallpaper.R
+import com.zxcursed.wallpaper.feature_add_photo.presentation.AddPhotoScreen
+import com.zxcursed.wallpaper.feature_contact.presentation.ContactScreen
 import com.zxcursed.wallpaper.feature_developer.presentation.DeveloperScreen
+import com.zxcursed.wallpaper.feature_developer_join.presentation.DeveloperJoinScreen
 import com.zxcursed.wallpaper.feature_favourite.presentation.FavouriteScreen
-import com.zxcursed.wallpaper.feature_login.presentation.LoginScreen
+import com.zxcursed.wallpaper.feature_login.presentattion.LoginScreen
 import com.zxcursed.wallpaper.feature_main.presentation.MainScreen
 import com.zxcursed.wallpaper.feature_notification.presentation.NotificationScreen
 import com.zxcursed.wallpaper.feature_register.presentation.RegisterScreen
+import com.zxcursed.wallpaper.feature_watch_photo.presentation.WatchPhotoScreen
 
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -41,7 +44,6 @@ fun Navigation(
     val currentUser = auth.currentUser
     var startDestination = Screens.Register.route
     val uid = currentUser?.uid
-    val context = LocalContext.current
 
     if (currentUser != null && currentUser.isEmailVerified) {
         startDestination = Screens.Main.route
@@ -134,7 +136,7 @@ fun Navigation(
                         sheetState = sheetState
                     )
                 } else {
-                    MyTopBar(navController, context, uid, scaffoldState)
+                    MyTopBar(scaffoldState)
                 }
             }
         },
@@ -164,10 +166,13 @@ fun Navigation(
                 FavouriteScreen(navController)
             }
             composable(route = Screens.Add.route) {
-                AddPhotoScreen(auth = auth)
+                AddPhotoScreen()
             }
             composable(route = Screens.Developer.route) {
                 DeveloperScreen()
+            }
+            composable(route = Screens.DeveloperJoinScreen.route) {
+                DeveloperJoinScreen(uid = uid, navController = navController)
             }
             composable(route = Screens.Notification.route) {
                 NotificationScreen(navController)

@@ -1,4 +1,4 @@
-package com.zxcursed.wallpaper
+package com.zxcursed.wallpaper.presentation
 
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem

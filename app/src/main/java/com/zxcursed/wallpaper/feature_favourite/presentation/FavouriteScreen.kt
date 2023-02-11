@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.SubcomposeAsyncImage
-import com.zxcursed.wallpaper.Screens
+import com.zxcursed.wallpaper.presentation.Screens
 import com.zxcursed.wallpaper.feature_favourite.domain.model.FavouritePhotosEntity
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets

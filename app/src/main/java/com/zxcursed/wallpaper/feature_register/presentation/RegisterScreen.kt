@@ -35,7 +35,7 @@ import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.zxcursed.wallpaper.R
-import com.zxcursed.wallpaper.Screens
+import com.zxcursed.wallpaper.presentation.Screens
 import com.zxcursed.wallpaper.common.Resource
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -117,7 +117,7 @@ fun RegisterScreen(
                     )
                 },
                 label = {
-                    Text(text = stringResource(id = R.string.email_id))
+                    Text(text = stringResource(id = R.string.register))
                 },
                 maxLines = 1,
                 singleLine = true,
@@ -136,7 +136,7 @@ fun RegisterScreen(
                     )
                 },
                 label = {
-                    Text(text = "Password")
+                    Text(text = stringResource(id = R.string.password))
                 },
                 trailingIcon = {
                     IconButton(onClick = { currentStateEyes.value = !currentStateEyes.value }) {
@@ -170,7 +170,7 @@ fun RegisterScreen(
                 shape = RoundedCornerShape(15.dp)
             )
             {
-                Text(text = "Register")
+                Text(text = stringResource(id = R.string.register))
             }
 
             Row(
@@ -211,7 +211,7 @@ fun RegisterScreen(
                         contentDescription = "google_svg", tint = Color.Unspecified
                     )
                     Spacer(modifier = Modifier.width(4.dp))
-                    Text(text = "Continue with Google")
+                    Text(text = stringResource(id = R.string.continue_with_google))
                 }
             }
 
@@ -221,10 +221,10 @@ fun RegisterScreen(
                 }
                 )) {
                     Text(
-                        text = "Already have an account? ",
+                        text = stringResource(id = R.string.already_have_account) + " ",
                         color = MaterialTheme.colors.onBackground
                     )
-                    Text(text = "Login", color = MaterialTheme.colors.primary)
+                    Text(text = stringResource(id = R.string.login), color = MaterialTheme.colors.primary)
                 }
             }
         }

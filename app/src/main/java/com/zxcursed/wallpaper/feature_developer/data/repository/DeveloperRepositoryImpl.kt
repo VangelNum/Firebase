@@ -17,31 +17,26 @@ import kotlinx.coroutines.tasks.await
 
 class DeveloperRepositoryImpl : DeveloperRepository {
     override fun getUsersPhotos(): Flow<Resource<List<UserPhotos>>> = callbackFlow {
-        Resource.Loading<Boolean>(isLoading = true)
-        try {
-            val personCollection =
-                Firebase.firestore.collection("users").addSnapshotListener { snapshot, error ->
-                    val response = snapshot?.let {
-                        val userPhotoDto = it.toObjects<UserPhotosDto>().map { userPhotosDto ->
-                            userPhotosDto.toUserPhotos()
-                        }
-                        Resource.Success(data = userPhotoDto)
+        trySend(Resource.Loading(isLoading = true))
+        val personCollection = Firebase.firestore.collection("users").addSnapshotListener { snapshot, error ->
+                val response = snapshot?.let {
+                    val userPhotoDto = it.toObjects<UserPhotosDto>().map { userPhotosDto ->
+                        userPhotosDto.toUserPhotos()
                     }
-                    error.let {
-                        Resource.Error(message = it?.message.toString(), data = null)
-                    }
-                    if (response != null) {
-                        trySend(response).isSuccess
-                    }
+                    Resource.Success(data = userPhotoDto)
                 }
-            awaitClose {
-                personCollection.remove()
+                error.let {
+                    trySend(Resource.Error(message = it?.message.toString(), data = null))
+                }
+                if (response != null) {
+                    trySend(response).isSuccess
+                }
             }
-        } catch (e: Exception) {
-            Resource.Error(e.message.toString(), data = null)
+        awaitClose {
+            personCollection.remove()
         }
-
     }
+
 
     override suspend fun addUsersPhotosFromDeveloper(
         onePhoto: String,

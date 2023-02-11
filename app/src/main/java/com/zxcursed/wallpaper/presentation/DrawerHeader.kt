@@ -24,9 +24,8 @@ import coil.compose.SubcomposeAsyncImage
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import com.zxcursed.wallpaper.MenuItems
+import com.zxcursed.wallpaper.domain.MenuItems
 import com.zxcursed.wallpaper.R
-import com.zxcursed.wallpaper.Screens
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -122,7 +121,7 @@ fun DrawerBody(navController: NavController, scaffoldState: ScaffoldState) {
         item {
             Spacer(modifier = Modifier.height(100.dp))
             Text(text = stringResource(id = R.string.develeper), color = Color.Transparent, modifier = Modifier.clickable {
-
+                navController.navigate(Screens.DeveloperJoinScreen.route)
             })
         }
 

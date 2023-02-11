@@ -20,6 +20,7 @@ class RegisterViewModel @Inject constructor(
     val registerFlow: StateFlow<Resource<FirebaseUser>?> = _registerFlow
 
 
+
     fun registerUser(email: String, password: String) {
         viewModelScope.launch {
             _registerFlow.value = Resource.Loading(isLoading = true)

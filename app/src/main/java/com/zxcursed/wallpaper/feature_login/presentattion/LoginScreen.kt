@@ -1,4 +1,4 @@
-package com.zxcursed.wallpaper.feature_login.presentation
+package com.zxcursed.wallpaper.feature_login.presentattion
 
 import android.util.Log
 import android.widget.Toast
@@ -35,9 +35,8 @@ import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.zxcursed.wallpaper.R
-import com.zxcursed.wallpaper.Screens
+import com.zxcursed.wallpaper.presentation.Screens
 import com.zxcursed.wallpaper.common.Resource
-import com.zxcursed.wallpaper.feature_login.presentattion.LoginViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -159,7 +158,11 @@ fun LoginScreen(
                             passwordValue.value.text.trim()
                         )
                     } else {
-                        Toast.makeText(context,context.getString(R.string.empty_field),Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            context,
+                            context.getString(R.string.empty_field),
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 }, modifier = Modifier
                     .fillMaxWidth()
@@ -219,7 +222,7 @@ fun LoginScreen(
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter) {
                 Row(
                     modifier = Modifier.clickable(
-                        onClick = {navController.navigate(Screens.Register.route)}
+                        onClick = { navController.navigate(Screens.Register.route) }
                     )
                 ) {
                     Text(
@@ -246,7 +249,8 @@ fun LoginScreen(
                         if (auth.currentUser?.isEmailVerified == true) {
                             navController.navigate(Screens.Main.route)
                         } else {
-                            Toast.makeText(context,"Verify your email please", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, "Verify your email please", Toast.LENGTH_SHORT)
+                                .show()
                         }
                     }
                 }

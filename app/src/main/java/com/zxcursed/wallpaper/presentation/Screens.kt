@@ -1,4 +1,6 @@
-package com.zxcursed.wallpaper
+package com.zxcursed.wallpaper.presentation
+
+import com.zxcursed.wallpaper.R
 
 sealed class Screens(val route: String, val icon: Int, val title: String) {
     object Register : Screens("register", R.drawable.ic_round_favorite_24, "")
@@ -10,8 +12,9 @@ sealed class Screens(val route: String, val icon: Int, val title: String) {
     object Notification : Screens("notification", R.drawable.ic_baseline_notifications_24, "Уведомления")
 
     object Developer : Screens("developer", R.drawable.ic_round_favorite_24, "Разработчик")
+    object DeveloperJoinScreen : Screens("developerJoin", R.drawable.ic_round_favorite_24, "Разработчик_Вход")
     object WatchPhoto : Screens("watch", R.drawable.ic_round_favorite_24, "Смотреть")
-    object Contact: Screens("contact",R.drawable.ic_round_favorite_24,"Контакты")
+    object Contact: Screens("contact", R.drawable.ic_round_favorite_24,"Контакты")
 
 
     fun withArgs(vararg args: String): String {

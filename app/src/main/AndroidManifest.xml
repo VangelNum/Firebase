@@ -29,7 +29,7 @@
             </intent-filter>
         </activity>
         <service
-            android:name="com.zxcursed.wallpaper.MyFirstbaseMessagingService"
+            android:name="com.zxcursed.wallpaper.data.MyFirstbaseMessagingService"
             android:exported="false"
             android:directBootAware="true">
             <intent-filter>

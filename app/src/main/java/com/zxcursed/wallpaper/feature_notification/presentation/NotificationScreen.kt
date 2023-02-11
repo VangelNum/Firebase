@@ -18,15 +18,18 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.SubcomposeAsyncImage
 import com.zxcursed.wallpaper.R
-import com.zxcursed.wallpaper.Screens
+import com.zxcursed.wallpaper.presentation.Screens
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
@@ -47,18 +50,18 @@ fun NotificationScreen(
     }
 
     LazyColumn(
-        contentPadding = PaddingValues(25.dp),
+        contentPadding = PaddingValues(16.dp),
     ) {
         resourses.data.notification?.let {
             itemsIndexed(it) { index, res ->
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(25.dp)
+                    horizontalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     Card(
                         modifier = Modifier
                             .size(120.dp),
-                        shape = RoundedCornerShape(20.dp)
+                        shape = RoundedCornerShape(25.dp)
                     ) {
                         SubcomposeAsyncImage(
                             model = res.name1,
@@ -81,7 +84,7 @@ fun NotificationScreen(
                         )
                     }
                     SelectionContainer() {
-                        Text(text = res.name1!!)
+                        Text(text = res.name1!!, maxLines = 5, overflow = TextOverflow.Ellipsis)
                     }
                 }
                 Spacer(modifier = Modifier.height(10.dp))
@@ -90,10 +93,13 @@ fun NotificationScreen(
                     val intent = Intent(Intent.ACTION_VIEW)
                     intent.data = Uri.parse(res.name1)
                     context.startActivity(intent)
-                }) {
+                }, colors = ButtonDefaults.buttonColors(Color.Transparent),
+                    modifier = Modifier.height(60.dp),
+                    shape = RoundedCornerShape(25.dp)
+                ) {
                     Text(
                         text = stringResource(id = R.string.open_photo),
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center,
                         style = TextStyle(
                             fontSize = 18.sp,
                             fontWeight = FontWeight.Light,
@@ -103,11 +109,13 @@ fun NotificationScreen(
                 Spacer(modifier = Modifier.height(10.dp))
                 OutlinedButton(onClick = {
                     val encodedUrl = URLEncoder.encode(res.name1, StandardCharsets.UTF_8.toString())
-                    navController.navigate(Screens.WatchPhoto.withArgs(encodedUrl))
-                }) {
+                    navController.navigate(Screens.WatchPhoto.withArgs(encodedUrl),)
+                }, colors = ButtonDefaults.buttonColors(Color.Transparent),
+                    modifier = Modifier.height(60.dp),
+                    shape = RoundedCornerShape(25.dp)) {
                     Text(
                         text = stringResource(id = R.string.watch_photo),
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center,
                         style = TextStyle(
                             fontSize = 18.sp,
                             fontWeight = FontWeight.Light,
@@ -121,7 +129,8 @@ fun NotificationScreen(
                         modifier = Modifier.fillMaxWidth(),
                         textAlign = TextAlign.Center,
                         text = stringResource(id = R.string.status_on_apply),
-                        color = Color.Green
+                        color = Color.Green,
+                        fontFamily = FontFamily(Font(R.font.atypdisplaynew))
                     )
                 }
                 if (res.name2 == stringResource(id = R.string.red)) {
@@ -129,7 +138,8 @@ fun NotificationScreen(
                         modifier = Modifier.fillMaxWidth(),
                         textAlign = TextAlign.Center,
                         text = stringResource(id = R.string.status_on_rejected),
-                        color = Color.Red
+                        color = Color.Red,
+                        fontFamily = FontFamily(Font(R.font.atypdisplaynew))
                     )
                 }
                 if (res.name2 == stringResource(id = R.string.gray)) {
@@ -137,7 +147,8 @@ fun NotificationScreen(
                         modifier = Modifier.fillMaxWidth(),
                         textAlign = TextAlign.Center,
                         text = stringResource(id = R.string.status_on_review),
-                        color = Color.Gray
+                        color = Color.Gray,
+                        fontFamily = FontFamily(Font(R.font.atypdisplaynew))
                     )
                 }
                 Spacer(modifier = Modifier.height(10.dp))
