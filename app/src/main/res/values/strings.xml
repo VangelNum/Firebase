@@ -52,5 +52,8 @@
     <string name="register">Register</string>
     <string name="already_have_account">"Already have an account? "</string>
     <string name="login">Login</string>
+    <string name="pleaseUrl">Просьба предлагать именно ссылки на фото</string>
+    <string name="choose_from_galery">Выбрать из галереи</string>
+    <string name="send_url">Отправить ссылку</string>
 
 </resources>

@@ -114,7 +114,7 @@ fun ContactScreen() {
 }
 
 private fun goToVkZxcursed(context: Context) {
-    val uri: Uri = Uri.parse("https://vk.com/zxcursedd")
+    val uri: Uri = Uri.parse("https://vk.com/zxcursed")
     val browser = Intent(Intent.ACTION_VIEW, uri)
     context.startActivity(browser)
 }
@@ -139,7 +139,7 @@ private fun goToMyVk(context: Context) {
 
 }
 
-fun emailSend(context: Context) {
+private fun emailSend(context: Context) {
     val mailto = "mailto:vangelnum@gmail.com" +
             "?cc=" +
             "&subject=" + Uri.encode("Zxcursed Wallpaper")

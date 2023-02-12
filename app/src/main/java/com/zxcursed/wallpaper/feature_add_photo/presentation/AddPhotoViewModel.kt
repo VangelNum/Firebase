@@ -1,5 +1,6 @@
 package com.zxcursed.wallpaper.feature_add_photo.presentation
 
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zxcursed.wallpaper.feature_add_photo.domain.AddPhotoRepository
@@ -14,6 +15,12 @@ class AddPhotoViewModel @Inject constructor(
     fun addPhoto(textValue: String) {
         viewModelScope.launch {
             repository.addPhoto(textValue)
+        }
+    }
+
+    fun addPhotoToFireStorage(photo: Uri?) {
+        viewModelScope.launch {
+            repository.addPhotoToFirestorage(photo)
         }
     }
 }

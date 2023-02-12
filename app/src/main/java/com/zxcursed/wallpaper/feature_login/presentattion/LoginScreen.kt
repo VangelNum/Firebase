@@ -35,8 +35,8 @@ import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.zxcursed.wallpaper.R
-import com.zxcursed.wallpaper.presentation.Screens
 import com.zxcursed.wallpaper.common.Resource
+import com.zxcursed.wallpaper.presentation.Screens
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -49,7 +49,8 @@ import kotlinx.coroutines.withContext
 fun LoginScreen(
     auth: FirebaseAuth,
     viewModel: LoginViewModel = hiltViewModel(),
-    navController: NavController
+    navController: NavController,
+    scaffoldState: ScaffoldState
 ) {
 
 
@@ -157,6 +158,7 @@ fun LoginScreen(
                             emailValue.value.text.trim(),
                             passwordValue.value.text.trim()
                         )
+                        keyboardController?.hide()
                     } else {
                         Toast.makeText(
                             context,
@@ -249,8 +251,17 @@ fun LoginScreen(
                         if (auth.currentUser?.isEmailVerified == true) {
                             navController.navigate(Screens.Main.route)
                         } else {
-                            Toast.makeText(context, "Verify your email please", Toast.LENGTH_SHORT)
-                                .show()
+                            val result =
+                                scaffoldState.snackbarHostState.showSnackbar(
+                                    "Необходимо подтвердить Email, отправить ссылку ещё раз?",
+                                    "Yep"
+                                )
+                            when (result) {
+                                SnackbarResult.ActionPerformed -> {
+                                    auth.currentUser?.sendEmailVerification()
+                                }
+                                else -> Unit
+                            }
                         }
                     }
                 }

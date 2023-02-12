@@ -23,7 +23,7 @@ class NotificationViewModel @Inject constructor(
         getAllNotifications()
     }
 
-    private fun getAllNotifications() {
+    fun getAllNotifications() {
         viewModelScope.launch {
             repository.getNotifications().collect { result ->
                 when (result) {

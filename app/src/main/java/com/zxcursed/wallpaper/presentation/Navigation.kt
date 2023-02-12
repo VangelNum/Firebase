@@ -22,7 +22,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.zxcursed.wallpaper.*
 import com.zxcursed.wallpaper.R
-import com.zxcursed.wallpaper.feature_add_photo.presentation.AddPhotoScreen
+import com.zxcursed.wallpaper.feature_add_photo.presentation.AddPhotoTabScreen
 import com.zxcursed.wallpaper.feature_contact.presentation.ContactScreen
 import com.zxcursed.wallpaper.feature_developer.presentation.DeveloperScreen
 import com.zxcursed.wallpaper.feature_developer_join.presentation.DeveloperJoinScreen
@@ -110,10 +110,12 @@ fun Navigation(
                     modifier = Modifier.padding(start = 15.dp, end = 15.dp, bottom = 10.dp)
                 ) {
                     Row(horizontalArrangement = Arrangement.Center) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_round_favorite_24),
-                            "", modifier = Modifier.padding(end = 15.dp)
-                        )
+                        if (data.actionLabel.toString() == "Отмена") {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_round_favorite_24),
+                                "", modifier = Modifier.padding(end = 15.dp)
+                            )
+                        }
                         Text(
                             data.message,
                             style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Light),
@@ -156,7 +158,8 @@ fun Navigation(
             }
             composable(route = Screens.Login.route) {
                 LoginScreen(
-                    navController = navController, auth = auth
+                    navController = navController, auth = auth,
+                    scaffoldState = scaffoldState
                 )
             }
             composable(route = Screens.Main.route) {
@@ -166,7 +169,7 @@ fun Navigation(
                 FavouriteScreen(navController)
             }
             composable(route = Screens.Add.route) {
-                AddPhotoScreen()
+                AddPhotoTabScreen()
             }
             composable(route = Screens.Developer.route) {
                 DeveloperScreen()

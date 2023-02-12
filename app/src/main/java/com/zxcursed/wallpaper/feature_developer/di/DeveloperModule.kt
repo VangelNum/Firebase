@@ -1,5 +1,8 @@
 package com.zxcursed.wallpaper.feature_developer.di
 
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import com.zxcursed.wallpaper.feature_developer.data.repository.DeveloperRepositoryImpl
 import com.zxcursed.wallpaper.feature_developer.domain.repository.DeveloperRepository
 import dagger.Module
@@ -13,9 +16,16 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object DeveloperModule {
 
+
     @Singleton
     @Provides
-    fun provideMyRepository(): DeveloperRepository {
-        return DeveloperRepositoryImpl()
+    fun provideFireStore() : FirebaseFirestore {
+        return Firebase.firestore
+    }
+
+    @Singleton
+    @Provides
+    fun provideMyRepository(fireStore: FirebaseFirestore): DeveloperRepository {
+        return DeveloperRepositoryImpl(fireStore)
     }
 }

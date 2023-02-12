@@ -2,9 +2,8 @@ package com.zxcursed.wallpaper.feature_developer.data.repository
 
 import android.util.Log
 import com.google.firebase.firestore.FieldValue
-import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.toObjects
-import com.google.firebase.ktx.Firebase
 import com.zxcursed.wallpaper.common.Resource
 import com.zxcursed.wallpaper.feature_developer.data.dto.UserPhotosDto
 import com.zxcursed.wallpaper.feature_developer.data.mapper.toUserPhotos
@@ -14,11 +13,15 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
+import javax.inject.Inject
 
-class DeveloperRepositoryImpl : DeveloperRepository {
+class DeveloperRepositoryImpl @Inject constructor(
+    private val fireStore: FirebaseFirestore
+) : DeveloperRepository {
     override fun getUsersPhotos(): Flow<Resource<List<UserPhotos>>> = callbackFlow {
-        trySend(Resource.Loading(isLoading = true))
-        val personCollection = Firebase.firestore.collection("users").addSnapshotListener { snapshot, error ->
+        Resource.Loading<Boolean>(isLoading = true)
+        val personCollection =
+            fireStore.collection("users").addSnapshotListener { snapshot, error ->
                 val response = snapshot?.let {
                     val userPhotoDto = it.toObjects<UserPhotosDto>().map { userPhotosDto ->
                         userPhotosDto.toUserPhotos()
@@ -26,7 +29,7 @@ class DeveloperRepositoryImpl : DeveloperRepository {
                     Resource.Success(data = userPhotoDto)
                 }
                 error.let {
-                    trySend(Resource.Error(message = it?.message.toString(), data = null))
+                    Resource.Error(message = it?.message.toString(), data = null)
                 }
                 if (response != null) {
                     trySend(response).isSuccess
@@ -42,9 +45,8 @@ class DeveloperRepositoryImpl : DeveloperRepository {
         onePhoto: String,
         collectPhotos: UserPhotos,
     ) {
-
         val myCollection =
-            Firebase.firestore.collection("images")
+            fireStore.collection("images")
                 .document("tutor")
         val mapUpdate = mapOf(
             "arrayImages" to FieldValue.arrayUnion(onePhoto)
@@ -52,7 +54,7 @@ class DeveloperRepositoryImpl : DeveloperRepository {
 
         myCollection.update(mapUpdate).await()
 
-        val personCollection = Firebase.firestore.collection("users").document(collectPhotos.userId)
+        val personCollection = fireStore.collection("users").document(collectPhotos.userId)
         personCollection.update(
             mapOf(
                 "url" to FieldValue.arrayRemove(onePhoto)
@@ -65,7 +67,7 @@ class DeveloperRepositoryImpl : DeveloperRepository {
             "name2" to "gray"
         )
 
-        val notifCollection = Firebase.firestore.collection("users")
+        val notifCollection = fireStore.collection("users")
 
         notifCollection.whereArrayContains("notification", photo).get()
             .addOnCompleteListener { task ->
@@ -117,7 +119,7 @@ class DeveloperRepositoryImpl : DeveloperRepository {
     ) {
 
         val personCollection =
-            Firebase.firestore.collection("users")
+            fireStore.collection("users")
                 .document(collectPhotos.userId)
         personCollection.update(
             mapOf(
@@ -131,7 +133,7 @@ class DeveloperRepositoryImpl : DeveloperRepository {
             "name2" to "gray"
         )
 
-        val notifCollection = Firebase.firestore.collection("users")
+        val notifCollection = fireStore.collection("users")
 
         notifCollection.whereArrayContains("notification", photo).get()
             .addOnCompleteListener { task ->

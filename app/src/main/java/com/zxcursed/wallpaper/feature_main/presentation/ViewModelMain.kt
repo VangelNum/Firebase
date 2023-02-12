@@ -23,9 +23,9 @@ class ViewModelMain @Inject constructor(
         getAllPhotos()
     }
 
-    private fun getAllPhotos() {
+    fun getAllPhotos() {
         viewModelScope.launch() {
-            getAllPhotosUseCase().collect { resource->
+            getAllPhotosUseCase().collect { resource ->
                 when (resource) {
                     is Resource.Error -> {
                         _allPhotos.value = AllPhotosState(error = resource.message.toString())
