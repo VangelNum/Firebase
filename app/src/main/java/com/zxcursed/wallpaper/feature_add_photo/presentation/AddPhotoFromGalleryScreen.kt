@@ -1,6 +1,8 @@
 package com.zxcursed.wallpaper.feature_add_photo.presentation
 
+import android.database.Cursor
 import android.net.Uri
+import android.provider.OpenableColumns
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -23,6 +25,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.SubcomposeAsyncImage
 import com.zxcursed.wallpaper.R
+
 
 @Composable
 fun AddPhotoFromGallery() {
@@ -49,7 +52,29 @@ fun GalleryScreenBody(viewModel: AddPhotoViewModel = hiltViewModel()) {
         contract =
         ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
-        imageUri = uri
+
+
+        val cursor: Cursor? = uri?.let {
+            context.contentResolver?.query(
+                it, null, null, null, null
+            )
+        }
+
+        cursor?.use {
+            val sizeColumn = it.getColumnIndex(OpenableColumns.SIZE)
+            if (it.moveToNext()) {
+                val sizeInMb = it.getDouble(sizeColumn) / (1024 * 1024)
+                if (sizeInMb <= 3f) {
+                    imageUri = uri
+                } else {
+                    Toast.makeText(
+                        context,
+                        context.getString(R.string.more_than_3mb),
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            }
+        }
     }
 
     OutlinedButton(

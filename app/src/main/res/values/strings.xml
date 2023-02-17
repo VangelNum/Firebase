@@ -6,7 +6,7 @@
     <string name="best_dota_rep">"Ссылки на лучшего дота репера"</string>
     <string name="youtube_zxcursed">"<u>YOUTUBE.COM/ZXCURSED</u>"</string>
     <string name="telegram_zxcursed">"<u>T.ME/ZXCURSED</u>"</string>
-    <string name="vk_zxcursed">"<u>VK.COM/ZXCURSEDD</u>"</string>
+    <string name="vk_zxcursed">"<u>VK.COM/ZXCURSED</u>"</string>
 
     <string name="Error">Error </string>
     <string name="link">Link: </string>
@@ -55,5 +55,6 @@
     <string name="pleaseUrl">Просьба предлагать именно ссылки на фото</string>
     <string name="choose_from_galery">Выбрать из галереи</string>
     <string name="send_url">Отправить ссылку</string>
+    <string name="more_than_3mb">Фото весит больше 3MB, выберите другое</string>
 
 </resources>

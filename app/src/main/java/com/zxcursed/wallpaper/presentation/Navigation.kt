@@ -11,6 +11,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -32,6 +33,7 @@ import com.zxcursed.wallpaper.feature_main.presentation.MainScreen
 import com.zxcursed.wallpaper.feature_notification.presentation.NotificationScreen
 import com.zxcursed.wallpaper.feature_register.presentation.RegisterScreen
 import com.zxcursed.wallpaper.feature_watch_photo.presentation.WatchPhotoScreen
+import com.zxcursed.wallpaper.feature_watch_photo.presentation.WatchPhotoViewModel
 
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -82,7 +84,6 @@ fun Navigation(
     }
 
 
-    val scope = rememberCoroutineScope()
     val sheetState = rememberBottomSheetState(
         initialValue = BottomSheetValue.Collapsed
     )
@@ -90,6 +91,8 @@ fun Navigation(
         bottomSheetState = sheetState
     )
     val scaffoldState = rememberScaffoldState()
+
+    val watchPhotoViewModel = viewModel<WatchPhotoViewModel>()
 
     Scaffold(
         scaffoldState = scaffoldState,
@@ -134,8 +137,8 @@ fun Navigation(
                 if (currentDestination?.route == Screens.WatchPhoto.route + "/{url}") {
                     MyTopBarForWatchScreen(
                         navController = navController,
-                        scope = scope,
-                        sheetState = sheetState
+                        sheetState = sheetState,
+                        watchPhotoViewModel
                     )
                 } else {
                     MyTopBar(scaffoldState)
@@ -185,7 +188,9 @@ fun Navigation(
                     type = NavType.StringType
                 }
             )) { entry ->
+                //val watchPhotoViewModel = viewModel<WatchPhotoViewModel>()
                 WatchPhotoScreen(
+                    watchPhotoViewModel,
                     url = entry.arguments?.getString("url"),
                     scaffoldState = scaffoldStateBottom,
                 )
@@ -193,7 +198,6 @@ fun Navigation(
             composable(Screens.Contact.route) {
                 ContactScreen()
             }
-
         }
     }
 }

@@ -9,9 +9,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -19,7 +18,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import coil.compose.AsyncImagePainter
 import coil.compose.SubcomposeAsyncImage
+import coil.compose.SubcomposeAsyncImageContent
 import com.zxcursed.wallpaper.domain.BottomSheet
 import com.zxcursed.wallpaper.feature_favourite.domain.model.FavouritePhotosEntity
 import com.zxcursed.wallpaper.feature_favourite.presentation.ViewModelForFavourite
@@ -28,9 +29,10 @@ import com.zxcursed.wallpaper.feature_favourite.presentation.ViewModelForFavouri
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun WatchPhotoScreen(
+    viewModelWatchPhotoViewModel: WatchPhotoViewModel,
     url: String?,
     scaffoldState: BottomSheetScaffoldState,
-    viewModelForFavourite: ViewModelForFavourite = hiltViewModel(),
+    viewModelForFavourite: ViewModelForFavourite = hiltViewModel()
 ) {
 
     val items = listOf(
@@ -121,13 +123,20 @@ fun WatchPhotoScreen(
                 model = url,
                 contentDescription = "photo",
                 contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxSize(),
-                loading = {
-                    Box(modifier = Modifier.fillMaxSize()) {
+            ) {
+                val state = painter.state
+                if (state is AsyncImagePainter.State.Loading || state is AsyncImagePainter.State.Error) {
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                         CircularProgressIndicator()
                     }
+                    viewModelWatchPhotoViewModel.triggerStates(0F, 0F)
+                } else {
+                    val height = painter.intrinsicSize.height
+                    val width = painter.intrinsicSize.width
+                    viewModelWatchPhotoViewModel.triggerStates(height, width)
+                    SubcomposeAsyncImageContent()
                 }
-            )
+            }
         }
     }
 

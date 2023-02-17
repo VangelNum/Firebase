@@ -20,6 +20,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.navOptions
 import coil.compose.SubcomposeAsyncImage
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -181,7 +182,9 @@ fun onEvent(
             scope.launch {
                 scaffoldState.drawerState.close()
             }
-            navController.navigate(Screens.Contact.route)
+            navController.navigate(Screens.Contact.route, navOptions {
+                launchSingleTop = true
+            })
         }
     }
 }

@@ -1,12 +1,20 @@
 package com.zxcursed.wallpaper.presentation
 
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.zxcursed.wallpaper.R
+import com.zxcursed.wallpaper.feature_watch_photo.presentation.WatchPhotoViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -36,12 +44,23 @@ fun MyTopBar(
 @Composable
 fun MyTopBarForWatchScreen(
     navController: NavController,
-    scope: CoroutineScope,
     sheetState: BottomSheetState,
+    viewModelWatchPhoto: WatchPhotoViewModel
 ) {
+    val scope = rememberCoroutineScope()
+    val width = viewModelWatchPhoto.stateWidth.collectAsState()
+    val height = viewModelWatchPhoto.stateHeight.collectAsState()
     TopAppBar(
         elevation = 0.dp,
-        title = {},
+        title = {
+            Text(
+                text = width.value.toInt().toString() + " x " + height.value.toInt().toString(),
+                fontSize = 16.sp,
+                fontFamily = FontFamily(Font(R.font.atypdisplaynew)),
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth(),
+            )
+        },
         navigationIcon = {
             IconButton(onClick = {
                 navController.popBackStack()

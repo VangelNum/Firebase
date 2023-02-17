@@ -1,11 +1,11 @@
 package com.zxcursed.wallpaper.feature_main.presentation
 
-import android.util.Log
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
@@ -17,7 +17,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import coil.compose.SubcomposeAsyncImage
+import coil.compose.*
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.SwipeRefreshIndicator
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
@@ -30,6 +30,7 @@ import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MainScreen(
     scaffoldState: ScaffoldState,
@@ -56,130 +57,119 @@ fun MainScreen(
             )
         }
     ) {
-        Box(modifier = Modifier.fillMaxSize()) {
-            LazyVerticalGrid(
-                GridCells.Fixed(2),
-                modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.spacedBy(10.dp),
-                horizontalArrangement = Arrangement.spacedBy(10.dp),
-                contentPadding = PaddingValues(horizontal = 10.dp, vertical = 10.dp),
-            ) {
-                resources.data?.let { photos ->
-                    items(photos.arrayImages) { photoUrl ->
-                        Card(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(350.dp)
-                                .clickable {
-                                    val encodedUrl =
-                                        URLEncoder.encode(
-                                            photoUrl,
-                                            StandardCharsets.UTF_8.toString()
-                                        )
-                                    navController.navigate(Screens.WatchPhoto.withArgs(encodedUrl))
-                                },
-                            shape = RoundedCornerShape(25.dp)
+        LazyVerticalStaggeredGrid(
+            columns = StaggeredGridCells.Fixed(2),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp),
+            modifier = Modifier.fillMaxSize()
+        ) {
+            resources.data?.let {
+                items(it.arrayImages) { photoUrl ->
+                    Card(
+                        modifier = Modifier
+                            .clickable {
+                                val encodedUrl = URLEncoder.encode(
+                                    photoUrl,
+                                    StandardCharsets.UTF_8.toString()
+                                )
+                                navController.navigate(Screens.WatchPhoto.withArgs(encodedUrl))
+                            },
+                        shape = RoundedCornerShape(16.dp),
+                    ) {
+                        SubcomposeAsyncImage(
+                            model = photoUrl,
+                            contentDescription = "photo",
+                            contentScale = ContentScale.FillWidth,
                         ) {
-                            SubcomposeAsyncImage(model = photoUrl,
-                                contentDescription = "photo",
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(350.dp),
-                                contentScale = ContentScale.Crop,
-                                error = {
-                                    Icon(
-                                        painter = painterResource(id = R.drawable.ic_baseline_error_24),
-                                        contentDescription = "error"
-                                    )
-                                },
-                                loading = {
-                                    Box(
-                                        modifier = Modifier.fillMaxSize(),
-                                        contentAlignment = Alignment.Center
-                                    ) {
-                                        CircularProgressIndicator()
-                                    }
+                            val state = painter.state
+                            if (state is AsyncImagePainter.State.Loading || state is AsyncImagePainter.State.Error) {
+                                Box(
+                                    modifier = Modifier.fillMaxSize(),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    CircularProgressIndicator()
                                 }
-                            )
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxSize(),
-                                contentAlignment = Alignment.BottomEnd
-                            ) {
-
-                                val photoInFavourite = remember {
-                                    mutableStateOf(false)
-                                }
-
-                                photoInFavourite.value =
-                                    favourites.data.toString().contains(photoUrl)
-                                IconButton(onClick = {
-                                    if (photoInFavourite.value) {
-                                        viewModelForFavourite.deleteFavouritePhoto(photoUrl)
-                                        scope.launch {
-                                            val result =
-                                                scaffoldState.snackbarHostState.showSnackbar(
-                                                    "Удалено из избранного",
-                                                    "Отмена"
-                                                )
-                                            when (result) {
-                                                SnackbarResult.ActionPerformed -> {
-                                                    viewModelForFavourite.addFavouritePhoto(
-                                                        FavouritePhotosEntity(url = photoUrl)
-                                                    )
-                                                }
-                                                else -> Unit
-                                            }
-                                        }
-                                    } else {
-                                        viewModelForFavourite.addFavouritePhoto(
-                                            FavouritePhotosEntity(
-                                                url = photoUrl
-                                            )
-                                        )
-                                        scope.launch {
-                                            val result = scaffoldState
-                                                .snackbarHostState
-                                                .showSnackbar(
-                                                    "Добавлено в избранное",
-                                                    "Отмена",
-                                                    duration = SnackbarDuration.Short
-                                                )
-                                            Log.d("tag", result.toString())
-                                            when (result) {
-                                                SnackbarResult.ActionPerformed -> {
-                                                    viewModelForFavourite.deleteFavouritePhoto(url = photoUrl)
-                                                }
-                                                else -> Unit
-                                            }
-                                        }
-                                    }
-                                }) {
-                                    Icon(
-                                        painter = painterResource(id = R.drawable.ic_round_favorite_24),
-                                        contentDescription = "favourite",
-                                        tint = if (photoInFavourite.value) Color.Red else Color.White
-                                    )
-                                }
+                            } else {
+                                SubcomposeAsyncImageContent()
                             }
                         }
+                        Box(
+                            contentAlignment = Alignment.BottomEnd
+                        ) {
+
+                            val photoInFavourite = remember {
+                                mutableStateOf(false)
+                            }
+                            photoInFavourite.value = favourites.data.toString().contains(photoUrl)
+                            IconButton(onClick = {
+                                if (photoInFavourite.value) {
+                                    viewModelForFavourite.deleteFavouritePhoto(photoUrl)
+                                    scope.launch {
+                                        val result =
+                                            scaffoldState.snackbarHostState.showSnackbar(
+                                                "Удалено из избранного",
+                                                "Отмена",
+                                                duration = SnackbarDuration.Short
+                                            )
+                                        when (result) {
+                                            SnackbarResult.ActionPerformed -> {
+                                                viewModelForFavourite.addFavouritePhoto(
+                                                    FavouritePhotosEntity(url = photoUrl)
+                                                )
+                                            }
+                                            else -> Unit
+                                        }
+                                    }
+                                } else {
+                                    viewModelForFavourite.addFavouritePhoto(
+                                        FavouritePhotosEntity(
+                                            url = photoUrl
+                                        )
+                                    )
+                                    scope.launch {
+                                        val result = scaffoldState
+                                            .snackbarHostState
+                                            .showSnackbar(
+                                                "Добавлено в избранное",
+                                                "Отмена",
+                                                duration = SnackbarDuration.Short
+                                            )
+                                        when (result) {
+                                            SnackbarResult.ActionPerformed -> {
+                                                viewModelForFavourite.deleteFavouritePhoto(url = photoUrl)
+                                            }
+                                            else -> Unit
+                                        }
+                                    }
+                                }
+                            }) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.ic_round_favorite_24),
+                                    contentDescription = "favourite",
+                                    tint = if (photoInFavourite.value) Color.Red else Color.White,
+                                )
+                            }
+                        }
+
                     }
                 }
             }
-            if (resources.error.isNotBlank()) {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text(text = resources.error, color = Color.Red)
-                }
+        }
+
+        if (resources.error.isNotBlank()) {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Text(text = resources.error, color = Color.Red)
             }
-            if (resources.isLoading) {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator()
-                }
+        }
+        if (resources.isLoading) {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator()
             }
         }
     }
-
-
 }
+
+
 
 
