@@ -53,12 +53,11 @@ fun NotificationScreen(
         state = swipeRefreshState,
         onRefresh = { viewModel.getAllNotifications() },
         indicator = { state, refreshTrigger ->
-            val isLoading = resources.isLoading
             SwipeRefreshIndicator(
                 state = state,
                 refreshTriggerDistance = refreshTrigger,
-                contentColor = if (isLoading) Color.Transparent else Color.Green,
-                backgroundColor = if (isLoading) Color.Transparent else MaterialTheme.colors.surface
+                contentColor = Color.Green,
+                backgroundColor = MaterialTheme.colors.surface
             )
         }
     ) {
@@ -99,7 +98,11 @@ fun NotificationScreen(
                                 )
                             }
                             SelectionContainer {
-                                Text(text = res.name1!!, maxLines = 5, overflow = TextOverflow.Ellipsis)
+                                Text(
+                                    text = res.name1!!,
+                                    maxLines = 5,
+                                    overflow = TextOverflow.Ellipsis
+                                )
                             }
                         }
                         Spacer(modifier = Modifier.height(10.dp))
@@ -111,7 +114,11 @@ fun NotificationScreen(
                                     intent.data = Uri.parse(res.name1)
                                     context.startActivity(intent)
                                 } catch (e: Exception) {
-                                    Toast.makeText(context, e.message.toString(), Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(
+                                        context,
+                                        e.message.toString(),
+                                        Toast.LENGTH_SHORT
+                                    ).show()
                                 }
                             }, colors = ButtonDefaults.buttonColors(Color.Transparent),
                             modifier = Modifier.height(60.dp),
@@ -184,18 +191,47 @@ fun NotificationScreen(
         }
         if (resources.data.notification?.isEmpty() == true) {
             Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text(text = stringResource(id = R.string.no_notification))
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Text(text = stringResource(id = R.string.no_notification))
+                    OutlinedButton(
+                        onClick = { viewModel.getAllNotifications() },
+                        colors = ButtonDefaults.buttonColors(Color.Transparent)
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.reload),
+                            style = TextStyle(
+                                fontSize = 18.sp,
+                                fontWeight = FontWeight.Light,
+                            )
+                        )
+                    }
+                }
             }
 
         }
         if (resources.error.isNotBlank()) {
             Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text(text = resources.error)
-            }
-        }
-        if (resources.isLoading) {
-            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator()
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Text(text = resources.error)
+                    OutlinedButton(
+                        onClick = { viewModel.getAllNotifications() },
+                        colors = ButtonDefaults.buttonColors(Color.Transparent)
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.reload),
+                            style = TextStyle(
+                                fontSize = 18.sp,
+                                fontWeight = FontWeight.Light,
+                            )
+                        )
+                    }
+                }
             }
         }
     }

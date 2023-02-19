@@ -22,33 +22,33 @@ fun MyBottomNavigation(
 ) {
     BottomNavigation(elevation = 0.dp) {
         items.forEach { screen ->
-                BottomNavigationItem(
-                    icon = {
-                        Icon(
-                            painter = painterResource(id = screen.icon),
-                            contentDescription = null,
-                        )
-                    },
-                    label = {
-                        Text(
-                            text = screen.title,
-                            overflow = TextOverflow.Ellipsis,
-                            maxLines = 1
-                        )
-                    },
-                    selected = currentDestination?.hierarchy?.any {
-                        it.route == screen.route
-                    } == true,
-                    onClick = {
-                        navController.navigate(screen.route) {
-                            popUpTo(navController.graph.findStartDestination().id) {
-                                saveState = true
-                            }
-                            launchSingleTop = true
-                            restoreState = true
+            BottomNavigationItem(
+                icon = {
+                    Icon(
+                        painter = painterResource(id = screen.icon),
+                        contentDescription = null,
+                    )
+                },
+                label = {
+                    Text(
+                        text = screen.title,
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 1
+                    )
+                },
+                selected = currentDestination?.hierarchy?.any {
+                    it.route == screen.route
+                } == true,
+                onClick = {
+                    navController.navigate(screen.route) {
+                        popUpTo(navController.graph.findStartDestination().id) {
+                            saveState = true
                         }
+                        launchSingleTop = true
+                        restoreState = true
                     }
-                )
+                }
+            )
 
         }
     }

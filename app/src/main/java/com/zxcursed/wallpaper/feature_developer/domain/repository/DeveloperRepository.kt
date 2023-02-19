@@ -10,4 +10,6 @@ interface DeveloperRepository {
     suspend fun addUsersPhotosFromDeveloper(onePhoto: String, collectPhotos: UserPhotos)
 
     suspend fun deleteUsersPhotosFromDeveleoper(onePhoto: String, collectPhotos: UserPhotos)
+
+    suspend fun deleteUsersPhotosFromDeveloperFirestore(onePhoto: String)
 }

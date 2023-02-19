@@ -122,6 +122,9 @@ fun DrawerBody(navController: NavController, scaffoldState: ScaffoldState) {
         item {
             Spacer(modifier = Modifier.height(100.dp))
             Text(text = stringResource(id = R.string.develeper), color = Color.Transparent, modifier = Modifier.clickable {
+                scope.launch {
+                    scaffoldState.drawerState.close()
+                }
                 navController.navigate(Screens.DeveloperJoinScreen.route)
             })
         }

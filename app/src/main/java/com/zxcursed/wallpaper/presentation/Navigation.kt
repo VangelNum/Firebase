@@ -1,5 +1,7 @@
 package com.zxcursed.wallpaper.presentation
 
+import androidx.activity.OnBackPressedCallback
+import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.*
@@ -34,6 +36,7 @@ import com.zxcursed.wallpaper.feature_notification.presentation.NotificationScre
 import com.zxcursed.wallpaper.feature_register.presentation.RegisterScreen
 import com.zxcursed.wallpaper.feature_watch_photo.presentation.WatchPhotoScreen
 import com.zxcursed.wallpaper.feature_watch_photo.presentation.WatchPhotoViewModel
+import kotlinx.coroutines.launch
 
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -41,6 +44,7 @@ import com.zxcursed.wallpaper.feature_watch_photo.presentation.WatchPhotoViewMod
 fun Navigation(
     navController: NavHostController = rememberNavController(),
 ) {
+
 
     val auth = Firebase.auth
     val currentUser = auth.currentUser
@@ -69,17 +73,25 @@ fun Navigation(
     }
 
     when (navBackStackEntry?.destination?.route) {
-        Screens.Login.route -> {
-            showAppBar = false
-            showBottomBar = false
-        }
-        Screens.Register.route -> {
-            showAppBar = false
-            showBottomBar = false
-        }
-        else -> {
+        Screens.Main.route -> {
             showAppBar = true
             showBottomBar = true
+        }
+        Screens.Favourite.route -> {
+            showAppBar = true
+            showBottomBar = true
+        }
+        Screens.Notification.route -> {
+            showAppBar = true
+            showBottomBar = true
+        }
+        Screens.Add.route -> {
+            showAppBar = true
+            showBottomBar = true
+        }
+        else -> {
+            showAppBar = false
+            showBottomBar = false
         }
     }
 
@@ -93,6 +105,8 @@ fun Navigation(
     val scaffoldState = rememberScaffoldState()
 
     val watchPhotoViewModel = viewModel<WatchPhotoViewModel>()
+
+
 
     Scaffold(
         scaffoldState = scaffoldState,
@@ -128,12 +142,33 @@ fun Navigation(
             }
         },
         drawerContent = {
+
+            val scope = rememberCoroutineScope()
+            val onBackPressedCallback = remember {
+                object : OnBackPressedCallback(true) {
+                    override fun handleOnBackPressed() {
+                        if (scaffoldState.drawerState.isOpen) {
+                            scope.launch {
+                                scaffoldState.drawerState.close()
+                            }
+                            isEnabled = true
+                        } else {
+                            isEnabled = false
+                        }
+                    }
+                }
+            }
+            LocalOnBackPressedDispatcherOwner.current
+                ?.onBackPressedDispatcher
+                ?.addCallback(onBackPressedCallback)
             DrawerHeader(auth)
             DrawerBody(navController, scaffoldState)
         },
         drawerElevation = 0.dp,
         topBar = {
             if (showAppBar) {
+                MyTopBar(scaffoldState = scaffoldState)
+            } else {
                 if (currentDestination?.route == Screens.WatchPhoto.route + "/{url}") {
                     MyTopBarForWatchScreen(
                         navController = navController,
@@ -141,7 +176,20 @@ fun Navigation(
                         watchPhotoViewModel
                     )
                 } else {
-                    MyTopBar(scaffoldState)
+                    TopAppBar(
+                        elevation = 0.dp,
+                        title = {},
+                        navigationIcon = {
+                            IconButton(onClick = {
+                                navController.popBackStack()
+                            }) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.ic_baseline_arrow_back_24),
+                                    contentDescription = "back"
+                                )
+                            }
+                        }
+                    )
                 }
             }
         },
@@ -149,7 +197,7 @@ fun Navigation(
             if (showBottomBar) {
                 MyBottomNavigation(items, currentDestination, navController)
             }
-        }
+        },
     ) { innerPadding ->
         NavHost(
             navController = navController,
@@ -175,7 +223,7 @@ fun Navigation(
                 AddPhotoTabScreen()
             }
             composable(route = Screens.Developer.route) {
-                DeveloperScreen()
+                DeveloperScreen(navController)
             }
             composable(route = Screens.DeveloperJoinScreen.route) {
                 DeveloperJoinScreen(uid = uid, navController = navController)
@@ -188,7 +236,6 @@ fun Navigation(
                     type = NavType.StringType
                 }
             )) { entry ->
-                //val watchPhotoViewModel = viewModel<WatchPhotoViewModel>()
                 WatchPhotoScreen(
                     watchPhotoViewModel,
                     url = entry.arguments?.getString("url"),
@@ -199,5 +246,6 @@ fun Navigation(
                 ContactScreen()
             }
         }
+
     }
 }

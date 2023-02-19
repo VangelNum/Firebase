@@ -14,7 +14,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.*
@@ -48,12 +52,11 @@ fun MainScreen(
         state = swipeRefreshState,
         onRefresh = { viewModelMain.getAllPhotos() },
         indicator = { state, refreshTrigger ->
-            val isLoading = resources.isLoading
             SwipeRefreshIndicator(
                 state = state,
                 refreshTriggerDistance = refreshTrigger,
-                contentColor = if (isLoading) Color.Transparent else Color.Green,
-                backgroundColor = if (isLoading) Color.Transparent else MaterialTheme.colors.surface
+                contentColor = Color.Green,
+                backgroundColor = MaterialTheme.colors.surface
             )
         }
     ) {
@@ -83,12 +86,14 @@ fun MainScreen(
                             contentScale = ContentScale.FillWidth,
                         ) {
                             val state = painter.state
-                            if (state is AsyncImagePainter.State.Loading || state is AsyncImagePainter.State.Error) {
+                            if (state is AsyncImagePainter.State.Loading) {
                                 Box(
-                                    modifier = Modifier.fillMaxSize(),
+                                    modifier = Modifier.height(48.dp),
                                     contentAlignment = Alignment.Center
                                 ) {
-                                    CircularProgressIndicator()
+                                    CircularProgressIndicator(
+                                        modifier = Modifier.then(Modifier.size(32.dp))
+                                    )
                                 }
                             } else {
                                 SubcomposeAsyncImageContent()
@@ -156,17 +161,27 @@ fun MainScreen(
                 }
             }
         }
-
-        if (resources.error.isNotBlank()) {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text(text = resources.error, color = Color.Red)
+        if (resources.error.isNotBlank())
+            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Text(text = resources.error)
+                    OutlinedButton(
+                        onClick = { viewModelMain.getAllPhotos() },
+                        colors = ButtonDefaults.buttonColors(Color.Transparent)
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.reload),
+                            style = TextStyle(
+                                fontSize = 18.sp,
+                                fontWeight = FontWeight.Light,
+                            )
+                        )
+                    }
+                }
             }
-        }
-        if (resources.isLoading) {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator()
-            }
-        }
     }
 }
 

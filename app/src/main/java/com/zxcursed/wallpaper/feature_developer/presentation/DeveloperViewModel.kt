@@ -1,6 +1,5 @@
 package com.zxcursed.wallpaper.feature_developer.presentation
 
-import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -28,28 +27,28 @@ class DeveloperViewModel @Inject constructor(
         getUsersPhotos()
     }
 
-    private fun getUsersPhotos() {
-            developerUseCase.getUsersPhotosUseCase().onEach { result ->
-                when (result) {
-                    is Resource.Error -> {
-                        _allUsersPhotosForDeveloper.value = allUsersPhotosForDeveloper.value.copy(
-                            error = result.message.toString()
-                        )
-                    }
-                    is Resource.Loading -> {
-                        _allUsersPhotosForDeveloper.value = allUsersPhotosForDeveloper.value.copy(
-                            isLoading = true
-                        )
-                    }
-                    is Resource.Success -> {
-                        _allUsersPhotosForDeveloper.value = allUsersPhotosForDeveloper.value.copy(
-                            isLoading = false,
-                            data = result.data?: emptyList()
-                        )
-
-                    }
+    fun getUsersPhotos() {
+        developerUseCase.getUsersPhotosUseCase().onEach { result ->
+            when (result) {
+                is Resource.Error -> {
+                    _allUsersPhotosForDeveloper.value = allUsersPhotosForDeveloper.value.copy(
+                        error = result.message.toString()
+                    )
                 }
-            }.launchIn(viewModelScope)
+                is Resource.Loading -> {
+                    _allUsersPhotosForDeveloper.value = allUsersPhotosForDeveloper.value.copy(
+                        isLoading = true
+                    )
+                }
+                is Resource.Success -> {
+                    _allUsersPhotosForDeveloper.value = allUsersPhotosForDeveloper.value.copy(
+                        isLoading = false,
+                        data = result.data ?: emptyList()
+                    )
+
+                }
+            }
+        }.launchIn(viewModelScope)
 
     }
 
@@ -62,6 +61,13 @@ class DeveloperViewModel @Inject constructor(
     fun deleteUserPhotosDev(onePhoto: String, photos: UserPhotos) {
         viewModelScope.launch(Dispatchers.IO) {
             developerUseCase.deleteUsersPhotosUseCase(onePhoto, photos)
+        }
+    }
+
+    fun deleteUserPhotoFromFirestore(onePhoto: String, photos: UserPhotos) {
+        viewModelScope.launch {
+            deleteUserPhotosDev(onePhoto, photos)
+            developerUseCase.deleteUsersPhotosFromFirestoreUseCase(onePhoto)
         }
     }
 

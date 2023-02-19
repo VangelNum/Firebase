@@ -56,5 +56,8 @@
     <string name="choose_from_galery">Выбрать из галереи</string>
     <string name="send_url">Отправить ссылку</string>
     <string name="more_than_3mb">Фото весит больше 3MB, выберите другое</string>
+    <string name="reload">Обновить</string>
+    <string name="upload">Загрузить</string>
+    <string name="delete">Удалить</string>
 
 </resources>

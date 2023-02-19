@@ -1,9 +1,11 @@
 package com.zxcursed.wallpaper.feature_developer.presentation
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -12,17 +14,25 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import coil.compose.SubcomposeAsyncImage
 import com.zxcursed.wallpaper.R
+import com.zxcursed.wallpaper.presentation.Screens
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 
 
 @Composable
-fun DeveloperScreen(viewModel: DeveloperViewModel = hiltViewModel()) {
+fun DeveloperScreen(navController: NavController, viewModel: DeveloperViewModel = hiltViewModel()) {
 
     val resource = viewModel.allUsersPhotosForDeveloper.value
-    UsersImages(viewModel, allUsersPhotos = resource)
+    UsersImages(viewModel, allUsersPhotos = resource, navController)
 
 }
 
@@ -31,6 +41,7 @@ fun DeveloperScreen(viewModel: DeveloperViewModel = hiltViewModel()) {
 fun UsersImages(
     viewModel: DeveloperViewModel,
     allUsersPhotos: DeveloperState,
+    navController: NavController
 ) {
 
 
@@ -41,14 +52,18 @@ fun UsersImages(
     }
     if (allUsersPhotos.error.isNotBlank()) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text(text = allUsersPhotos.error)
+            Column() {
+                Text(text = allUsersPhotos.error)
+                Button(onClick = { viewModel.getUsersPhotos() }) {
+                    Text(text = stringResource(id = R.string.reload))
+                }
+            }
         }
     }
 
-
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(10.dp)
+        contentPadding = PaddingValues(10.dp),
     ) {
         items(allUsersPhotos.data) { collectPhotos ->
             if (collectPhotos.url.isNotEmpty()) {
@@ -56,60 +71,94 @@ fun UsersImages(
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(400.dp),
+                            .height(400.dp)
+                            .clickable {
+                                val encodedUrl = URLEncoder.encode(
+                                    onePhoto,
+                                    StandardCharsets.UTF_8.toString()
+                                )
+                                navController.navigate(Screens.WatchPhoto.withArgs(encodedUrl))
+                            },
                         shape = RoundedCornerShape(25.dp)
                     ) {
                         SubcomposeAsyncImage(
                             model = onePhoto,
                             contentDescription = "photos",
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(400.dp)
-                                .padding(),
+                            modifier = Modifier.fillMaxSize(),
                             contentScale = ContentScale.Crop,
                             error = {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.ic_baseline_error_24),
-                                    contentDescription = "error"
-                                )
+                                Box(
+                                    modifier = Modifier.fillMaxSize(),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.ic_baseline_error_24),
+                                        contentDescription = "error",
+                                    )
+                                }
+                            },
+                            loading = {
+                                Box(
+                                    modifier = Modifier.fillMaxSize(),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    CircularProgressIndicator()
+                                }
                             }
                         )
-                        Box(
-                            modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.BottomEnd
-                        ) {
-                            Row(
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                modifier = Modifier.fillMaxWidth()
-                            ) {
-                                IconButton(onClick = {
-                                    viewModel.updateUserPhotosDev(onePhoto, collectPhotos)
-                                }) {
-                                    Icon(
-                                        painter = painterResource(id = R.drawable.ic_baseline_upload_24),
-                                        contentDescription = "upload",
-                                        modifier = Modifier.size(30.dp),
-                                        tint = Color.Red
-                                    )
-                                }
-                                IconButton(onClick = {
-                                    viewModel.deleteUserPhotosDev(onePhoto, collectPhotos)
-                                }) {
-                                    Icon(
-                                        painter = painterResource(id = R.drawable.ic_baseline_delete_24),
-                                        contentDescription = "delete",
-                                        modifier = Modifier.size(30.dp),
-                                        tint = Color.Red
-                                    )
-                                }
-                            }
-                        }
                     }
-                    Spacer(modifier = Modifier.height(10.dp))
-                    Text(text = stringResource(id = R.string.link) +" "+ onePhoto)
+                    Spacer(modifier = Modifier.height(8.dp))
+                    OutlinedButton(
+                        onClick = {
+                            viewModel.updateUserPhotosDev(onePhoto, collectPhotos)
+                        }, colors = ButtonDefaults.buttonColors(Color.Transparent),
+                        modifier = Modifier.height(60.dp),
+                        shape = RoundedCornerShape(25.dp)
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.upload),
+                            modifier = Modifier.fillMaxWidth(),
+                            textAlign = TextAlign.Center,
+                            style = TextStyle(
+                                fontSize = 18.sp,
+                                fontWeight = FontWeight.Light,
+                            )
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(8.dp))
+                    OutlinedButton(
+                        onClick = {
+                            if (onePhoto.contains("https://firebasestorage")) {
+                                viewModel.deleteUserPhotoFromFirestore(onePhoto, collectPhotos)
+                            } else {
+                                viewModel.deleteUserPhotosDev(onePhoto, collectPhotos)
+                            }
+                        }, colors = ButtonDefaults.buttonColors(Color.Transparent),
+                        modifier = Modifier.height(60.dp),
+                        shape = RoundedCornerShape(25.dp)
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.delete),
+                            modifier = Modifier.fillMaxWidth(),
+                            textAlign = TextAlign.Center,
+                            style = TextStyle(
+                                fontSize = 18.sp,
+                                fontWeight = FontWeight.Light,
+                            )
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    Text(text = stringResource(id = R.string.link) + " ")
+                    SelectionContainer() {
+                        Text(text = onePhoto)
+                    }
+
+
                     Text(text = stringResource(id = R.string.email) + " " + collectPhotos.email)
                     Text(text = stringResource(id = R.string.uid) + " " + collectPhotos.userId)
                     Text(text = stringResource(id = R.string.score) + " " + collectPhotos.score)
+                    Spacer(modifier = Modifier.height(8.dp))
 
                 }
             }

@@ -4,6 +4,8 @@ import android.util.Log
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.toObjects
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 import com.zxcursed.wallpaper.common.Resource
 import com.zxcursed.wallpaper.feature_developer.data.dto.UserPhotosDto
 import com.zxcursed.wallpaper.feature_developer.data.mapper.toUserPhotos
@@ -177,5 +179,19 @@ class DeveloperRepositoryImpl @Inject constructor(
             }
 
 
+    }
+
+    override suspend fun deleteUsersPhotosFromDeveloperFirestore(onePhoto: String) {
+        val storage = Firebase.storage
+        val fileRef = storage.getReferenceFromUrl(onePhoto)
+
+        fileRef.delete()
+            .addOnSuccessListener {
+                Log.d("tag", "success delete from firestore")
+            }
+            .addOnFailureListener { exception ->
+                Log.e("tag","delete from firestore with error: $exception")
+                exception.printStackTrace()
+            }
     }
 }

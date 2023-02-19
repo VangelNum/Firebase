@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Environment
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -144,26 +145,34 @@ fun WatchPhotoScreen(
 }
 
 private fun download(url: String?, context: Context) {
-    val request = DownloadManager.Request(Uri.parse(url))
-    request.setDescription("Downloading")
-    request.setMimeType("image/*")
-    request.setTitle("File")
-    request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-    request.setDestinationInExternalPublicDir(
-        Environment.DIRECTORY_DOWNLOADS,
-        "photo.png"
-    )
-    val manager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager?
-    manager!!.enqueue(request)
+    try {
+        val request = DownloadManager.Request(Uri.parse(url))
+        request.setDescription("Downloading")
+        request.setMimeType("image/*")
+        request.setTitle("File")
+        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+        request.setDestinationInExternalPublicDir(
+            Environment.DIRECTORY_DOWNLOADS,
+            "photo.png"
+        )
+        val manager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager?
+        manager!!.enqueue(request)
+    } catch (e: Exception) {
+        Toast.makeText(context, e.message.toString(),Toast.LENGTH_SHORT).show()
+    }
 }
 
 
 private fun share(url: String?, context: Context) {
-    val sendIntent: Intent = Intent().apply {
-        action = Intent.ACTION_SEND
-        putExtra(Intent.EXTRA_TEXT, url)
-        type = "text/*"
+    try {
+        val sendIntent: Intent = Intent().apply {
+            action = Intent.ACTION_SEND
+            putExtra(Intent.EXTRA_TEXT, url)
+            type = "text/*"
+        }
+        val shareIntent = Intent.createChooser(sendIntent, null)
+        context.startActivity(shareIntent)
+    } catch (e: Exception) {
+        Toast.makeText(context,e.message.toString(), Toast.LENGTH_SHORT).show()
     }
-    val shareIntent = Intent.createChooser(sendIntent, null)
-    context.startActivity(shareIntent)
 }

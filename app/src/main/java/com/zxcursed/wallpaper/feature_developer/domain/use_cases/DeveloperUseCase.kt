@@ -6,4 +6,5 @@ data class DeveloperUseCase @Inject constructor(
     val addUsersPhotosDevUseCase: AddUsersPhotosDevUseCase,
     val deleteUsersPhotosUseCase: DeleteUsersPhotosUseCase,
     val getUsersPhotosUseCase: GetUsersPhotosUseCase,
+    val deleteUsersPhotosFromFirestoreUseCase: DeleteUsersPhotosFromFirestoreUseCase
 )

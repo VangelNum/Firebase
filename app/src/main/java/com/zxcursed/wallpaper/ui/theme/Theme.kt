@@ -38,13 +38,17 @@ private val LightColorPalette = lightColors(
 @Composable
 fun FirebaseTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable () -> Unit) {
     val systemUiController = rememberSystemUiController()
-    val colors = if (darkTheme) {
-        systemUiController.setSystemBarsColor(color = MyGray)
-        systemUiController.setNavigationBarColor(color = MyGray)
-        DarkColorPalette
-    } else {
-        LightColorPalette
-    }
+//    val colors = if (darkTheme) {
+//        systemUiController.setSystemBarsColor(color = MyGray)
+//        systemUiController.setNavigationBarColor(color = MyGray)
+//        DarkColorPalette
+//    } else {
+//        LightColorPalette
+//    }
+    systemUiController.setSystemBarsColor(color = MyGray)
+    systemUiController.setNavigationBarColor(color = MyGray)
+    val colors = DarkColorPalette
+
 
     MaterialTheme(
         colors = colors,
