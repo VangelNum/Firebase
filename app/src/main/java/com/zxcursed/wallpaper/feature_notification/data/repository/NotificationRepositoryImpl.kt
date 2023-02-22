@@ -17,7 +17,7 @@ class NotificationRepositoryImpl @Inject constructor(
 ) : NotificationRepository {
     override suspend fun getNotifications(): Flow<Resource<NotificationToUserData>> = flow {
         try {
-            emit(Resource.Loading(isLoading = true))
+            emit(Resource.Loading())
             val uid = auth.currentUser?.uid.toString()
             val collection = Firebase.firestore.collection("users").document(uid)
             val querySnapShot = collection.get().await()

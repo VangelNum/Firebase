@@ -32,28 +32,64 @@ import androidx.navigation.NavController
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import com.zxcursed.wallpaper.R
-import com.zxcursed.wallpaper.presentation.Screens
 import com.zxcursed.wallpaper.common.Resource
+import com.zxcursed.wallpaper.presentation.Screens
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun RegisterScreen(
-    auth: FirebaseAuth,
     navController: NavController,
     viewModel: RegisterViewModel = hiltViewModel()
 ) {
 
+    val alreadyRegisterState = viewModel.alreadyRegisterFlow.collectAsState()
+
+    when (alreadyRegisterState.value) {
+        is Resource.Success -> {
+            LaunchedEffect(key1 = Unit) {
+                navController.navigate(Screens.Main.route) {
+                    popUpTo(Screens.Login.route) {
+                        inclusive = true
+                    }
+                    popUpTo(Screens.Register.route) {
+                        inclusive = true
+                    }
+                }
+            }
+        }
+        is Resource.Loading -> {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator()
+            }
+        }
+        is Resource.Error -> {
+            Log.d("tag","state5")
+            if (alreadyRegisterState.value.message?.isBlank() == true) {
+                RegisterScreenItems(navController = navController, viewModel = viewModel)
+            }
+        }
+    }
+
+
+}
+
+@OptIn(ExperimentalComposeUiApi::class)
+@Composable
+fun RegisterScreenItems(
+    navController: NavController,
+    viewModel: RegisterViewModel
+) {
     val state = viewModel.registerFlow.collectAsState()
     val context = LocalContext.current
-
+    val auth = Firebase.auth
     val launcher =
         rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) {
             val account = GoogleSignIn.getSignedInAccountFromIntent(it.data)
@@ -63,7 +99,14 @@ fun RegisterScreen(
                     val credentials = GoogleAuthProvider.getCredential(result.idToken, null)
                     auth.signInWithCredential(credentials).await()
                     withContext(Dispatchers.Main) {
-                        return@withContext navController.navigate(Screens.Main.route)
+                        return@withContext navController.navigate(Screens.Main.route) {
+                            popUpTo(Screens.Register.route) {
+                                inclusive = true
+                            }
+                            popUpTo(Screens.Login.route) {
+                                inclusive = true
+                            }
+                        }
                     }
                 } catch (it: ApiException) {
                     Log.d("Error", it.status.toString())
@@ -105,7 +148,8 @@ fun RegisterScreen(
                 color = MaterialTheme.colors.onBackground,
                 textAlign = TextAlign.Center
             )
-            OutlinedTextField(value = emailValue.value,
+            OutlinedTextField(
+                value = emailValue.value,
                 onValueChange = {
                     emailValue.value = it
                 },
@@ -180,7 +224,7 @@ fun RegisterScreen(
             ) {
                 Divider(modifier = Modifier.weight(2f))
                 Text(
-                    text = "OR",
+                    text = stringResource(id = R.string.or),
                     color = MaterialTheme.colors.onBackground,
                     modifier = Modifier.weight(1f),
                     textAlign = TextAlign.Center
@@ -224,25 +268,35 @@ fun RegisterScreen(
                         text = stringResource(id = R.string.already_have_account) + " ",
                         color = MaterialTheme.colors.onBackground
                     )
-                    Text(text = stringResource(id = R.string.login), color = MaterialTheme.colors.primary)
+                    Text(
+                        text = stringResource(id = R.string.login),
+                        color = MaterialTheme.colors.primary
+                    )
                 }
             }
         }
-        state.value?.let {
+        state.value.let {
             when (it) {
                 is Resource.Success -> {
+                    Log.d("tag", "state6")
                     LaunchedEffect(key1 = Unit) {
                         auth.currentUser?.sendEmailVerification()
                         navController.navigate(Screens.Login.route)
-                        Toast.makeText(context, "Verify your email please ${it.data?.email}", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            context,
+                            "Verify your email please ${it.data?.email}",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 }
                 is Resource.Error -> {
-                    LaunchedEffect(key1 = true) {
+                    Log.d("tag", "state7")
+                    LaunchedEffect(key1 = Unit) {
                         Toast.makeText(context, it.message.toString(), Toast.LENGTH_SHORT).show()
                     }
                 }
                 is Resource.Loading -> {
+                    Log.d("tag", "state8")
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
@@ -252,6 +306,7 @@ fun RegisterScreen(
                         CircularProgressIndicator()
                     }
                 }
+                else -> Unit
             }
         }
     }

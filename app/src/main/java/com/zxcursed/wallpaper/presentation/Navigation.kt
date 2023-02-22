@@ -1,7 +1,6 @@
 package com.zxcursed.wallpaper.presentation
 
-import androidx.activity.OnBackPressedCallback
-import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.*
@@ -21,8 +20,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
 import com.zxcursed.wallpaper.*
 import com.zxcursed.wallpaper.R
 import com.zxcursed.wallpaper.feature_add_photo.presentation.AddPhotoTabScreen
@@ -43,18 +40,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun Navigation(
     navController: NavHostController = rememberNavController(),
+    startDestination: String = Screens.Register.route
 ) {
-
-
-    val auth = Firebase.auth
-    val currentUser = auth.currentUser
-    var startDestination = Screens.Register.route
-    val uid = currentUser?.uid
-
-    if (currentUser != null && currentUser.isEmailVerified) {
-        startDestination = Screens.Main.route
-    }
-
     val items = listOf(
         Screens.Main,
         Screens.Favourite,
@@ -108,6 +95,7 @@ fun Navigation(
 
 
 
+
     Scaffold(
         scaffoldState = scaffoldState,
         snackbarHost = { hostState ->
@@ -142,26 +130,16 @@ fun Navigation(
             }
         },
         drawerContent = {
-
             val scope = rememberCoroutineScope()
-            val onBackPressedCallback = remember {
-                object : OnBackPressedCallback(true) {
-                    override fun handleOnBackPressed() {
-                        if (scaffoldState.drawerState.isOpen) {
-                            scope.launch {
-                                scaffoldState.drawerState.close()
-                            }
-                            isEnabled = true
-                        } else {
-                            isEnabled = false
-                        }
+            if (scaffoldState.drawerState.isOpen) {
+                BackHandler() {
+                    scope.launch {
+                        scaffoldState.drawerState.close()
                     }
                 }
             }
-            LocalOnBackPressedDispatcherOwner.current
-                ?.onBackPressedDispatcher
-                ?.addCallback(onBackPressedCallback)
-            DrawerHeader(auth)
+
+            DrawerHeader()
             DrawerBody(navController, scaffoldState)
         },
         drawerElevation = 0.dp,
@@ -175,21 +153,23 @@ fun Navigation(
                         sheetState = sheetState,
                         watchPhotoViewModel
                     )
-                } else {
-                    TopAppBar(
-                        elevation = 0.dp,
-                        title = {},
-                        navigationIcon = {
-                            IconButton(onClick = {
-                                navController.popBackStack()
-                            }) {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.ic_baseline_arrow_back_24),
-                                    contentDescription = "back"
-                                )
+                } else if (currentDestination != null) {
+                    if (currentDestination.route != Screens.Login.route && currentDestination.route != Screens.Register.route) {
+                        TopAppBar(
+                            elevation = 0.dp,
+                            title = {},
+                            navigationIcon = {
+                                IconButton(onClick = {
+                                    navController.popBackStack()
+                                }) {
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.ic_baseline_arrow_back_24),
+                                        contentDescription = "back"
+                                    )
+                                }
                             }
-                        }
-                    )
+                        )
+                    }
                 }
             }
         },
@@ -199,17 +179,18 @@ fun Navigation(
             }
         },
     ) { innerPadding ->
+
         NavHost(
             navController = navController,
             startDestination = startDestination,
             modifier = Modifier.padding(innerPadding)
         ) {
             composable(route = Screens.Register.route) {
-                RegisterScreen(auth, navController)
+                RegisterScreen(navController)
             }
             composable(route = Screens.Login.route) {
                 LoginScreen(
-                    navController = navController, auth = auth,
+                    navController = navController,
                     scaffoldState = scaffoldState
                 )
             }
@@ -226,7 +207,7 @@ fun Navigation(
                 DeveloperScreen(navController)
             }
             composable(route = Screens.DeveloperJoinScreen.route) {
-                DeveloperJoinScreen(uid = uid, navController = navController)
+                DeveloperJoinScreen(navController = navController)
             }
             composable(route = Screens.Notification.route) {
                 NotificationScreen(navController)

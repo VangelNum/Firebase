@@ -1,11 +1,13 @@
 package com.zxcursed.wallpaper.feature_main.presentation
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
-import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
-import androidx.compose.foundation.lazy.staggeredgrid.items
+import androidx.compose.foundation.lazy.staggeredgrid.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
@@ -48,6 +50,14 @@ fun MainScreen(
 
     val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = resources.isLoading)
 
+    val listState = rememberLazyStaggeredGridState()
+
+    val showButton by remember {
+        derivedStateOf {
+            listState.firstVisibleItemIndex > 0
+        }
+    }
+
     SwipeRefresh(
         state = swipeRefreshState,
         onRefresh = { viewModelMain.getAllPhotos() },
@@ -60,103 +70,139 @@ fun MainScreen(
             )
         }
     ) {
-        LazyVerticalStaggeredGrid(
-            columns = StaggeredGridCells.Fixed(2),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp),
-            modifier = Modifier.fillMaxSize()
-        ) {
-            resources.data?.let {
-                items(it.arrayImages) { photoUrl ->
-                    Card(
-                        modifier = Modifier
-                            .clickable {
-                                val encodedUrl = URLEncoder.encode(
-                                    photoUrl,
-                                    StandardCharsets.UTF_8.toString()
-                                )
-                                navController.navigate(Screens.WatchPhoto.withArgs(encodedUrl))
-                            },
-                        shape = RoundedCornerShape(16.dp),
-                    ) {
-                        SubcomposeAsyncImage(
-                            model = photoUrl,
-                            contentDescription = "photo",
-                            contentScale = ContentScale.FillWidth,
-                        ) {
-                            val state = painter.state
-                            if (state is AsyncImagePainter.State.Loading) {
-                                Box(
-                                    modifier = Modifier.height(48.dp),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    CircularProgressIndicator(
-                                        modifier = Modifier.then(Modifier.size(32.dp))
+        Box(modifier = Modifier.fillMaxSize()) {
+            LazyVerticalStaggeredGrid(
+                state = listState,
+                columns = StaggeredGridCells.Fixed(2),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp),
+                modifier = Modifier.fillMaxSize()
+            ) {
+                resources.data?.let {
+                    items(it.arrayImages) { photoUrl ->
+                        Card(
+                            modifier = Modifier
+                                .clickable {
+                                    val encodedUrl = URLEncoder.encode(
+                                        photoUrl,
+                                        StandardCharsets.UTF_8.toString()
                                     )
-                                }
-                            } else {
-                                SubcomposeAsyncImageContent()
-                            }
-                        }
-                        Box(
-                            contentAlignment = Alignment.BottomEnd
+                                    navController.navigate(Screens.WatchPhoto.withArgs(encodedUrl))
+                                },
+                            shape = RoundedCornerShape(16.dp),
                         ) {
-
-                            val photoInFavourite = remember {
-                                mutableStateOf(false)
-                            }
-                            photoInFavourite.value = favourites.data.toString().contains(photoUrl)
-                            IconButton(onClick = {
-                                if (photoInFavourite.value) {
-                                    viewModelForFavourite.deleteFavouritePhoto(photoUrl)
-                                    scope.launch {
-                                        val result =
-                                            scaffoldState.snackbarHostState.showSnackbar(
-                                                "Удалено из избранного",
-                                                "Отмена",
-                                                duration = SnackbarDuration.Short
-                                            )
-                                        when (result) {
-                                            SnackbarResult.ActionPerformed -> {
-                                                viewModelForFavourite.addFavouritePhoto(
-                                                    FavouritePhotosEntity(url = photoUrl)
-                                                )
-                                            }
-                                            else -> Unit
-                                        }
+                            SubcomposeAsyncImage(
+                                model = photoUrl,
+                                contentDescription = "photo",
+                                contentScale = ContentScale.FillWidth,
+                            ) {
+                                val state = painter.state
+                                if (state is AsyncImagePainter.State.Loading) {
+                                    Box(
+                                        modifier = Modifier.height(48.dp),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        CircularProgressIndicator(
+                                            modifier = Modifier.then(Modifier.size(32.dp))
+                                        )
                                     }
                                 } else {
-                                    viewModelForFavourite.addFavouritePhoto(
-                                        FavouritePhotosEntity(
-                                            url = photoUrl
-                                        )
-                                    )
-                                    scope.launch {
-                                        val result = scaffoldState
-                                            .snackbarHostState
-                                            .showSnackbar(
-                                                "Добавлено в избранное",
-                                                "Отмена",
-                                                duration = SnackbarDuration.Short
-                                            )
-                                        when (result) {
-                                            SnackbarResult.ActionPerformed -> {
-                                                viewModelForFavourite.deleteFavouritePhoto(url = photoUrl)
+                                    SubcomposeAsyncImageContent()
+                                }
+                            }
+                            Box(
+                                contentAlignment = Alignment.BottomEnd
+                            ) {
+
+                                val photoInFavourite = remember {
+                                    mutableStateOf(false)
+                                }
+                                photoInFavourite.value =
+                                    favourites.data.toString().contains(photoUrl)
+                                IconButton(onClick = {
+                                    if (photoInFavourite.value) {
+                                        viewModelForFavourite.deleteFavouritePhoto(photoUrl)
+                                        scope.launch {
+                                            val result =
+                                                scaffoldState.snackbarHostState.showSnackbar(
+                                                    "Удалено из избранного",
+                                                    "Отмена",
+                                                    duration = SnackbarDuration.Short
+                                                )
+                                            when (result) {
+                                                SnackbarResult.ActionPerformed -> {
+                                                    viewModelForFavourite.addFavouritePhoto(
+                                                        FavouritePhotosEntity(url = photoUrl)
+                                                    )
+                                                }
+                                                else -> Unit
                                             }
-                                            else -> Unit
+                                        }
+                                    } else {
+                                        viewModelForFavourite.addFavouritePhoto(
+                                            FavouritePhotosEntity(
+                                                url = photoUrl
+                                            )
+                                        )
+                                        scope.launch {
+                                            val result = scaffoldState
+                                                .snackbarHostState
+                                                .showSnackbar(
+                                                    "Добавлено в избранное",
+                                                    "Отмена",
+                                                    duration = SnackbarDuration.Short
+                                                )
+                                            when (result) {
+                                                SnackbarResult.ActionPerformed -> {
+                                                    viewModelForFavourite.deleteFavouritePhoto(url = photoUrl)
+                                                }
+                                                else -> Unit
+                                            }
                                         }
                                     }
+                                }) {
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.ic_round_favorite_24),
+                                        contentDescription = "favourite",
+                                        tint = if (photoInFavourite.value) Color.Red else Color.White,
+                                    )
                                 }
-                            }) {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.ic_round_favorite_24),
-                                    contentDescription = "favourite",
-                                    tint = if (photoInFavourite.value) Color.Red else Color.White,
-                                )
                             }
-                        }
 
+                        }
+                    }
+                }
+            }
+            AnimatedVisibility(
+                visible = listState.isScrollingUp() && showButton,
+                enter = slideInHorizontally(
+                    initialOffsetX = { it },
+                    animationSpec = tween(durationMillis = 600)
+                ),
+                exit = slideOutHorizontally(
+                    targetOffsetX = { it },
+                    animationSpec = tween(durationMillis = 600)
+                )
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(16.dp),
+                    contentAlignment = Alignment.BottomEnd
+                ) {
+                    FloatingActionButton(
+                        onClick = {
+                            scope.launch {
+                                listState.animateScrollToItem(index = 0)
+                            }
+                        },
+                        backgroundColor = MaterialTheme.colors.surface
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_baseline_arrow_upward_24),
+                            contentDescription = "up"
+                        )
                     }
                 }
             }
@@ -185,6 +231,24 @@ fun MainScreen(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun LazyStaggeredGridState.isScrollingUp(): Boolean {
+    var previousIndex by remember(this) { mutableStateOf(firstVisibleItemIndex) }
+    var previousScrollOffset by remember(this) { mutableStateOf(firstVisibleItemScrollOffset) }
 
+    return remember(this) {
+        derivedStateOf {
+            if (previousIndex != firstVisibleItemIndex) {
+                previousIndex > firstVisibleItemIndex
+            } else {
+                previousScrollOffset >= firstVisibleItemScrollOffset
+            }.also {
+                previousIndex = firstVisibleItemIndex
+                previousScrollOffset = firstVisibleItemScrollOffset
+            }
+        }
+    }.value
+}
 
 

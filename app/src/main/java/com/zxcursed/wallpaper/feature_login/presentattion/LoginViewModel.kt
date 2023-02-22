@@ -23,7 +23,7 @@ class LoginViewModel @Inject constructor(
 
     fun loginUser(email: String, password: String) {
         viewModelScope.launch {
-            _loginFlow.value = Resource.Loading(isLoading = true)
+            _loginFlow.value = Resource.Loading()
             val result = repository.login(email, password = password)
             _loginFlow.value = result
         }

@@ -14,6 +14,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.zxcursed.wallpaper.presentation.Screens
@@ -25,11 +26,10 @@ import kotlinx.coroutines.withContext
 
 @Composable
 fun DeveloperJoinScreen(
-    uid: String?,
     navController: NavController,
     viewModel: DeveloperJoinViewModel = hiltViewModel()
 ) {
-
+    val uid = Firebase.auth.currentUser?.uid
     var valueText by remember {
         mutableStateOf("")
     }

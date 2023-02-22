@@ -22,17 +22,16 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.navOptions
 import coil.compose.SubcomposeAsyncImage
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import com.zxcursed.wallpaper.domain.MenuItems
 import com.zxcursed.wallpaper.R
+import com.zxcursed.wallpaper.domain.MenuItems
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
-fun DrawerHeader(auth: FirebaseAuth) {
-
+fun DrawerHeader() {
+    val auth = Firebase.auth
     val currentUser = auth.currentUser
     val photo = currentUser?.photoUrl
     val name = currentUser?.displayName.toString()
@@ -121,12 +120,15 @@ fun DrawerBody(navController: NavController, scaffoldState: ScaffoldState) {
         }
         item {
             Spacer(modifier = Modifier.height(100.dp))
-            Text(text = stringResource(id = R.string.develeper), color = Color.Transparent, modifier = Modifier.clickable {
-                scope.launch {
-                    scaffoldState.drawerState.close()
-                }
-                navController.navigate(Screens.DeveloperJoinScreen.route)
-            })
+            Text(
+                text = stringResource(id = R.string.develeper),
+                color = Color.Transparent,
+                modifier = Modifier.clickable {
+                    scope.launch {
+                        scaffoldState.drawerState.close()
+                    }
+                    navController.navigate(Screens.DeveloperJoinScreen.route)
+                })
         }
 
     }
@@ -146,7 +148,11 @@ fun onEvent(
             scope.launch {
                 scaffoldState.drawerState.close()
             }
-            navController.navigate(Screens.Login.route)
+            navController.navigate(Screens.Login.route) {
+                popUpTo(Screens.Main.route) {
+                    inclusive = true
+                }
+            }
             Firebase.auth.signOut()
         }
         is MenuItems.Share -> {

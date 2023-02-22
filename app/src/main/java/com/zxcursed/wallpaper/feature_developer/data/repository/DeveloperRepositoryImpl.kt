@@ -21,7 +21,7 @@ class DeveloperRepositoryImpl @Inject constructor(
     private val fireStore: FirebaseFirestore
 ) : DeveloperRepository {
     override fun getUsersPhotos(): Flow<Resource<List<UserPhotos>>> = callbackFlow {
-        Resource.Loading<Boolean>(isLoading = true)
+        Resource.Loading<Boolean>()
         val personCollection =
             fireStore.collection("users").addSnapshotListener { snapshot, error ->
                 val response = snapshot?.let {

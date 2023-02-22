@@ -29,9 +29,5 @@ object AddPhotoModule {
         return AddPhotoRepositoryImpl(auth, context = context, fireStore, firebaseStorage)
     }
 
-    @Provides
-    @Singleton
-    fun provideFireStorage(): FirebaseStorage {
-        return FirebaseStorage.getInstance()
-    }
+
 }

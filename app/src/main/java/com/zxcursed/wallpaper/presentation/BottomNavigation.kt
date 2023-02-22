@@ -11,7 +11,6 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
-import androidx.navigation.NavGraph.Companion.findStartDestination
 
 
 @Composable
@@ -41,7 +40,7 @@ fun MyBottomNavigation(
                 } == true,
                 onClick = {
                     navController.navigate(screen.route) {
-                        popUpTo(navController.graph.findStartDestination().id) {
+                        popUpTo(Screens.Main.route) {
                             saveState = true
                         }
                         launchSingleTop = true

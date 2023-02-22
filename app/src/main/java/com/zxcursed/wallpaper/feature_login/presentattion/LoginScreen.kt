@@ -32,8 +32,9 @@ import androidx.navigation.NavController
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import com.zxcursed.wallpaper.R
 import com.zxcursed.wallpaper.common.Resource
 import com.zxcursed.wallpaper.presentation.Screens
@@ -47,13 +48,12 @@ import kotlinx.coroutines.withContext
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun LoginScreen(
-    auth: FirebaseAuth,
     viewModel: LoginViewModel = hiltViewModel(),
     navController: NavController,
     scaffoldState: ScaffoldState
 ) {
 
-
+    val auth = Firebase.auth
     val state = viewModel.loginFlow.collectAsState()
     val context = LocalContext.current
 
@@ -67,7 +67,14 @@ fun LoginScreen(
                     val credentials = GoogleAuthProvider.getCredential(result.idToken, null)
                     auth.signInWithCredential(credentials).await()
                     withContext(Dispatchers.Main) {
-                        return@withContext navController.navigate(Screens.Main.route)
+                        return@withContext navController.navigate(Screens.Main.route) {
+                            popUpTo(Screens.Login.route) {
+                                inclusive = true
+                            }
+                            popUpTo(Screens.Register.route) {
+                                inclusive = true
+                            }
+                        }
                     }
                 } catch (it: ApiException) {
                     Log.d("Error", it.status.toString())
@@ -249,7 +256,14 @@ fun LoginScreen(
                 is Resource.Success -> {
                     LaunchedEffect(key1 = Unit) {
                         if (auth.currentUser?.isEmailVerified == true) {
-                            navController.navigate(Screens.Main.route)
+                            navController.navigate(Screens.Main.route) {
+                                popUpTo(Screens.Login.route) {
+                                    inclusive = true
+                                }
+                                popUpTo(Screens.Register.route) {
+                                    inclusive = true
+                                }
+                            }
                         } else {
                             val result =
                                 scaffoldState.snackbarHostState.showSnackbar(

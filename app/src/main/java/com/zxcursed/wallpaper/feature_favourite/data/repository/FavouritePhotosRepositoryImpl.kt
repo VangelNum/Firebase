@@ -11,7 +11,7 @@ class FavouritePhotosRepositoryImpl(
     private val myDao: FavouritePhotosDao,
 ) : FavouritePhotosRepository {
     override fun getAllFavouritesPhotos(): Flow<Resource<List<FavouritePhotosEntity>>> = flow {
-        emit(Resource.Loading(isLoading = true))
+        emit(Resource.Loading())
         try {
             val response = myDao.getAllUsersPhotos()
             response.collect {
