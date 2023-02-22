@@ -1,5 +1,6 @@
 package com.zxcursed.wallpaper.feature_main.di
 
+import com.google.firebase.firestore.FirebaseFirestore
 import com.zxcursed.wallpaper.feature_main.data.repository.MainRepositoryImpl
 import com.zxcursed.wallpaper.feature_main.domain.repository.MainRepository
 import dagger.Module
@@ -14,7 +15,7 @@ import javax.inject.Singleton
 object MainModule {
     @Singleton
     @Provides
-    fun provideMyRepository(): MainRepository {
-        return MainRepositoryImpl()
+    fun provideMyRepository(firestore: FirebaseFirestore): MainRepository {
+        return MainRepositoryImpl(firestore)
     }
 }

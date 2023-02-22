@@ -31,13 +31,13 @@ class AddPhotoRepositoryImpl @Inject constructor(
 ) : AddPhotoRepository {
     override suspend fun addPhoto(textValue: String) {
         try {
-            val uid = auth.currentUser?.uid ?: throw Exception("User ID is null")
+            val uid = auth.currentUser?.uid ?: return
             val collection = fireStore.collection("users").document(uid)
-            val email = auth.currentUser?.email ?: throw Exception("User email is null")
+            val email = auth.currentUser?.email ?: return
             val scoreDocument = collection.get().await()
 
             if (scoreDocument.exists()) {
-                val score = scoreDocument.getLong("score") ?: throw Exception("Score is null")
+                val score = scoreDocument.getLong("score") ?: return
                 val newScore = score + 1
                 val mapUpdate = mapOf(
                     "url" to FieldValue.arrayUnion(textValue),
@@ -69,7 +69,7 @@ class AddPhotoRepositoryImpl @Inject constructor(
                     }
                 }
             } else {
-                val mapUpdate = mapOf(
+                val mapUpdate =     mapOf(
                     "url" to FieldValue.arrayUnion(textValue),
                     "score" to 1L,
                     "notification" to FieldValue.arrayUnion(
@@ -157,14 +157,14 @@ private fun loadToFireStoreStarted(
     collection: DocumentReference,
     email: String,
     uid: String,
-    fireStorage: FirebaseStorage
+    fireStorage: FirebaseStorage,
 ) {
-
     val formatter = SimpleDateFormat("yyyy_MM_dd_HH_mm_ss", Locale.CANADA)
     val now = Date()
     val fileName = formatter.format(now)
     val storageReference: StorageReference = fireStorage.getReference("images/$email/$fileName")
     if (selectedPicUri != null) {
+        Toast.makeText(context,context.getString(R.string.photo_upload),Toast.LENGTH_SHORT).show()
         storageReference.putFile(selectedPicUri).addOnSuccessListener { taskSnapShot ->
             taskSnapShot.metadata?.reference?.downloadUrl?.addOnSuccessListener { urlToPhoto ->
                 val mapUpdate = mapOf(
@@ -215,6 +215,7 @@ private fun loadToFireStore(
     val fileName = formatter.format(now)
     val storageReference: StorageReference = fireStorage.getReference("images/$email/$fileName")
     if (selectedPicUri != null) {
+        Toast.makeText(context,context.getString(R.string.photo_upload),Toast.LENGTH_SHORT).show()
         storageReference.putFile(selectedPicUri).addOnSuccessListener { taskSnapShot ->
             taskSnapShot.metadata?.reference?.downloadUrl?.addOnSuccessListener { urlToPhoto ->
                 val mapUpdate = mapOf(

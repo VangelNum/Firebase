@@ -5,6 +5,7 @@ import android.net.Uri
 import android.provider.OpenableColumns
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -50,7 +51,7 @@ fun GalleryScreenBody(viewModel: AddPhotoViewModel = hiltViewModel()) {
 
     val launcher = rememberLauncherForActivityResult(
         contract =
-        ActivityResultContracts.GetContent()
+        ActivityResultContracts.PickVisualMedia()
     ) { uri: Uri? ->
 
 
@@ -80,7 +81,7 @@ fun GalleryScreenBody(viewModel: AddPhotoViewModel = hiltViewModel()) {
     OutlinedButton(
         onClick = {
             try {
-                launcher.launch("image/*")
+                launcher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
             } catch (e: Exception) {
                 Toast.makeText(context, e.message.toString(), Toast.LENGTH_SHORT).show()
             }
@@ -101,7 +102,6 @@ fun GalleryScreenBody(viewModel: AddPhotoViewModel = hiltViewModel()) {
         OutlinedButton(
             onClick = {
                 viewModel.addPhotoToFireStorage(it)
-                Toast.makeText(context, "Фото отправляется", Toast.LENGTH_LONG).show()
             }, colors = ButtonDefaults.buttonColors(Color.Transparent),
             modifier = Modifier.height(60.dp),
             shape = RoundedCornerShape(25.dp)

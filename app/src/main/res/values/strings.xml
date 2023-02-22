@@ -59,5 +59,7 @@
     <string name="reload">Обновить</string>
     <string name="upload">Загрузить</string>
     <string name="delete">Удалить</string>
+    <string name="cant_be_empty">Строка Url не может быть пуста</string>
+    <string name="photo_upload">Фото загружается</string>
 
 </resources>

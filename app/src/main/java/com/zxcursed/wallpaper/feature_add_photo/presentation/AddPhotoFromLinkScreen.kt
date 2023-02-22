@@ -67,7 +67,7 @@ fun LinkBody(viewModel: AddPhotoViewModel = hiltViewModel()) {
             if (textValue.value.isNotBlank()) {
                 viewModel.addPhoto(textValue.value)
             } else {
-                Toast.makeText(context, "Строка Url не может быть пуста", Toast.LENGTH_SHORT)
+                Toast.makeText(context, context.getString(R.string.cant_be_empty), Toast.LENGTH_SHORT)
                     .show()
             }
         }, colors = ButtonDefaults.buttonColors(Color.Transparent),

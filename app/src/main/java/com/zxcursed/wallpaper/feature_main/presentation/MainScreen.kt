@@ -1,5 +1,6 @@
 package com.zxcursed.wallpaper.feature_main.presentation
 
+
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
@@ -52,12 +53,6 @@ fun MainScreen(
 
     val listState = rememberLazyStaggeredGridState()
 
-    val showButton by remember {
-        derivedStateOf {
-            listState.firstVisibleItemIndex > 0
-        }
-    }
-
     SwipeRefresh(
         state = swipeRefreshState,
         onRefresh = { viewModelMain.getAllPhotos() },
@@ -70,165 +65,165 @@ fun MainScreen(
             )
         }
     ) {
-        Box(modifier = Modifier.fillMaxSize()) {
-            LazyVerticalStaggeredGrid(
-                state = listState,
-                columns = StaggeredGridCells.Fixed(2),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp),
-                modifier = Modifier.fillMaxSize()
-            ) {
-                resources.data?.let {
-                    items(it.arrayImages) { photoUrl ->
-                        Card(
-                            modifier = Modifier
-                                .clickable {
-                                    val encodedUrl = URLEncoder.encode(
-                                        photoUrl,
-                                        StandardCharsets.UTF_8.toString()
-                                    )
-                                    navController.navigate(Screens.WatchPhoto.withArgs(encodedUrl))
-                                },
-                            shape = RoundedCornerShape(16.dp),
+
+        LazyVerticalStaggeredGrid(
+            state = listState,
+            columns = StaggeredGridCells.Adaptive(128.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp),
+            modifier = Modifier.fillMaxSize()
+        ) {
+            resources.data?.let {
+                items(it.arrayImages) { photoUrl ->
+                    Card(
+                        modifier = Modifier
+                            .clickable {
+                                val encodedUrl = URLEncoder.encode(
+                                    photoUrl,
+                                    StandardCharsets.UTF_8.toString()
+                                )
+                                navController.navigate(Screens.WatchPhoto.withArgs(encodedUrl))
+                            },
+                        shape = RoundedCornerShape(16.dp),
+                    ) {
+                        SubcomposeAsyncImage(
+                            model = photoUrl,
+                            contentDescription = "photo",
+                            contentScale = ContentScale.FillWidth,
                         ) {
-                            SubcomposeAsyncImage(
-                                model = photoUrl,
-                                contentDescription = "photo",
-                                contentScale = ContentScale.FillWidth,
-                            ) {
-                                val state = painter.state
-                                if (state is AsyncImagePainter.State.Loading) {
-                                    Box(
-                                        modifier = Modifier.height(48.dp),
-                                        contentAlignment = Alignment.Center
-                                    ) {
-                                        CircularProgressIndicator(
-                                            modifier = Modifier.then(Modifier.size(32.dp))
-                                        )
+                            val state = painter.state
+                            if (state is AsyncImagePainter.State.Loading) {
+                                Box(
+                                    modifier = Modifier.height(48.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    CircularProgressIndicator(
+                                        modifier = Modifier.then(Modifier.size(32.dp))
+                                    )
+                                }
+                            } else {
+                                SubcomposeAsyncImageContent()
+                            }
+                        }
+                        Box(
+                            contentAlignment = Alignment.BottomEnd
+                        ) {
+
+                            val photoInFavourite = remember {
+                                mutableStateOf(false)
+                            }
+                            photoInFavourite.value =
+                                favourites.data.toString().contains(photoUrl)
+                            IconButton(onClick = {
+                                if (photoInFavourite.value) {
+                                    viewModelForFavourite.deleteFavouritePhoto(photoUrl)
+                                    scope.launch {
+                                        val result =
+                                            scaffoldState.snackbarHostState.showSnackbar(
+                                                "Удалено из избранного",
+                                                "Отмена",
+                                                duration = SnackbarDuration.Short
+                                            )
+                                        when (result) {
+                                            SnackbarResult.ActionPerformed -> {
+                                                viewModelForFavourite.addFavouritePhoto(
+                                                    FavouritePhotosEntity(url = photoUrl)
+                                                )
+                                            }
+                                            else -> Unit
+                                        }
                                     }
                                 } else {
-                                    SubcomposeAsyncImageContent()
-                                }
-                            }
-                            Box(
-                                contentAlignment = Alignment.BottomEnd
-                            ) {
-
-                                val photoInFavourite = remember {
-                                    mutableStateOf(false)
-                                }
-                                photoInFavourite.value =
-                                    favourites.data.toString().contains(photoUrl)
-                                IconButton(onClick = {
-                                    if (photoInFavourite.value) {
-                                        viewModelForFavourite.deleteFavouritePhoto(photoUrl)
-                                        scope.launch {
-                                            val result =
-                                                scaffoldState.snackbarHostState.showSnackbar(
-                                                    "Удалено из избранного",
-                                                    "Отмена",
-                                                    duration = SnackbarDuration.Short
-                                                )
-                                            when (result) {
-                                                SnackbarResult.ActionPerformed -> {
-                                                    viewModelForFavourite.addFavouritePhoto(
-                                                        FavouritePhotosEntity(url = photoUrl)
-                                                    )
-                                                }
-                                                else -> Unit
-                                            }
-                                        }
-                                    } else {
-                                        viewModelForFavourite.addFavouritePhoto(
-                                            FavouritePhotosEntity(
-                                                url = photoUrl
-                                            )
+                                    viewModelForFavourite.addFavouritePhoto(
+                                        FavouritePhotosEntity(
+                                            url = photoUrl
                                         )
-                                        scope.launch {
-                                            val result = scaffoldState
-                                                .snackbarHostState
-                                                .showSnackbar(
-                                                    "Добавлено в избранное",
-                                                    "Отмена",
-                                                    duration = SnackbarDuration.Short
-                                                )
-                                            when (result) {
-                                                SnackbarResult.ActionPerformed -> {
-                                                    viewModelForFavourite.deleteFavouritePhoto(url = photoUrl)
-                                                }
-                                                else -> Unit
+                                    )
+                                    scope.launch {
+                                        val result = scaffoldState
+                                            .snackbarHostState
+                                            .showSnackbar(
+                                                "Добавлено в избранное",
+                                                "Отмена",
+                                                duration = SnackbarDuration.Short
+                                            )
+                                        when (result) {
+                                            SnackbarResult.ActionPerformed -> {
+                                                viewModelForFavourite.deleteFavouritePhoto(url = photoUrl)
                                             }
+                                            else -> Unit
                                         }
                                     }
-                                }) {
-                                    Icon(
-                                        painter = painterResource(id = R.drawable.ic_round_favorite_24),
-                                        contentDescription = "favourite",
-                                        tint = if (photoInFavourite.value) Color.Red else Color.White,
-                                    )
                                 }
+                            }) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.ic_round_favorite_24),
+                                    contentDescription = "favourite",
+                                    tint = if (photoInFavourite.value) Color.Red else Color.White,
+                                )
                             }
-
                         }
-                    }
-                }
-            }
-            AnimatedVisibility(
-                visible = listState.isScrollingUp() && showButton,
-                enter = slideInHorizontally(
-                    initialOffsetX = { it },
-                    animationSpec = tween(durationMillis = 600)
-                ),
-                exit = slideOutHorizontally(
-                    targetOffsetX = { it },
-                    animationSpec = tween(durationMillis = 600)
-                )
-            ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(16.dp),
-                    contentAlignment = Alignment.BottomEnd
-                ) {
-                    FloatingActionButton(
-                        onClick = {
-                            scope.launch {
-                                listState.animateScrollToItem(index = 0)
-                            }
-                        },
-                        backgroundColor = MaterialTheme.colors.surface
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_baseline_arrow_upward_24),
-                            contentDescription = "up"
-                        )
+
                     }
                 }
             }
         }
-        if (resources.error.isNotBlank())
-            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+        AnimatedVisibility(
+            visible = listState.isScrollingUp(),
+            enter = slideInHorizontally(
+                initialOffsetX = { it },
+                animationSpec = tween(durationMillis = 600)
+            ),
+            exit = slideOutHorizontally(
+                targetOffsetX = { it },
+                animationSpec = tween(durationMillis = 600)
+            )
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
+                contentAlignment = Alignment.BottomEnd
+            ) {
+                FloatingActionButton(
+                    onClick = {
+                        scope.launch {
+                            listState.animateScrollToItem(index = 0)
+                        }
+                    },
+                    backgroundColor = MaterialTheme.colors.surface
                 ) {
-                    Text(text = resources.error)
-                    OutlinedButton(
-                        onClick = { viewModelMain.getAllPhotos() },
-                        colors = ButtonDefaults.buttonColors(Color.Transparent)
-                    ) {
-                        Text(
-                            text = stringResource(id = R.string.reload),
-                            style = TextStyle(
-                                fontSize = 18.sp,
-                                fontWeight = FontWeight.Light,
-                            )
-                        )
-                    }
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_baseline_arrow_upward_24),
+                        contentDescription = "up"
+                    )
                 }
             }
+        }
     }
+    if (resources.error.isNotBlank())
+        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Text(text = resources.error)
+                OutlinedButton(
+                    onClick = { viewModelMain.getAllPhotos() },
+                    colors = ButtonDefaults.buttonColors(Color.Transparent)
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.reload),
+                        style = TextStyle(
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.Light,
+                        )
+                    )
+                }
+            }
+        }
+
 }
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -239,10 +234,12 @@ fun LazyStaggeredGridState.isScrollingUp(): Boolean {
 
     return remember(this) {
         derivedStateOf {
-            if (previousIndex != firstVisibleItemIndex) {
+            if (firstVisibleItemIndex == 0) {
+                false
+            } else if (previousIndex != firstVisibleItemIndex) {
                 previousIndex > firstVisibleItemIndex
             } else {
-                previousScrollOffset >= firstVisibleItemScrollOffset
+                previousScrollOffset > firstVisibleItemScrollOffset
             }.also {
                 previousIndex = firstVisibleItemIndex
                 previousScrollOffset = firstVisibleItemScrollOffset
