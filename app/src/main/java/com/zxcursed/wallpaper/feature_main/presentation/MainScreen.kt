@@ -25,6 +25,9 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.*
+import com.google.accompanist.placeholder.PlaceholderHighlight
+import com.google.accompanist.placeholder.placeholder
+import com.google.accompanist.placeholder.shimmer
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.SwipeRefreshIndicator
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
@@ -87,6 +90,7 @@ fun MainScreen(
                             },
                         shape = RoundedCornerShape(16.dp),
                     ) {
+
                         SubcomposeAsyncImage(
                             model = photoUrl,
                             contentDescription = "photo",
@@ -95,17 +99,31 @@ fun MainScreen(
                             val state = painter.state
                             if (state is AsyncImagePainter.State.Loading) {
                                 Box(
-                                    modifier = Modifier.height(48.dp),
+                                    modifier = Modifier
+                                        .height(200.dp)
+                                        .placeholder(
+                                            visible = true,
+                                            color = Color.Gray,
+                                            highlight = PlaceholderHighlight.shimmer(
+                                                highlightColor = Color.White,
+                                            ),
+                                        )
+                                )
+                            } else if (state is AsyncImagePainter.State.Error) {
+                                Box(
+                                    modifier = Modifier.height(200.dp),
                                     contentAlignment = Alignment.Center
                                 ) {
-                                    CircularProgressIndicator(
-                                        modifier = Modifier.then(Modifier.size(32.dp))
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.ic_baseline_error_24),
+                                        contentDescription = "error icon"
                                     )
                                 }
                             } else {
                                 SubcomposeAsyncImageContent()
                             }
                         }
+
                         Box(
                             contentAlignment = Alignment.BottomEnd
                         ) {
@@ -173,11 +191,11 @@ fun MainScreen(
             visible = listState.isScrollingUp(),
             enter = slideInHorizontally(
                 initialOffsetX = { it },
-                animationSpec = tween(durationMillis = 600)
+                animationSpec = tween(durationMillis = 500)
             ),
             exit = slideOutHorizontally(
                 targetOffsetX = { it },
-                animationSpec = tween(durationMillis = 600)
+                animationSpec = tween(durationMillis = 500)
             )
         ) {
             Box(

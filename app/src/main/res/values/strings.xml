@@ -29,13 +29,13 @@
 
     <string name="no_notification">Уведомлений нет</string>
 
-    <string name="your_variants_for_photo">Здесь вы можете предложить свои варианты фотографий курседа.</string>
+    <string name="your_variants_for_photo">Здесь вы можете предложить свои варианты фотографий</string>
     <string name="restrictions">Ограничения:</string>
     <string name="restriction1">1. Максимум 10 фотографий, ограничение связано с бесплатностью приложения.</string>
-    <string name="restriction2">2. Нельзя предлагать нацизм, фашизм, нацистскую символику, наготу и так далее.</string>
+    <string name="restriction2">2. Фотографии 18+ не будут приняты.</string>
     <string name="url_to_zxcursed">Фото курседа URL</string>
     <string name="send">Отправить</string>
-    <string name="error_for_photo_zxcursed">Вставьте ссылку и курсед появится, если этого не произошло, вероятно, ссылка не работает</string>
+    <string name="error_for_photo_zxcursed">Вставьте ссылку и фото появится, если этого не произошло, вероятно, ссылка не работает</string>
 
     <string name="sign_in">Sign in</string>
     <string name="or">OR</string>

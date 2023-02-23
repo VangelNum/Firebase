@@ -18,10 +18,13 @@ class MainRepositoryImpl @Inject constructor(
     override suspend fun getAllPhotos(): Flow<Resource<NewPhotos>> = flow {
         try {
             emit(Resource.Loading())
-
-
             val myCollection =
-                fireStore.collection("images").document("tutor").get().await().toObject<NewPhotos>()
+                fireStore
+                    .collection("images")
+                    .document("tutor")
+                    .get()
+                    .await()
+                    .toObject<NewPhotos>()
             emit(Resource.Success(myCollection))
 
         } catch (e: IOException) {

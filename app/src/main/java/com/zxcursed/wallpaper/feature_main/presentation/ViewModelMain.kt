@@ -34,6 +34,7 @@ class ViewModelMain @Inject constructor(
                         _allPhotos.value = AllPhotosState(isLoading = true)
                     }
                     is Resource.Success -> {
+                        _allPhotos.value = AllPhotosState(isLoading = false)
                         _allPhotos.value = AllPhotosState(data = resource.data)
                     }
                 }

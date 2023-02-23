@@ -59,7 +59,7 @@ fun FavouritePhotosLazyGrid(
 
     if (allFavouritePhotos?.isEmpty() == false) {
         LazyVerticalGrid(
-            columns = GridCells.Fixed(2),
+            columns = GridCells.Adaptive(128.dp),
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(10.dp),
             horizontalArrangement = Arrangement.spacedBy(10.dp),
