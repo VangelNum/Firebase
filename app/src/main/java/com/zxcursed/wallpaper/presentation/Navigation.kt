@@ -42,6 +42,7 @@ fun Navigation(
     navController: NavHostController = rememberNavController(),
     startDestination: String = Screens.Register.route
 ) {
+
     val items = listOf(
         Screens.Main,
         Screens.Favourite,
