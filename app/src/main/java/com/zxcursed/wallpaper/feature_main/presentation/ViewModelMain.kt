@@ -4,7 +4,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.zxcursed.wallpaper.common.Resource
+import com.zxcursed.wallpaper.core.common.Resource
 import com.zxcursed.wallpaper.feature_main.domain.use_cases.GetAllPhotosUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -24,7 +24,7 @@ class ViewModelMain @Inject constructor(
     }
 
     fun getAllPhotos() {
-        viewModelScope.launch() {
+        viewModelScope.launch {
             getAllPhotosUseCase().collect { resource ->
                 when (resource) {
                     is Resource.Error -> {

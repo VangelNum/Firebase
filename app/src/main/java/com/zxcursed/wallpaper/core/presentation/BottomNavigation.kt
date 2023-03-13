@@ -1,4 +1,4 @@
-package com.zxcursed.wallpaper.presentation
+package com.zxcursed.wallpaper.core.presentation
 
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
@@ -11,6 +11,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
+import com.zxcursed.wallpaper.core.presentation.navigation.Screens
 
 
 @Composable

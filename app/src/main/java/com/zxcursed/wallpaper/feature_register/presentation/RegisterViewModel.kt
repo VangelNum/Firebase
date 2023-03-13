@@ -3,7 +3,7 @@ package com.zxcursed.wallpaper.feature_register.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseUser
-import com.zxcursed.wallpaper.common.Resource
+import com.zxcursed.wallpaper.core.common.Resource
 import com.zxcursed.wallpaper.feature_register.domain.repository.RegisterRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay

@@ -4,7 +4,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.zxcursed.wallpaper.common.Resource
+import com.zxcursed.wallpaper.core.common.Resource
 import com.zxcursed.wallpaper.feature_developer.domain.model.UserPhotos
 import com.zxcursed.wallpaper.feature_developer.domain.use_cases.DeveloperUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel

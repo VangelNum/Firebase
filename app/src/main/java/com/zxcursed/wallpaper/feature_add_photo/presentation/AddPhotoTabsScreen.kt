@@ -14,7 +14,6 @@ import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.pagerTabIndicatorOffset
 import com.google.accompanist.pager.rememberPagerState
 import com.zxcursed.wallpaper.R
-import com.zxcursed.wallpaper.domain.TabRowItem
 import kotlinx.coroutines.launch
 import java.util.*
 

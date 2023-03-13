@@ -65,7 +65,7 @@ fun LinkBody(viewModel: AddPhotoViewModel = hiltViewModel()) {
     OutlinedButton(
         onClick = {
             if (textValue.value.isNotBlank()) {
-                viewModel.addPhoto(textValue.value)
+                viewModel.addPhoto(textValue.value, context = context)
             } else {
                 Toast.makeText(context, context.getString(R.string.cant_be_empty), Toast.LENGTH_SHORT)
                     .show()

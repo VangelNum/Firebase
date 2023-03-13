@@ -1,4 +1,4 @@
-package com.zxcursed.wallpaper.di
+package com.zxcursed.wallpaper.core.di
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth

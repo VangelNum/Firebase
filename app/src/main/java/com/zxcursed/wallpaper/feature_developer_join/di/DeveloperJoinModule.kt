@@ -38,9 +38,5 @@ object DataStoreModule {
         )
     }
 
-    @Singleton
-    @Provides
-    fun provideRepository(dataStore: DataStore<Preferences>): DeveloperJoinRepository {
-        return DeveloperJoinRepositoryImpl(dataStore = dataStore)
-    }
+
 }

@@ -1,6 +1,6 @@
 package com.zxcursed.wallpaper.feature_developer.domain.repository
 
-import com.zxcursed.wallpaper.common.Resource
+import com.zxcursed.wallpaper.core.common.Resource
 import com.zxcursed.wallpaper.feature_developer.domain.model.UserPhotos
 import kotlinx.coroutines.flow.Flow
 

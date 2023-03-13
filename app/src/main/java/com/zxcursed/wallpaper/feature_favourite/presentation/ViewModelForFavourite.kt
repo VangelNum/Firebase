@@ -5,7 +5,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.zxcursed.wallpaper.common.Resource
+import com.zxcursed.wallpaper.core.common.Resource
 import com.zxcursed.wallpaper.feature_favourite.domain.model.FavouritePhotosEntity
 import com.zxcursed.wallpaper.feature_favourite.domain.use_case.AddToFavouriteUseCase
 import com.zxcursed.wallpaper.feature_favourite.domain.use_case.DeleteFavouriteUseCase
@@ -39,15 +39,17 @@ class ViewModelForFavourite @Inject constructor(
                         isLoading = true
                     )
                 }
+
                 is Resource.Error -> {
                     _allFavouritePhotos.value = allFavouritePhotos.value.copy(
                         error = resources.message.toString(),
                         isLoading = false
                     )
                 }
+
                 is Resource.Success -> {
                     _allFavouritePhotos.value = allFavouritePhotos.value.copy(
-                        data = resources.data?: emptyList(),
+                        data = resources.data ?: emptyList(),
                         isLoading = false
                     )
                 }

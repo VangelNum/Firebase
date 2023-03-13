@@ -25,11 +25,10 @@ import javax.inject.Inject
 
 class AddPhotoRepositoryImpl @Inject constructor(
     private val auth: FirebaseAuth,
-    private val context: Context,
     private val fireStore: FirebaseFirestore,
     private val fireStorage: FirebaseStorage
 ) : AddPhotoRepository {
-    override suspend fun addPhoto(textValue: String) {
+    override suspend fun addPhoto(textValue: String, context: Context) {
         try {
             val uid = auth.currentUser?.uid ?: return
             val collection = fireStore.collection("users").document(uid)
@@ -103,7 +102,7 @@ class AddPhotoRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun addPhotoToFirestorage(selectedPicUri: Uri?) {
+    override suspend fun addPhotoToFirestorage(selectedPicUri: Uri?, context: Context) {
         try {
             val uid = auth.currentUser?.uid ?: throw Exception("User ID is null")
             val collection = fireStore.collection("users").document(uid)

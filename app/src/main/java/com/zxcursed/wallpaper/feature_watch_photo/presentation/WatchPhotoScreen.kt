@@ -17,12 +17,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImagePainter
 import coil.compose.SubcomposeAsyncImage
 import coil.compose.SubcomposeAsyncImageContent
-import com.zxcursed.wallpaper.domain.BottomSheet
 import com.zxcursed.wallpaper.feature_favourite.domain.model.FavouritePhotosEntity
 import com.zxcursed.wallpaper.feature_favourite.presentation.ViewModelForFavourite
 
@@ -71,12 +71,12 @@ fun WatchPhotoScreen(
                     text = {
                         if (index == 0) {
                             if (photoInFavourite.value) {
-                                Text(text = BottomSheet.FavouriteDelete.name)
+                                Text(text = stringResource(id = BottomSheet.FavouriteDelete.name))
                             } else {
-                                Text(text = current.name)
+                                Text(text = stringResource(id = current.name))
                             }
                         } else {
-                            Text(text = current.name)
+                            Text(text = stringResource(id = current.name))
                         }
                     },
                     icon = {
@@ -99,9 +99,11 @@ fun WatchPhotoScreen(
                                     viewModelForFavourite.deleteFavouritePhoto(url)
                                 }
                             }
+
                             1 -> {
                                 share(url, context = context)
                             }
+
                             2 -> {
                                 download(url, context = context)
                             }
@@ -158,7 +160,7 @@ private fun download(url: String?, context: Context) {
         val manager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager?
         manager!!.enqueue(request)
     } catch (e: Exception) {
-        Toast.makeText(context, e.message.toString(),Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, e.message.toString(), Toast.LENGTH_SHORT).show()
     }
 }
 
@@ -173,6 +175,6 @@ private fun share(url: String?, context: Context) {
         val shareIntent = Intent.createChooser(sendIntent, null)
         context.startActivity(shareIntent)
     } catch (e: Exception) {
-        Toast.makeText(context,e.message.toString(), Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, e.message.toString(), Toast.LENGTH_SHORT).show()
     }
 }

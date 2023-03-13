@@ -16,10 +16,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -32,9 +34,9 @@ import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.SwipeRefreshIndicator
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.zxcursed.wallpaper.R
+import com.zxcursed.wallpaper.core.presentation.navigation.Screens
 import com.zxcursed.wallpaper.feature_favourite.domain.model.FavouritePhotosEntity
 import com.zxcursed.wallpaper.feature_favourite.presentation.ViewModelForFavourite
-import com.zxcursed.wallpaper.presentation.Screens
 import kotlinx.coroutines.launch
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
@@ -55,6 +57,8 @@ fun MainScreen(
     val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = resources.isLoading)
 
     val listState = rememberLazyStaggeredGridState()
+    val isVisible = remember { derivedStateOf { listState.firstVisibleItemIndex > 0 } }
+    val context = LocalContext.current
 
     SwipeRefresh(
         state = swipeRefreshState,
@@ -74,7 +78,7 @@ fun MainScreen(
             columns = StaggeredGridCells.Adaptive(128.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
-            contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp),
+            contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 80.dp),
             modifier = Modifier.fillMaxSize()
         ) {
             resources.data?.let {
@@ -90,37 +94,41 @@ fun MainScreen(
                             },
                         shape = RoundedCornerShape(16.dp),
                     ) {
-
                         SubcomposeAsyncImage(
                             model = photoUrl,
                             contentDescription = "photo",
                             contentScale = ContentScale.FillWidth,
                         ) {
-                            val state = painter.state
-                            if (state is AsyncImagePainter.State.Loading) {
-                                Box(
-                                    modifier = Modifier
-                                        .height(200.dp)
-                                        .placeholder(
-                                            visible = true,
-                                            color = Color.Gray,
-                                            highlight = PlaceholderHighlight.shimmer(
-                                                highlightColor = Color.White,
-                                            ),
-                                        )
-                                )
-                            } else if (state is AsyncImagePainter.State.Error) {
-                                Box(
-                                    modifier = Modifier.height(200.dp),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Icon(
-                                        painter = painterResource(id = R.drawable.ic_baseline_error_24),
-                                        contentDescription = "error icon"
+                            when (painter.state) {
+                                is AsyncImagePainter.State.Loading -> {
+                                    Box(
+                                        modifier = Modifier
+                                            .height(200.dp)
+                                            .placeholder(
+                                                visible = true,
+                                                color = Color.Gray,
+                                                highlight = PlaceholderHighlight.shimmer(
+                                                    highlightColor = Color.White,
+                                                ),
+                                            )
                                     )
                                 }
-                            } else {
-                                SubcomposeAsyncImageContent()
+
+                                is AsyncImagePainter.State.Error -> {
+                                    Box(
+                                        modifier = Modifier.height(200.dp),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Text(
+                                            text = stringResource(id = R.string.error_loading_image),
+                                            textAlign = TextAlign.Center
+                                        )
+                                    }
+                                }
+
+                                else -> {
+                                    SubcomposeAsyncImageContent()
+                                }
                             }
                         }
 
@@ -139,8 +147,8 @@ fun MainScreen(
                                     scope.launch {
                                         val result =
                                             scaffoldState.snackbarHostState.showSnackbar(
-                                                "Удалено из избранного",
-                                                "Отмена",
+                                                context.getString(R.string.deleted_from_favourite),
+                                                context.getString(R.string.cancel),
                                                 duration = SnackbarDuration.Short
                                             )
                                         when (result) {
@@ -149,6 +157,7 @@ fun MainScreen(
                                                     FavouritePhotosEntity(url = photoUrl)
                                                 )
                                             }
+
                                             else -> Unit
                                         }
                                     }
@@ -162,14 +171,15 @@ fun MainScreen(
                                         val result = scaffoldState
                                             .snackbarHostState
                                             .showSnackbar(
-                                                "Добавлено в избранное",
-                                                "Отмена",
+                                                context.getString(R.string.added_to_favourite),
+                                                context.getString(R.string.cancel),
                                                 duration = SnackbarDuration.Short
                                             )
                                         when (result) {
                                             SnackbarResult.ActionPerformed -> {
                                                 viewModelForFavourite.deleteFavouritePhoto(url = photoUrl)
                                             }
+
                                             else -> Unit
                                         }
                                     }
@@ -187,8 +197,9 @@ fun MainScreen(
                 }
             }
         }
+
         AnimatedVisibility(
-            visible = listState.isScrollingUp(),
+            visible = isVisible.value,
             enter = slideInHorizontally(
                 initialOffsetX = { it },
                 animationSpec = tween(durationMillis = 500)
@@ -243,27 +254,3 @@ fun MainScreen(
         }
 
 }
-
-@OptIn(ExperimentalFoundationApi::class)
-@Composable
-fun LazyStaggeredGridState.isScrollingUp(): Boolean {
-    var previousIndex by remember(this) { mutableStateOf(firstVisibleItemIndex) }
-    var previousScrollOffset by remember(this) { mutableStateOf(firstVisibleItemScrollOffset) }
-
-    return remember(this) {
-        derivedStateOf {
-            if (firstVisibleItemIndex == 0) {
-                false
-            } else if (previousIndex != firstVisibleItemIndex) {
-                previousIndex > firstVisibleItemIndex
-            } else {
-                previousScrollOffset > firstVisibleItemScrollOffset
-            }.also {
-                previousIndex = firstVisibleItemIndex
-                previousScrollOffset = firstVisibleItemScrollOffset
-            }
-        }
-    }.value
-}
-
-

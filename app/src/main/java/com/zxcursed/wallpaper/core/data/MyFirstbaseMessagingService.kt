@@ -1,4 +1,4 @@
-package com.zxcursed.wallpaper.data
+package com.zxcursed.wallpaper.core.data
 
 import android.util.Log
 import com.google.firebase.messaging.FirebaseMessagingService

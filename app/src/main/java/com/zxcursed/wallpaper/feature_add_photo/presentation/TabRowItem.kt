@@ -1,4 +1,4 @@
-package com.zxcursed.wallpaper.domain
+package com.zxcursed.wallpaper.feature_add_photo.presentation
 
 import androidx.compose.runtime.Composable
 

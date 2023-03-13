@@ -23,7 +23,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.SubcomposeAsyncImage
 import com.zxcursed.wallpaper.R
-import com.zxcursed.wallpaper.presentation.Screens
+import com.zxcursed.wallpaper.core.presentation.navigation.Screens
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 

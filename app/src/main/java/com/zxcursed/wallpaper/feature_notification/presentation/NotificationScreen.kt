@@ -34,7 +34,7 @@ import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.SwipeRefreshIndicator
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.zxcursed.wallpaper.R
-import com.zxcursed.wallpaper.presentation.Screens
+import com.zxcursed.wallpaper.core.presentation.navigation.Screens
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 

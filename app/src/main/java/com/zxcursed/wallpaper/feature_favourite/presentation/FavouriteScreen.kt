@@ -1,6 +1,5 @@
 package com.zxcursed.wallpaper.feature_favourite.presentation
 
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -19,7 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.SubcomposeAsyncImage
-import com.zxcursed.wallpaper.presentation.Screens
+import com.zxcursed.wallpaper.core.presentation.navigation.Screens
 import com.zxcursed.wallpaper.feature_favourite.domain.model.FavouritePhotosEntity
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
@@ -31,7 +30,6 @@ fun FavouriteScreen(navController: NavController,viewModel: ViewModelForFavourit
     val resource = viewModel.allFavouritePhotos.value
 
     if (resource.isLoading) {
-        Log.d("taag","loading")
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             CircularProgressIndicator(color = Color.Green)
         }

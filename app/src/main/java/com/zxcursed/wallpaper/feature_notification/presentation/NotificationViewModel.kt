@@ -4,7 +4,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.zxcursed.wallpaper.common.Resource
+import com.zxcursed.wallpaper.core.common.Resource
 import com.zxcursed.wallpaper.feature_notification.domain.model.NotificationToUserData
 import com.zxcursed.wallpaper.feature_notification.domain.repository.NotificationRepository
 import dagger.hilt.android.lifecycle.HiltViewModel

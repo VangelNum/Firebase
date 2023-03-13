@@ -6,7 +6,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.toObjects
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
-import com.zxcursed.wallpaper.common.Resource
+import com.zxcursed.wallpaper.core.common.Resource
 import com.zxcursed.wallpaper.feature_developer.data.dto.UserPhotosDto
 import com.zxcursed.wallpaper.feature_developer.data.mapper.toUserPhotos
 import com.zxcursed.wallpaper.feature_developer.domain.model.UserPhotos

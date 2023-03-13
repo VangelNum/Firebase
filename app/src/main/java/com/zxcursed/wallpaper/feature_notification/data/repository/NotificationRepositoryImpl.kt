@@ -4,7 +4,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
-import com.zxcursed.wallpaper.common.Resource
+import com.zxcursed.wallpaper.core.common.Resource
 import com.zxcursed.wallpaper.feature_notification.domain.model.NotificationToUserData
 import com.zxcursed.wallpaper.feature_notification.domain.repository.NotificationRepository
 import kotlinx.coroutines.flow.Flow

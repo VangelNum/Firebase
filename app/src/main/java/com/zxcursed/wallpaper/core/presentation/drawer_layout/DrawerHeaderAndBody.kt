@@ -1,4 +1,4 @@
-package com.zxcursed.wallpaper.presentation
+package com.zxcursed.wallpaper.core.presentation.drawer_layout
 
 import android.content.Context
 import android.content.Intent
@@ -25,7 +25,7 @@ import coil.compose.SubcomposeAsyncImage
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.zxcursed.wallpaper.R
-import com.zxcursed.wallpaper.domain.MenuItems
+import com.zxcursed.wallpaper.core.presentation.navigation.Screens
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -83,12 +83,12 @@ fun DrawerHeader() {
 fun DrawerBody(navController: NavController, scaffoldState: ScaffoldState) {
 
     val items = listOf(
-        MenuItems.Share,
-        MenuItems.Stars,
-        MenuItems.Contacts,
-        MenuItems.Exit,
-        MenuItems.SoundBoard,
-        MenuItems.DrumPad,
+        DrawerItems.Share,
+        DrawerItems.Stars,
+        DrawerItems.Contacts,
+        DrawerItems.Exit,
+        DrawerItems.SoundBoard,
+        DrawerItems.DrumPad,
     )
 
     val context = LocalContext.current
@@ -99,18 +99,18 @@ fun DrawerBody(navController: NavController, scaffoldState: ScaffoldState) {
     ) {
         itemsIndexed(items) { index, item ->
             ListItem(text = {
-                Text(text = item.title)
+                Text(text = stringResource(id = item.title))
             }, icon = {
                 if (index > 3) {
                     Image(
                         painter = painterResource(id = item.icon),
-                        contentDescription = item.title,
+                        contentDescription = stringResource(id = item.title),
                         modifier = Modifier.size(24.dp)
                     )
                 } else {
                     Icon(
                         painter = painterResource(id = item.icon),
-                        contentDescription = item.title,
+                        contentDescription = stringResource(id = item.title),
                         modifier = Modifier.size(24.dp),
                     )
                 }
@@ -136,15 +136,14 @@ fun DrawerBody(navController: NavController, scaffoldState: ScaffoldState) {
 
 
 fun onEvent(
-    title: MenuItems,
+    title: DrawerItems,
     navController: NavController,
     scaffoldState: ScaffoldState,
     context: Context,
     scope: CoroutineScope
 ) {
-
     when (title) {
-        is MenuItems.Exit -> {
+        is DrawerItems.Exit -> {
             scope.launch {
                 scaffoldState.drawerState.close()
             }
@@ -155,31 +154,31 @@ fun onEvent(
             }
             Firebase.auth.signOut()
         }
-        is MenuItems.Share -> {
+        is DrawerItems.Share -> {
             val sendIntent: Intent = Intent().apply {
                 action = Intent.ACTION_SEND
                 putExtra(Intent.EXTRA_TITLE, "Спасибо за то, что поделился приложением! ❤")
                 putExtra(
                     Intent.EXTRA_TEXT,
-                    "ПРСОТО ЧТО ТО С ЧЕМ ТО ЭТО ЛУЧШЕЕ ЧТО Я ВИДЕЛ В СВОЕЙ ЖИЗНИ СТАвлю ЛАЙК Ю. НЕТ ТЫЩУ ЛАЙКОВ !!111?: https://play.google.com/store/apps/details?id=com.zxcursed.wallpaper"
+                    "Zxcursed Wallpaper https://play.google.com/store/apps/details?id=com.zxcursed.wallpaper"
                 )
                 type = "text/plain"
             }
             context.startActivity(Intent.createChooser(sendIntent, "Share..."))
         }
-        is MenuItems.SoundBoard -> {
+        is DrawerItems.SoundBoard -> {
             val intent = Intent(Intent.ACTION_VIEW)
             intent.data =
                 Uri.parse("https://play.google.com/store/apps/details?id=com.zxcursedsoundboard.apk")
             context.startActivity(intent)
         }
-        is MenuItems.DrumPad -> {
+        is DrawerItems.DrumPad -> {
             val intent = Intent(Intent.ACTION_VIEW)
             intent.data =
                 Uri.parse("https://play.google.com/store/apps/details?id=com.vangelnum.drumpad")
             context.startActivity(intent)
         }
-        is MenuItems.Stars -> {
+        is DrawerItems.Stars -> {
             context.startActivity(
                 Intent(
                     Intent.ACTION_VIEW,
@@ -187,7 +186,7 @@ fun onEvent(
                 )
             )
         }
-        is MenuItems.Contacts -> {
+        is DrawerItems.Contacts -> {
             scope.launch {
                 scaffoldState.drawerState.close()
             }

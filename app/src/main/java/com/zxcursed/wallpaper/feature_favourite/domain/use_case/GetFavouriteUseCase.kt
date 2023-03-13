@@ -1,6 +1,6 @@
 package com.zxcursed.wallpaper.feature_favourite.domain.use_case
 
-import com.zxcursed.wallpaper.common.Resource
+import com.zxcursed.wallpaper.core.common.Resource
 import com.zxcursed.wallpaper.feature_favourite.domain.model.FavouritePhotosEntity
 import com.zxcursed.wallpaper.feature_favourite.domain.repository.FavouritePhotosRepository
 import kotlinx.coroutines.flow.Flow

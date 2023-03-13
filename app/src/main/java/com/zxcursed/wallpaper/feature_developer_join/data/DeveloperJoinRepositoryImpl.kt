@@ -6,8 +6,9 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import com.zxcursed.wallpaper.feature_developer_join.domain.DeveloperJoinRepository
 import kotlinx.coroutines.flow.first
+import javax.inject.Inject
 
-class DeveloperJoinRepositoryImpl(
+class DeveloperJoinRepositoryImpl @Inject constructor(
     private val dataStore: DataStore<Preferences>
 ) : DeveloperJoinRepository {
 

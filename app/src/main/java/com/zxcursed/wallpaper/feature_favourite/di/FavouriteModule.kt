@@ -4,8 +4,6 @@ import android.content.Context
 import androidx.room.Room
 import com.zxcursed.wallpaper.feature_favourite.data.network.FavouritePhotosDao
 import com.zxcursed.wallpaper.feature_favourite.data.network.FavouritePhotosDatabase
-import com.zxcursed.wallpaper.feature_favourite.data.repository.FavouritePhotosRepositoryImpl
-import com.zxcursed.wallpaper.feature_favourite.domain.repository.FavouritePhotosRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -16,7 +14,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object Module {
+object FavouriteModule {
 
     @Singleton
     @Provides
@@ -30,18 +28,10 @@ object Module {
                 .build()
         }
     }
-
-
     @Singleton
     @Provides
     fun provideFavouritePhotosDao(appDatabase: FavouritePhotosDatabase): FavouritePhotosDao {
         return appDatabase.getDao()
     }
 
-
-    @Singleton
-    @Provides
-    fun provideRepository(myDao: FavouritePhotosDao): FavouritePhotosRepository {
-        return FavouritePhotosRepositoryImpl(myDao)
-    }
 }

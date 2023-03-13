@@ -1,4 +1,4 @@
-package com.zxcursed.wallpaper.presentation
+package com.zxcursed.wallpaper.core.presentation.navigation
 
 import com.zxcursed.wallpaper.R
 

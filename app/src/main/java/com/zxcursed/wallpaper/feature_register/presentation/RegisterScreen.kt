@@ -36,8 +36,8 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.zxcursed.wallpaper.R
-import com.zxcursed.wallpaper.common.Resource
-import com.zxcursed.wallpaper.presentation.Screens
+import com.zxcursed.wallpaper.core.common.Resource
+import com.zxcursed.wallpaper.core.presentation.navigation.Screens
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

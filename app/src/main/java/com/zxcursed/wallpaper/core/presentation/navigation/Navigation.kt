@@ -1,13 +1,15 @@
-package com.zxcursed.wallpaper.presentation
+package com.zxcursed.wallpaper.core.presentation.navigation
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -22,8 +24,14 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.zxcursed.wallpaper.*
 import com.zxcursed.wallpaper.R
+import com.zxcursed.wallpaper.core.presentation.MainTopBar
+import com.zxcursed.wallpaper.core.presentation.MyBottomNavigation
+import com.zxcursed.wallpaper.core.presentation.MyTopBarForWatchScreen
+import com.zxcursed.wallpaper.core.presentation.drawer_layout.DrawerBody
+import com.zxcursed.wallpaper.core.presentation.drawer_layout.DrawerHeader
 import com.zxcursed.wallpaper.feature_add_photo.presentation.AddPhotoTabScreen
 import com.zxcursed.wallpaper.feature_contact.presentation.ContactScreen
+import com.zxcursed.wallpaper.feature_contact.presentation.ContactViewModel
 import com.zxcursed.wallpaper.feature_developer.presentation.DeveloperScreen
 import com.zxcursed.wallpaper.feature_developer_join.presentation.DeveloperJoinScreen
 import com.zxcursed.wallpaper.feature_favourite.presentation.FavouriteScreen
@@ -43,46 +51,18 @@ fun Navigation(
     startDestination: String = Screens.Register.route
 ) {
 
-    val items = listOf(
+    val itemsScreen = listOf(
         Screens.Main,
         Screens.Favourite,
         Screens.Notification,
         Screens.Add
     )
-
+    val itemsRoutes = itemsScreen.map {
+        it.route
+    }
     val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentDestination = navBackStackEntry?.destination
-
-    var showAppBar by rememberSaveable {
-        mutableStateOf(true)
-    }
-    var showBottomBar by rememberSaveable {
-        mutableStateOf(true)
-    }
-
-    when (navBackStackEntry?.destination?.route) {
-        Screens.Main.route -> {
-            showAppBar = true
-            showBottomBar = true
-        }
-        Screens.Favourite.route -> {
-            showAppBar = true
-            showBottomBar = true
-        }
-        Screens.Notification.route -> {
-            showAppBar = true
-            showBottomBar = true
-        }
-        Screens.Add.route -> {
-            showAppBar = true
-            showBottomBar = true
-        }
-        else -> {
-            showAppBar = false
-            showBottomBar = false
-        }
-    }
-
+    val currentDestination = navBackStackEntry?.destination?.route
+    val navDestination = navBackStackEntry?.destination
 
     val sheetState = rememberBottomSheetState(
         initialValue = BottomSheetValue.Collapsed
@@ -91,11 +71,7 @@ fun Navigation(
         bottomSheetState = sheetState
     )
     val scaffoldState = rememberScaffoldState()
-
     val watchPhotoViewModel = viewModel<WatchPhotoViewModel>()
-
-
-
 
     Scaffold(
         scaffoldState = scaffoldState,
@@ -116,7 +92,7 @@ fun Navigation(
                     modifier = Modifier.padding(start = 15.dp, end = 15.dp, bottom = 10.dp)
                 ) {
                     Row(horizontalArrangement = Arrangement.Center) {
-                        if (data.actionLabel.toString() == "Отмена") {
+                        if (data.actionLabel.toString() == stringResource(id = R.string.cancel)) {
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_round_favorite_24),
                                 "", modifier = Modifier.padding(end = 15.dp)
@@ -133,54 +109,42 @@ fun Navigation(
         drawerContent = {
             val scope = rememberCoroutineScope()
             if (scaffoldState.drawerState.isOpen) {
-                BackHandler() {
+                BackHandler {
                     scope.launch {
                         scaffoldState.drawerState.close()
                     }
                 }
             }
-
             DrawerHeader()
             DrawerBody(navController, scaffoldState)
         },
         drawerElevation = 0.dp,
         topBar = {
-            if (showAppBar) {
-                MyTopBar(scaffoldState = scaffoldState)
-            } else {
-                if (currentDestination?.route == Screens.WatchPhoto.route + "/{url}") {
+            if (currentDestination != null && currentDestination !in itemsRoutes) {
+                if (currentDestination == Screens.WatchPhoto.route + "/{url}") {
                     MyTopBarForWatchScreen(
                         navController = navController,
                         sheetState = sheetState,
                         watchPhotoViewModel
                     )
-                } else if (currentDestination != null) {
-                    if (currentDestination.route != Screens.Login.route && currentDestination.route != Screens.Register.route) {
-                        TopAppBar(
-                            elevation = 0.dp,
-                            title = {},
-                            navigationIcon = {
-                                IconButton(onClick = {
-                                    navController.popBackStack()
-                                }) {
-                                    Icon(
-                                        painter = painterResource(id = R.drawable.ic_baseline_arrow_back_24),
-                                        contentDescription = "back"
-                                    )
-                                }
-                            }
-                        )
-                    }
                 }
+                if (currentDestination == Screens.Contact.route) {
+                    TopAppBar(title = {}, navigationIcon = {
+                        IconButton(onClick = { navController.popBackStack() }) {
+                            Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "back")
+                        }
+                    }, elevation = 0.dp)
+                }
+            } else {
+                MainTopBar(scaffoldState = scaffoldState)
             }
         },
         bottomBar = {
-            if (showBottomBar) {
-                MyBottomNavigation(items, currentDestination, navController)
+            if (currentDestination != null && currentDestination in itemsRoutes) {
+                MyBottomNavigation(itemsScreen, navDestination, navController)
             }
         },
     ) { innerPadding ->
-
         NavHost(
             navController = navController,
             startDestination = startDestination,
@@ -225,7 +189,8 @@ fun Navigation(
                 )
             }
             composable(Screens.Contact.route) {
-                ContactScreen()
+                val contactViewModel: ContactViewModel = viewModel()
+                ContactScreen(contactViewModel)
             }
         }
 
