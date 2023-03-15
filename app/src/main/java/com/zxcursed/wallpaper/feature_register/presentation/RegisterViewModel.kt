@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseUser
 import com.zxcursed.wallpaper.core.common.Resource
+import com.zxcursed.wallpaper.core.data.Person
 import com.zxcursed.wallpaper.feature_register.domain.repository.RegisterRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
@@ -29,7 +30,7 @@ class RegisterViewModel @Inject constructor(
             _alreadyRegisterFlow.value = Resource.Loading()
             delay(500L)
             repository.alreadyRegister().collect {
-               _alreadyRegisterFlow.value = it
+                _alreadyRegisterFlow.value = it
             }
         }
     }
@@ -40,6 +41,13 @@ class RegisterViewModel @Inject constructor(
             _registerFlow.value = Resource.Loading()
             val result = repository.register(email, password)
             _registerFlow.value = result
+        }
+    }
+
+
+    fun saveData(person: Person) {
+        viewModelScope.launch {
+            repository.saveData(person)
         }
     }
 }

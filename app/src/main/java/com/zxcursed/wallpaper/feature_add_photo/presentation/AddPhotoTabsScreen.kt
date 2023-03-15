@@ -22,14 +22,14 @@ import java.util.*
 fun AddPhotoTabScreen() {
     val tabRowItems = listOf(
         TabRowItem(
-            title = "Отправить ссылку",
+            title = R.string.send_url,
             screen = {
                 AddPhotoFromLink()
             },
             icon = R.drawable.ic_baseline_link_24,
         ),
         TabRowItem(
-            title = "Выбрать из галереи",
+            title = R.string.choose_from_galery,
             screen = {
                 AddPhotoFromGallery()
             },
@@ -59,7 +59,7 @@ fun AddPhotoTabScreen() {
                     },
                     text = {
                         Text(
-                            text = item.title,
+                            text = stringResource(id = item.title),
                             maxLines = 2,
                             overflow = TextOverflow.Ellipsis,
                         )

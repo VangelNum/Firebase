@@ -1,11 +1,5 @@
 package com.zxcursed.wallpaper.feature_watch_photo.presentation
 
-import android.app.DownloadManager
-import android.content.Context
-import android.content.Intent
-import android.net.Uri
-import android.os.Environment
-import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -40,6 +34,8 @@ fun WatchPhotoScreen(
         BottomSheet.Favourite,
         BottomSheet.Share,
         BottomSheet.Download,
+        BottomSheet.Copy,
+        BottomSheet.Set
     )
 
     val favourites = viewModelForFavourite.allFavouritePhotos.value
@@ -101,11 +97,22 @@ fun WatchPhotoScreen(
                             }
 
                             1 -> {
-                                share(url, context = context)
+                                viewModelWatchPhotoViewModel.share(url, context = context)
                             }
 
                             2 -> {
-                                download(url, context = context)
+                                viewModelWatchPhotoViewModel.download(url, context = context)
+                            }
+
+                            3 -> {
+                                viewModelWatchPhotoViewModel.copyToKeyBoard(
+                                    context = context,
+                                    url = url
+                                )
+                            }
+
+                            4 -> {
+                                viewModelWatchPhotoViewModel.setImage(url = url, context = context)
                             }
                         }
                     }
@@ -144,37 +151,4 @@ fun WatchPhotoScreen(
     }
 
 
-}
-
-private fun download(url: String?, context: Context) {
-    try {
-        val request = DownloadManager.Request(Uri.parse(url))
-        request.setDescription("Downloading")
-        request.setMimeType("image/*")
-        request.setTitle("File")
-        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-        request.setDestinationInExternalPublicDir(
-            Environment.DIRECTORY_DOWNLOADS,
-            "photo.png"
-        )
-        val manager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager?
-        manager!!.enqueue(request)
-    } catch (e: Exception) {
-        Toast.makeText(context, e.message.toString(), Toast.LENGTH_SHORT).show()
-    }
-}
-
-
-private fun share(url: String?, context: Context) {
-    try {
-        val sendIntent: Intent = Intent().apply {
-            action = Intent.ACTION_SEND
-            putExtra(Intent.EXTRA_TEXT, url)
-            type = "text/*"
-        }
-        val shareIntent = Intent.createChooser(sendIntent, null)
-        context.startActivity(shareIntent)
-    } catch (e: Exception) {
-        Toast.makeText(context, e.message.toString(), Toast.LENGTH_SHORT).show()
-    }
 }

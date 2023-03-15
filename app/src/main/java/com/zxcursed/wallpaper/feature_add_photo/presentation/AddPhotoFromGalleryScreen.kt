@@ -131,8 +131,6 @@ fun GalleryScreenBody(viewModel: AddPhotoViewModel = hiltViewModel()) {
         }
         Card(
             modifier = Modifier
-                .fillMaxWidth()
-                .height(400.dp)
                 .padding(bottom = 10.dp),
             shape = RoundedCornerShape(15.dp)
         ) {
@@ -144,10 +142,7 @@ fun GalleryScreenBody(viewModel: AddPhotoViewModel = hiltViewModel()) {
                     }
                 },
                 contentDescription = "",
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(450.dp),
-                contentScale = ContentScale.Crop
+                contentScale = ContentScale.FillWidth
             )
         }
     }

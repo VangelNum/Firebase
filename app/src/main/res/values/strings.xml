@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Firebase</string>
+    <string name="app_name">Zxcursed Wallpaper</string>
     <string name="errorContract">"При возникновении ошибки, по предложениям доработки приложения, если используется ваше фото"</string>
     <string name="vk_com_vangelnum">"<u>VK.COM/VANGELNUM</u>"</string>
     <string name="gmail_vangelnum">"<u>VANGELNUM@GMAIL.COM</u>"</string>
@@ -74,5 +74,11 @@
     <string name="error_loading_image">Ошибка загрузки изображения</string>
     <string name="added_to_favourite">Добавлено в избранное</string>
     <string name="deleted_from_favourite">Удалено из избранного</string>
+    <string name="copy">Cкопировать ссылку</string>
+    <string name="set">Установить изображение</string>
+
+    <string name="established">Фото установлено!</string>
+    <string name="wait_wallpaper">Подождите, обои устанавливаются</string>
+    <string name="url_coped">Ссылка скопирована в буфер обмена</string>
 
 </resources>

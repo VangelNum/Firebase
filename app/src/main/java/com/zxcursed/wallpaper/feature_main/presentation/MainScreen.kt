@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.staggeredgrid.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.KeyboardArrowUp
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -76,7 +78,7 @@ fun MainScreen(
         LazyVerticalStaggeredGrid(
             state = listState,
             columns = StaggeredGridCells.Adaptive(128.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
+            verticalItemSpacing = 8.dp,
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 80.dp),
             modifier = Modifier.fillMaxSize()
@@ -224,7 +226,7 @@ fun MainScreen(
                     backgroundColor = MaterialTheme.colors.surface
                 ) {
                     Icon(
-                        painter = painterResource(id = R.drawable.ic_baseline_arrow_upward_24),
+                        imageVector = Icons.Outlined.KeyboardArrowUp,
                         contentDescription = "up"
                     )
                 }

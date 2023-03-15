@@ -1,11 +1,24 @@
 package com.zxcursed.wallpaper.feature_add_photo.presentation
 
 import android.widget.Toast
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.*
+import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.Card
+import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.OutlinedButton
+import androidx.compose.material.OutlinedTextField
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -93,8 +106,6 @@ fun LinkBody(viewModel: AddPhotoViewModel = hiltViewModel()) {
     } else {
         Card(
             modifier = Modifier
-                .fillMaxWidth()
-                .height(450.dp)
                 .padding(bottom = 10.dp),
             shape = RoundedCornerShape(15.dp)
         ) {
@@ -107,9 +118,8 @@ fun LinkBody(viewModel: AddPhotoViewModel = hiltViewModel()) {
                 },
                 contentDescription = "",
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(400.dp),
-                contentScale = ContentScale.Crop
+                    .fillMaxWidth(),
+                contentScale = ContentScale.FillWidth
             )
 
         }

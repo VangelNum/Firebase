@@ -37,6 +37,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.zxcursed.wallpaper.R
 import com.zxcursed.wallpaper.core.common.Resource
+import com.zxcursed.wallpaper.core.data.Person
 import com.zxcursed.wallpaper.core.presentation.navigation.Screens
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -47,7 +48,7 @@ import kotlinx.coroutines.withContext
 @Composable
 fun RegisterScreen(
     navController: NavController,
-    viewModel: RegisterViewModel = hiltViewModel()
+    viewModel: RegisterViewModel = hiltViewModel(),
 ) {
 
     val alreadyRegisterState = viewModel.alreadyRegisterFlow.collectAsState()
@@ -65,13 +66,15 @@ fun RegisterScreen(
                 }
             }
         }
+
         is Resource.Loading -> {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator()
             }
         }
+
         is Resource.Error -> {
-            Log.d("tag","state5")
+            Log.d("tag", "state5")
             if (alreadyRegisterState.value.message?.isBlank() == true) {
                 RegisterScreenItems(navController = navController, viewModel = viewModel)
             }
@@ -85,7 +88,7 @@ fun RegisterScreen(
 @Composable
 fun RegisterScreenItems(
     navController: NavController,
-    viewModel: RegisterViewModel
+    viewModel: RegisterViewModel,
 ) {
     val state = viewModel.registerFlow.collectAsState()
     val context = LocalContext.current
@@ -278,8 +281,9 @@ fun RegisterScreenItems(
         state.value.let {
             when (it) {
                 is Resource.Success -> {
-                    Log.d("tag", "state6")
                     LaunchedEffect(key1 = Unit) {
+                        val person = Person(emailValue.value.text, passwordValue.value.text)
+                        viewModel.saveData(person)
                         auth.currentUser?.sendEmailVerification()
                         navController.navigate(Screens.Login.route)
                         Toast.makeText(
@@ -289,14 +293,14 @@ fun RegisterScreenItems(
                         ).show()
                     }
                 }
+
                 is Resource.Error -> {
-                    Log.d("tag", "state7")
                     LaunchedEffect(key1 = Unit) {
                         Toast.makeText(context, it.message.toString(), Toast.LENGTH_SHORT).show()
                     }
                 }
+
                 is Resource.Loading -> {
-                    Log.d("tag", "state8")
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
@@ -306,6 +310,7 @@ fun RegisterScreenItems(
                         CircularProgressIndicator()
                     }
                 }
+
                 else -> Unit
             }
         }

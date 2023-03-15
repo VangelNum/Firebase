@@ -37,6 +37,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.zxcursed.wallpaper.R
 import com.zxcursed.wallpaper.core.common.Resource
+import com.zxcursed.wallpaper.core.data.Person
 import com.zxcursed.wallpaper.core.presentation.navigation.Screens
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -56,7 +57,6 @@ fun LoginScreen(
     val auth = Firebase.auth
     val state = viewModel.loginFlow.collectAsState()
     val context = LocalContext.current
-
 
     val launcher =
         rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) {
@@ -255,6 +255,8 @@ fun LoginScreen(
                 }
                 is Resource.Success -> {
                     LaunchedEffect(key1 = Unit) {
+                        val person = Person(emailValue.value.text, passwordValue.value.text)
+                        viewModel.saveData(person)
                         if (auth.currentUser?.isEmailVerified == true) {
                             navController.navigate(Screens.Main.route) {
                                 popUpTo(Screens.Login.route) {

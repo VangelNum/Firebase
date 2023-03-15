@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseUser
 import com.zxcursed.wallpaper.core.common.Resource
+import com.zxcursed.wallpaper.core.data.Person
 import com.zxcursed.wallpaper.feature_login.domain.repository.LoginRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,6 +27,12 @@ class LoginViewModel @Inject constructor(
             _loginFlow.value = Resource.Loading()
             val result = repository.login(email, password = password)
             _loginFlow.value = result
+        }
+    }
+
+    fun saveData(person: Person) {
+        viewModelScope.launch {
+            repository.saveData(person)
         }
     }
 }

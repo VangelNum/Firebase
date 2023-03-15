@@ -8,8 +8,6 @@ import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.preferencesDataStoreFile
-import com.zxcursed.wallpaper.feature_developer_join.data.DeveloperJoinRepositoryImpl
-import com.zxcursed.wallpaper.feature_developer_join.domain.DeveloperJoinRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -37,6 +35,4 @@ object DataStoreModule {
             produceFile = { appContext.preferencesDataStoreFile(DEVELOPER_PREFERENCES) }
         )
     }
-
-
 }
