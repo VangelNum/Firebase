@@ -80,5 +80,11 @@
     <string name="established">Фото установлено!</string>
     <string name="wait_wallpaper">Подождите, обои устанавливаются</string>
     <string name="url_coped">Ссылка скопирована в буфер обмена</string>
+    <string name="another_applications">Другие приложения с курседом</string>
+    <string name="confirm_action">Подтверждение действия</string>
+    <string name="are_you_sure_soundboard">Вы действительно хотите перейти на страницу Google Play и просмотреть приложение Zxcursed Soundboard?</string>
+    <string name="are_you_sure_drumpad">Вы действительно хотите перейти на страницу Google Play и просмотреть приложение Zxcursed DrumPad?</string>
+    <string name="no">Нет</string>
+    <string name="yes">Да</string>
 
 </resources>

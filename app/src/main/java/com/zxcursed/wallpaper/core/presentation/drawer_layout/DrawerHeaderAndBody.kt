@@ -12,6 +12,9 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -87,12 +90,21 @@ fun DrawerBody(navController: NavController, scaffoldState: ScaffoldState) {
         DrawerItems.Stars,
         DrawerItems.Contacts,
         DrawerItems.Exit,
-        DrawerItems.SoundBoard,
-        DrawerItems.DrumPad,
+    )
+    val itemsAnotherApps = listOf(
+        DrawerAnotherApplications.SoundBoard,
+        DrawerAnotherApplications.DrumPad,
     )
 
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
+
+    val openDialogSoundBoard = remember { mutableStateOf(false) }
+    val openDialogDrumPad = remember { mutableStateOf(false) }
+
+    AlertDialogZxcursedSoundboard(openDialogSoundBoard, context)
+    AlertDialogZxcursedDrumPad(openDialogDrumPad, context)
+
 
     LazyColumn(
         contentPadding = PaddingValues(horizontal = 4.dp)
@@ -101,21 +113,37 @@ fun DrawerBody(navController: NavController, scaffoldState: ScaffoldState) {
             ListItem(text = {
                 Text(text = stringResource(id = item.title))
             }, icon = {
-                if (index > 3) {
-                    Image(
-                        painter = painterResource(id = item.icon),
-                        contentDescription = stringResource(id = item.title),
-                        modifier = Modifier.size(24.dp)
-                    )
-                } else {
-                    Icon(
-                        painter = painterResource(id = item.icon),
-                        contentDescription = stringResource(id = item.title),
-                        modifier = Modifier.size(24.dp),
-                    )
-                }
+                Icon(
+                    painter = painterResource(id = item.icon),
+                    contentDescription = stringResource(id = item.title),
+                    modifier = Modifier.size(24.dp),
+                )
             }, modifier = Modifier.clickable {
                 onEvent(item, navController, scaffoldState, context, scope)
+            })
+        }
+        item {
+            Divider(modifier = Modifier.fillMaxWidth())
+            Text(
+                text = stringResource(id = R.string.another_applications),
+                modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 8.dp)
+            )
+        }
+        itemsIndexed(itemsAnotherApps) { index, item ->
+            ListItem(text = {
+                Text(text = stringResource(id = item.title))
+            }, icon = {
+                Image(
+                    painter = painterResource(id = item.icon),
+                    contentDescription = stringResource(id = item.title),
+                    modifier = Modifier.size(24.dp),
+                )
+            }, modifier = Modifier.clickable {
+                if (index == 0) {
+                    openDialogSoundBoard.value = true
+                } else {
+                    openDialogDrumPad.value = true
+                }
             })
         }
         item {
@@ -134,13 +162,82 @@ fun DrawerBody(navController: NavController, scaffoldState: ScaffoldState) {
     }
 }
 
+@Composable
+fun AlertDialogZxcursedDrumPad(openDialog: MutableState<Boolean>, context: Context) {
+    if (openDialog.value) {
+        AlertDialog(
+            onDismissRequest = {
+                openDialog.value = false
+            },
+            title = { Text(text = stringResource(id = R.string.confirm_action)) },
+            text = { Text(stringResource(id = R.string.are_you_sure_drumpad)) },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        val intent = Intent(Intent.ACTION_VIEW)
+                        intent.data =
+                            Uri.parse("https://play.google.com/store/apps/details?id=com.vangelnum.drumpad")
+                        context.startActivity(intent)
+                        openDialog.value = false
+                    }
+                ) {
+                    Text(stringResource(id = R.string.yes))
+                }
+            },
+            dismissButton = {
+                Button(
+                    onClick = {
+                        openDialog.value = false
+                    }) {
+                    Text(stringResource(id = R.string.no))
+                }
+            }
+        )
+    }
+}
+
+
+@Composable
+fun AlertDialogZxcursedSoundboard(openDialog: MutableState<Boolean>, context: Context) {
+    if (openDialog.value) {
+        AlertDialog(
+            onDismissRequest = {
+                openDialog.value = false
+            },
+            title = { Text(text = stringResource(id = R.string.confirm_action)) },
+            text = { Text(stringResource(id = R.string.are_you_sure_soundboard)) },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        val intent = Intent(Intent.ACTION_VIEW)
+                        intent.data =
+                            Uri.parse("https://play.google.com/store/apps/details?id=com.zxcursedsoundboard.apk")
+                        context.startActivity(intent)
+                        openDialog.value = false
+                    }
+                ) {
+                    Text(stringResource(id = R.string.yes))
+                }
+            },
+            dismissButton = {
+                Button(
+                    onClick = {
+                        openDialog.value = false
+                    }) {
+                    Text(stringResource(id = R.string.no))
+                }
+            }
+        )
+    }
+}
+
 
 fun onEvent(
     title: DrawerItems,
     navController: NavController,
     scaffoldState: ScaffoldState,
     context: Context,
-    scope: CoroutineScope
+    scope: CoroutineScope,
 ) {
     when (title) {
         is DrawerItems.Exit -> {
@@ -154,6 +251,7 @@ fun onEvent(
             }
             Firebase.auth.signOut()
         }
+
         is DrawerItems.Share -> {
             val sendIntent: Intent = Intent().apply {
                 action = Intent.ACTION_SEND
@@ -166,18 +264,7 @@ fun onEvent(
             }
             context.startActivity(Intent.createChooser(sendIntent, "Share..."))
         }
-        is DrawerItems.SoundBoard -> {
-            val intent = Intent(Intent.ACTION_VIEW)
-            intent.data =
-                Uri.parse("https://play.google.com/store/apps/details?id=com.zxcursedsoundboard.apk")
-            context.startActivity(intent)
-        }
-        is DrawerItems.DrumPad -> {
-            val intent = Intent(Intent.ACTION_VIEW)
-            intent.data =
-                Uri.parse("https://play.google.com/store/apps/details?id=com.vangelnum.drumpad")
-            context.startActivity(intent)
-        }
+
         is DrawerItems.Stars -> {
             context.startActivity(
                 Intent(
@@ -186,6 +273,7 @@ fun onEvent(
                 )
             )
         }
+
         is DrawerItems.Contacts -> {
             scope.launch {
                 scaffoldState.drawerState.close()
@@ -196,3 +284,4 @@ fun onEvent(
         }
     }
 }
+
