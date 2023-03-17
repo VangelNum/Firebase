@@ -1,6 +1,32 @@
 # Zxcursed Wallpaper Firebase
-Work with firebase - authentication, notification messaging, firestore Database, Storage; 
-MVVM, Clean architecture, Room, navigation, coil, jetpack compose, dagger-hilt, coroutines, flow, sealed classes, data store, pager, shimmer effect
+
+Application in Google Play: https://play.google.com/store/apps/details?id=com.zxcursed.wallpaper
+
+Technologies used:
+
+MVVM stands for Model-View-ViewModel, which is a software architectural pattern used in the development of user interfaces. It separates the user interface logic from the business logic and data access layer, resulting in a more modular and maintainable codebase.
+
+Clean Architecture is a software architecture pattern that focuses on separation of concerns and independence of frameworks, libraries, and external dependencies. It consists of multiple layers with clear responsibilities and boundaries, and each layer only depends on the layers beneath it.
+
+Firebase is a mobile and web application development platform that provides a range of backend services, including authentication, database, storage, and analytics. It enables developers to build apps quickly and easily without having to worry about infrastructure and backend management.
+
+Jetpack Compose is a modern toolkit for building user interfaces in Android applications. It allows developers to build UI components using a declarative syntax, similar to other modern UI frameworks like React and SwiftUI.
+
+Room is a persistence library provided by Google as part of the Jetpack library suite. It provides an abstraction layer over SQLite, allowing developers to easily store and retrieve data in a local database within their Android applications.
+
+Dagger-Hilt is a dependency injection library for Android applications. It simplifies the process of injecting dependencies into classes by generating the necessary code at compile-time, resulting in a more efficient and maintainable codebase.
+
+Flow is a reactive programming library for Kotlin. It allows developers to build asynchronous, non-blocking, and reactive applications by providing a simple and intuitive API for working with streams of data.
+
+Data Store is a data storage solution for Android applications. It provides a consistent and easy-to-use interface for storing and retrieving key-value pairs or typed objects.
+
+Coil is an image loading library for Android applications. It provides a lightweight and efficient solution for loading images from various sources, including network URLs, local files, and content providers.
+
+Navigation Compose is a navigation library for Jetpack Compose. It simplifies the process of building and managing navigation within an Android application by providing a declarative API for defining navigation graphs and destinations.
+
+Coroutines are a lightweight threading framework introduced by Kotlin to simplify asynchronous programming. They allow developers to write asynchronous code in a sequential and synchronous manner, making it easier to manage and maintain. Coroutines provide a way to perform long-running tasks without blocking the main thread and provide a simple and efficient way to handle concurrency in Android apps.
+
+Application screenshots:
 
 ![image](https://user-images.githubusercontent.com/91003195/220918609-215635a0-b7b1-40a6-b073-b1a75fada4f5.png)
 ![image](https://user-images.githubusercontent.com/91003195/220918639-9b84d88a-b5d8-4260-9e32-2baaf12a9ba3.png)
